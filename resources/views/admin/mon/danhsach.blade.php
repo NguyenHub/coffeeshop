@@ -83,12 +83,12 @@
        <input type="text" name="ghichu" id="ghichu" class="form-control" placeholder="Nhập Ghi Chú"  />
      </div>
    </div>
-   <div hidden="" id="trangthai_selected" class="form-group row">
+   <div class="form-group row">
         <label class="control-label col-md-4" >Trạng Thái : </label>
         <div class="col-md-8">
-         <select name="trangthai" id="trangthai" class="form-control">
+         <select  name="trangthai" id="trangthai" class="form-control">
             <option value="0">Còn hàng</option>
-            <option value="1">Hết hàng</option>
+            <option id="option" disabled="" value="1">Hết hàng</option>
          </select>
        </div>
      </div>
@@ -227,6 +227,7 @@
       $('.modal-title').text("Tạo Mới Dữ Liệu");
       $('#action_button').val("Add");
       $('#action').val("Add");
+      $('#option').attr('disabled',true);
       $('#formModal').modal('show');
       $('#sample_form')[0].reset();
       $('#form_result').html(html);
@@ -331,7 +332,7 @@
         $('#action_button').val("Cập Nhật");
         $('#action').val("Edit");
         $('#formModal').modal('show');
-        $('#trangthai_selected').removeAttr('hidden');
+        $('#option').removeAttr('disabled');
         $('#action_button').attr('disabled',true);
         $('input').change(function()
           {

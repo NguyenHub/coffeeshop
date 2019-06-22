@@ -12,15 +12,38 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+	return view('welcome');
 });
 Route::get('index',
-    [
-        'as'=>'home',
-        'uses'=>'PageController@getIndex'
-    ]
+	[
+		'as'=>'trangchu',
+		'uses'=>'PageController@Index'
+	]);
+Route::get('dangnhap-dangky',
+	[
+		'as'=>'dangnhap-dangky',
+		'uses'=>'KhachHangController@LoginOrRegister'
+	]);
+Route::get('admin/trangchu',
+	[
+		'as'=>'home',
+		'uses'=>'PageController@getIndex'
+	]
 );
+Route::get('dangxuat',
+	[
+		'as'=>'home',
+		'uses'=>'NhanVienController@getLogout'
+	]
+);
+// Route::get('dangnhap',
+// [
+// 	'as'=>'dangnhap',
+// 	'uses'=>'PageController@getLogin'
+// ]);
 Route::group(['prefix'=>'admin'],function(){
+	Route::get('dangnhap','NhanVienController@getLogin');
+	Route::post('login','NhanVienController@postLogin');
 	Route::group(['prefix'=>'loaimon'],function(){
 		Route::resource('danh-sach','LoaiMonController');
 		//Route::get('danh-sach','LoaiMonController@getDanhsach');
@@ -113,6 +136,8 @@ Route::group(['prefix'=>'admin'],function(){
 		Route::get('destroy/{id}', 'NhanVienController@destroy');
 		Route::get('edit/{id}', 'NhanVienController@edit');
 		Route::post('update','NhanVienController@update');
+		Route::get('capnhat/{id}', 'NhanVienController@getCapnhat');
+		Route::post('capnhat', 'NhanVienController@postCapnhat');
 	});
 	Route::group(['prefix'=>'calam'],function(){
 		Route::resource('danh-sach','CaLamController');

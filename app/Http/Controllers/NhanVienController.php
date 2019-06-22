@@ -7,32 +7,26 @@ use App\NhanVien;
 use App\LoaiNhanVien;
 use App\ChucVu;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Validator;
 class NhanVienController extends Controller
 {
-   public function index()
+	public function index()
 	{
 		$loainhanvien=LoaiNhanVien::all();
 		$chucvu=ChucVu::all();
 		if(request()->ajax())
 		{
-			// return datatables()->of(DB::table('mon')
-			// 	->join('loai_mon','mon.maloai','loai_mon.id')
-			// 	->select('mon.*','loai_mon.tenloai')
-			// 	->latest()->get())
-			// ->addColumn('action', function($data){
-			// 	$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Edit</button>';
-			// 	$button .= '&nbsp;&nbsp;';
-			// 	$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Delete</button>';
-			// 	return $button;
-			// })
-			// ->rawColumns(['action'])
-			// ->make(true);
-			return datatables()->of(NhanVien::
-				latest()->get())
+			return datatables()->of(DB::table('nhan_vien')
+				->join('chuc_vu','nhan_vien.machucvu','=','chuc_vu.id')
+				->join('loai_nhan_vien','nhan_vien.maloai','=','loai_nhan_vien.id')
+				->select('nhan_vien.*','chuc_vu.tenchucvu','loai_nhan_vien.tenloai')
+				->latest()->get())
 			->addColumn('action', function($data){
-				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Edit</button>';
+				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm" title="Cập nhật" style="width:30px"><i class="fa fa-edit" ></i></button>';
 				$button .= '&nbsp;&nbsp;';
-				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Delete</button>';
+				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm" title="Xóa" style="width:30px"><i class="fa fa-trash"  ></i></button>';
 				return $button;
 			})
 			->rawColumns(['action'])
@@ -43,20 +37,22 @@ class NhanVienController extends Controller
 	public function add( Request $request)
 	{
 		$validator =Validator::make($request->all(),[
-			// 'tenkhuyenmai'    =>  'required',
-			// 'soluong'    =>  'required',
-			'email'=>'bail|required|unique:nhan_vien,email',
-			'cmnd'=>'bail|required|unique:nhan_vien,cmnd',
-			'sdt'=>'bail|regex:/([0-9]{})/'
-			'dongia'=>'bail|regex:/([0-9]{1,9})$/',
-			'hinhanh' => 'image|mimes:jpg,png,gif',
-			'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
+			'tennhanvien'=>'bail|regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{2,7})+([\s]*)+([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,7}))$/|min:5|max:50',
+			'email'=>'bail|regex:/^([a-zA-Z0-9_\.\-])+\@([a-zA-Z0-9_\.\-])+([a-zA-Z0-9]{2,4})+$/|required|unique:nhan_vien,email',
+			'cmnd'=>'bail|digits:9|required|unique:nhan_vien,cmnd',
+			'sdt' => 'bail|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:nhan_vien,sdt',
 		],
 		[
-			'dongia.regex'=>'Giá trị không không hợp lệ ',
-			'hinhanh.image' => 'Không đúng định dạng hình ảnh',
-			'hinhanh.mimes'=>'Vui lòng chọn file .jpg,png,gif',
-			'ghichu.regex'=>'Ghi chú không hợp lệ'
+			'tennhanvien.regex'=>'Tên nhân viên không hợp lệ',
+			'tennhanvien.min'=>'Tên nhân viên quá ngắn',
+			'tennhanvien.max'=>'Tên nhân viên quá dài',
+			'email.regex'=>'Vui lòng nhập đúng định dạng email',
+			'email.unique'=>'Email đã tồn tại',
+			'tennhanvien.regex'=>'Tên nhân viên không hợp lệ',
+			'cmnd.regex'=>'Số chứng minh không hợp lệ',
+			'cmnd.digits'=>'Vui lòng nhập đủ 9 số',
+			'cmnd.unique'=>'Số chứng minh đã tồn tại',
+			'sdt.regex'=>'Số điện thoại không hợp lệ'
 		]);
 		if($validator->fails())
 		{
@@ -64,34 +60,29 @@ class NhanVienController extends Controller
 		}
 		else
 		{
-			if(($request->dongia % 500)!=0)
-			{
-				$errors=array('0'=>'Đơn giá không hợp lệ');
-				return response()->json(['errors' => $errors]);
-			}
-			else
-			{
-				$file=$request->file('hinhanh');
-				$name=$file->getClientOriginalName();
-				$file->move('hinhanh/upload/',$name);
-				$data = new Mon;
-				$data->maloai=$request->maloai;
-				$data->tenmon=ucwords($request->tenmon);
-				$data->dongia=$request->dongia;
-				$data->hinhanh=$name;
-				$data->trangthai=$request->trangthai;
-				$data->ghichu=$request->ghichu;
-				$data->created_at=date('Y-m-d H:m:s');
-				$data->save();
-				return response()->json(['success' => 'Thêm Thành Công!']);
-			}
-			
+			$data = new NhanVien;
+			$data->tennhanvien=ucwords($request->tennhanvien);
+			$data->ngaysinh=$request->ngaysinh;
+			$data->gioitinh=$request->gioitinh;
+			$data->email=$request->email;
+			$data->password=bcrypt($request->email);
+			$data->sdt=$request->sdt;
+			$data->trangthai=0;
+			$data->diachi=$request->diachi;
+			$data->machucvu=$request->chucvu;
+			$data->maloai=$request->loainhanvien;
+			$data->cmnd=$request->cmnd;
+			$data->ngayvaolam=$request->ngayvaolam;
+			$data->ghichu=$request->ghichu;
+			$data->created_at=date('Y-m-d H:m:s');
+			$data->save();
+			return response()->json(['success' => 'Thêm Thành Công!']);
 		}
 
 	}
 	public function destroy($id)
 	{
-		$data = Mon::find($id);
+		$data = NhanVien::find($id);
 		$data->delete();
 		return response()->json(['success' => 'Xóa Thành Công!']);
 	}
@@ -99,28 +90,113 @@ class NhanVienController extends Controller
 	{
 		if(request()->ajax())
 		{
-			$data = Mon::find($id);
+			$data = NhanVien::find($id);
 			return response()->json(['data' => $data]);
 		}
 	}
 	public function update(Request $request)
 	{
-		$file=$request->file('hinhanh');
-		//$name=$file->getClientOriginalName();
-		if($file!=null)
+		$validator =Validator::make($request->all(),[
+			'tennhanvien'=>'bail|regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{2,7})+([\s]*)+([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,7}))$/|min:5|max:50',
+			'email'=>'bail|regex:/^([a-zA-Z0-9_\.\-])+\@([a-zA-Z0-9_\.\-])+([a-zA-Z0-9]{2,4})+$/|required|unique:nhan_vien,email,'.$request->hidden_id,
+			'cmnd'=>'bail|digits:9|required|unique:nhan_vien,cmnd,'.$request->hidden_id,
+			'sdt' => 'bail|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:nhan_vien,sdt,'.$request->hidden_id,
+		],
+		[
+			'tennhanvien.regex'=>'Tên nhân viên không hợp lệ',
+			'tennhanvien.min'=>'Tên nhân viên quá ngắn',
+			'tennhanvien.max'=>'Tên nhân viên quá dài',
+			'email.regex'=>'Vui lòng nhập đúng định dạng email',
+			'email.unique'=>'Email đã tồn tại',
+			'tennhanvien.regex'=>'Tên nhân viên không hợp lệ',
+			'cmnd.regex'=>'Số chứng minh không hợp lệ',
+			'cmnd.digits'=>'Vui lòng nhập đủ 9 số',
+			'cmnd.unique'=>'Số chứng minh đã tồn tại',
+			'sdt.regex'=>'Số điện thoại không hợp lệ'
+		]);
+		if($validator->fails())
 		{
-			$validator =Validator::make($request->all(),[
-				'tenmon'=>'required|unique:mon,tenmon,'.$request->hidden_id,
-				'dongia'=>'bail|regex:/([0-9]{1,9})$/',
-				'hinhanh' => 'bail|image|mimes:jpg,png,gif',
-				'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
+			return response()->json(['errors' => $validator->errors()->all()]);
+		}
+		else
+		{
+			$data =NhanVien::find($request->hidden_id);
+			$data->tennhanvien=ucwords($request->tennhanvien);
+			$data->ngaysinh=$request->ngaysinh;
+			$data->gioitinh=$request->gioitinh;
+			$data->email=$request->email;
+			$data->password=bcrypt($request->email);
+			$data->sdt=$request->sdt;
+			$data->trangthai=$request->trangthai;
+			$data->diachi=$request->diachi;
+			$data->machucvu=$request->chucvu;
+			$data->maloai=$request->loainhanvien;
+			$data->cmnd=$request->cmnd;
+			$data->ngayvaolam=$request->ngayvaolam;
+			$data->ghichu=$request->ghichu;
+			$data->updated_at=date('Y-m-d H:m:s');
+			$data->save();
+			return response()->json(['success' => 'Thêm Thành Công!']);
+		}
+
+
+	}
+	public function getLogin()
+	{
+		return view('admin/dang-nhap');
+	}
+	public function getLogout()
+	{
+		Auth::guard('nhan_vien')->logout();
+		return view('admin/dang-nhap');
+	}
+	public function postLogin(Request $request)
+	{
+		$login=['email'=>$request->email,'password'=>$request->password];
+		if(Auth::guard('nhan_vien')->attempt($login))
+		{
+            //return redirect('admin/trang-chu');
+            //return response()->json(['errors' => 'Đăng Nhập Thành Công!']);
+            //return view('admin/trang-chu');
+			return response()->json(['success' => 'Email hoặc mật khẩu không đúng!']);
+		}
+		else
+		{
+
+			return response()->json(['errors' => 'Email hoặc mật khẩu không đúng!']);
+		}
+	}
+	public function getCapnhat($id)
+	{
+		if(request()->ajax())
+		{
+			$data = DB::table('nhan_vien')
+			->join('chuc_vu','nhan_vien.machucvu','=','chuc_vu.id')
+			->join('loai_nhan_vien','nhan_vien.maloai','=','loai_nhan_vien.id')
+			->select('nhan_vien.*','chuc_vu.tenchucvu','loai_nhan_vien.tenloai')
+			->first();
+			return response()->json(['data' => $data]);
+		}
+	}
+	public function postCapnhat(Request $request)
+	{
+		if($request->changepassword=='on')
+		{
+			$validator=Validator::make($request->all(),[
+				'tennhanvien'=>'bail|regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{2,7})+([\s]*)+([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,7}))$/|min:5|max:50',
+				'sdt' => 'bail|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:nhan_vien,sdt,'.$request->id,
+				'newpassword'=>'bail|min:8|max:32|regex:/^(?=.*?[A-Z]{1,})(?=.*?[a-z]{1,})+(?=.*?[0-9]{1,})$/',
+				'renewpassword'=>'bail|same:newpassword'
 			],
 			[
-				'tenmon.unique'=>'Tên món đã tồn tại',
-				'dongia.regex'=>'Giá trị không không hợp lệ ',
-				'hinhanh.image' => 'Không đúng định dạng hình ảnh',
-				'hinhanh.mimes'=>'Vui lòng chọn file .jpg,png,gif',
-				'ghichu.regex'=>'Ghi chú không hợp lệ'
+				'tennhanvien.regex'=>'Tên nhân viên không hợp lệ',
+				'tennhanvien.min'=>'Tên nhân viên quá ngắn',
+				'tennhanvien.max'=>'Tên nhân viên quá dài',
+				'tennhanvien.regex'=>'Tên nhân viên không hợp lệ',
+				'sdt.regex'=>'Số điện thoại không hợp lệ',
+				'sdt.unique'=>'Số điện thoại đã tồn tại',
+				'newpassword.regex'=>'Mật khẩu mới không hợp lệ',
+				'renewpassword.same'=>'Nhập lại mật khẩu chưa đúng',
 			]);
 			if($validator->fails())
 			{
@@ -128,66 +204,55 @@ class NhanVienController extends Controller
 			}
 			else
 			{
-				if(($request->dongia % 500)!=0)
+				$data =NhanVien::find($request->id);
+				$data->tennhanvien=ucwords($request->tennhanvien);
+				$data->ngaysinh=$request->ngaysinh;
+				$data->gioitinh=$request->gioitinh;
+				$data->password=bcrypt($request->newpassword);
+				$data->sdt=$request->sdt;
+				$data->diachi=$request->diachi;
+				$data->ghichu=$request->ghichu;
+				$data->updated_at=date('Y-m-d H:m:s');
+				if(Hash::check($request->oldpassword,$data->password))
 				{
-					$errors=array('0'=>'Đơn giá không hợp lệ');
-					return response()->json(['errors' => $errors]);
-				}
-				else
-				{
-					$name=$file->getClientOriginalName();
-					$file->move('hinhanh/upload/',$name);
-					$data = Mon::find($request->hidden_id);
-					$data->maloai=$request->maloai;
-					$data->tenmon=ucwords($request->tenmon);
-					$data->dongia=$request->dongia;
-					$data->hinhanh=$name;
-					$data->trangthai=$request->trangthai;
-					$data->ghichu=$request->ghichu;
-					$data->updated_at=date('Y-m-d H:m:s');
 					$data->save();
 					return response()->json(['success' => 'Cập Nhật Thành Công!']);
 				}
-
+				$errors=array('0'=>'Mật khẩu cũ chưa đúng!');
+				return response()->json(['errors' => $errors]);
 			}
 		}
 		else
 		{
 			$validator =Validator::make($request->all(),[
-				'tenmon'=>'required|unique:mon,tenmon,'.$request->hidden_id,
-				'dongia'=>'bail|regex:/([0-9]{1,9})$/',
-				'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
+				'tennhanvien'=>'bail|regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{2,7})+([\s]*)+([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,7}))$/|min:5|max:50',
+				'sdt' => 'bail|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:nhan_vien,sdt,'.$request->id,
 			],
 			[
-				'tenmon.unique'=>'Tên món đã tồn tại',
-				'dongia.regex'=>'Giá trị không không hợp lệ ',
-				'ghichu.regex'=>'Ghi chú không hợp lệ'
+				'tennhanvien.regex'=>'Tên nhân viên không hợp lệ',
+				'tennhanvien.min'=>'Tên nhân viên quá ngắn',
+				'tennhanvien.max'=>'Tên nhân viên quá dài',
+				'tennhanvien.regex'=>'Tên nhân viên không hợp lệ',
+				'sdt.regex'=>'Số điện thoại không hợp lệ',
+				'sdt.unique'=>'Số điện thoại đã tồn tại',
 			]);
-			if($validator->fails())
-			{
-				return response()->json(['errors' => $validator->errors()->all()]);
-			}
-			else
-			{
-				if(($request->dongia % 500)!=0)
-				{
-					$errors=array('0'=>'Đơn giá không hợp lệ');
-					return response()->json(['errors' => $errors]);
-				}
-				else
-				{
-					$data = Mon::find($request->hidden_id);
-					$data->maloai=$request->maloai;
-					$data->tenmon=ucwords($request->tenmon);
-					$data->dongia=$request->dongia;
-					$data->trangthai=$request->trangthai;
-					$data->ghichu=$request->ghichu;
-					$data->updated_at=date('Y-m-d H:m:s');
-					$data->save();
-					return response()->json(['success' => 'Cập Nhật Thành Công!']);
-				}
-
-			}
+		}
+		if($validator->fails())
+		{
+			return response()->json(['errors' => $validator->errors()->all()]);
+		}
+		else
+		{
+			$data =NhanVien::find($request->id);
+			$data->tennhanvien=ucwords($request->tennhanvien);
+			$data->ngaysinh=$request->ngaysinh;
+			$data->gioitinh=$request->gioitinh;
+			$data->sdt=$request->sdt;
+			$data->diachi=$request->diachi;
+			$data->ghichu=$request->ghichu;
+			$data->updated_at=date('Y-m-d H:m:s');
+			$data->save();
+			return response()->json(['success' => 'Cập Nhật Thành Công!']);
 		}
 	}
 }

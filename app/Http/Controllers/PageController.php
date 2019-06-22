@@ -10,4 +10,8 @@ class PageController extends Controller
     {
     	return view('admin/trang-chu');
     }
+     public function Index()
+    {
+    	return view('front/trangchu');
+    }
 }

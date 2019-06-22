@@ -25,10 +25,16 @@
               <th >MÃ</th>
               <th >TÊN NV</th>
               <th >NGÀY SINH</th>
+              <th >NGÀY VÀO LÀM</th>
               <th >GIỚI TÍNH</th>
               <th >EMAIL</th>
               <th >SDT</th>
               <th >ĐỊA CHỈ</th>
+              <th >CMND</th>
+              <th >CHỨC VỤ</th>
+              <th >LOẠI</th>
+              <th >NGÀY TẠO</th>
+              <th >NGÀY CẬP NHẬT</th>
               <th >Thao tác
                 <button style="width: 30px" type="button" name="create_record" id="create_record" class="btn btn-success btn-sm" title="Thêm"><i class="fa fa-plus"></i></button></th>
               </tr>
@@ -126,6 +132,24 @@
        </select>
      </div>
    </div>
+   <div class="form-group row" >
+        <label class="control-label col-md-3" >Ngày Vào Làm : </label>
+        <div class="col-md-4">
+         <input type="date" name="ngayvaolam" id="ngayvaolam" class="form-control" required=""  />
+       </div>
+       <div class="col-md-4">
+         <select id="trangthai" name="trangthai" class="form-control" disabled="">
+          <option value="0">Đang làm</option>
+          <option value="1">Nghỉ</option>
+       </select>
+       </div>
+     </div>
+   <div class="form-group row">
+        <label class="control-label col-md-3" >Ghi Chú : </label>
+        <div class="col-md-8">
+         <input type="text" name="ghichu" id="ghichu" class="form-control"  />
+       </div>
+     </div>
    <br />
    <div class="form-group" align="center">
     <input type="hidden" name="action" id="action" />
@@ -200,12 +224,12 @@
     width:'5px'
   },
   {
-    data: 'tenca',
-    name: 'tenca',
+    data: 'tennhanvien',
+    name: 'tennhanvien',
   },
   {
-    data: 'giobatdau',
-    name: 'giobatdau',
+    data: 'ngaysinh',
+    name: 'ngaysinh',
     // "render": function(data)
     // {
     //   var d = new Date(data);
@@ -213,17 +237,49 @@
     // }
   },
   {
-    data: 'gioketthuc',
-    name: 'gioketthuc',
-    // "render": function(data)
-    // {
-    //   var d = new Date(data);
-    //   return  d.getDate()+"-"+(d.getMonth()+1)+"-"+d.getFullYear();
-    // }
+  data: 'ngayvaolam',
+  name: 'ngayvaolam',
   },
   {
-    data: 'ghichu',
-    name: 'ghichu',
+    data: 'gioitinh',
+    name: 'gioitinh',
+    "render": function(data)
+    {
+      if(data==0)
+      {
+        return "Nam";
+      }
+      return "Nữ";
+    }
+  },
+  {
+    data: 'email',
+    name: 'email',
+    //visible:false //ẩn cột
+  },
+  {
+    data: 'sdt',
+    name: 'sdt',
+    //visible:false //ẩn cột
+  },
+  {
+    data: 'diachi',
+    name: 'diachi',
+    //visible:false //ẩn cột
+  },
+  {
+    data: 'cmnd',
+    name: 'cmnd',
+    //visible:false //ẩn cột
+  },
+  {
+    data: 'tenchucvu',
+    name: 'tenchucvu',
+    //visible:false //ẩn cột
+  },
+  {
+    data: 'tenloai',
+    name: 'tenloai',
     //visible:false //ẩn cột
   },
   {
@@ -275,6 +331,7 @@
       $('.modal-title').text("Tạo Mới Dữ Liệu");
       $('#action_button').val("Add");
       $('#action').val("Add");
+      $('#trangthai').attr('disabled',true);
       $('#formModal').modal('show');
       $('#sample_form')[0].reset();
       $('#form_result').html(html);
@@ -367,9 +424,17 @@
        url:"admin/nhanvien/edit/"+id,
        dataType:"json",
        success:function(html){
-        $('#tenca').val(html.data.tenca);
-        $('#giobatdau').val(html.data.giobatdau);
-        $('#gioketthuc').val(html.data.gioketthuc);
+        $('#trangthai').removeAttr('disabled');
+        $('#tennhanvien').val(html.data.tennhanvien);
+        $('#ngaysinh').val(html.data.ngaysinh);
+        $('#gioitinh').val(html.data.gioitinh);
+        $('#email').val(html.data.email);
+        $('#sdt').val(html.data.sdt);
+        $('#cmnd').val(html.data.cmnd);
+        $('#diachi').val(html.data.diachi);
+        $('#loainhanvien').val(html.data.maloai);
+        $('#chucvu').val(html.data.machucvu);
+        $('#ngayvaolam').val(html.data.ngayvaolam);
         $('#ghichu').val(html.data.ghichu);
         $('#hidden_id').val(html.data.id);
         $('.modal-title').text("Cập Nhật Dữ Liệu");

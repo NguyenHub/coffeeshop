@@ -44,7 +44,15 @@ return [
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
-            'hash' => false,
+            //'hash' => false,
+        ],
+        'nhan_vien'=>[
+            'driver'=>'session',
+            'provider'=>'nhan_vien',
+        ],
+        'nhan_vien-api'=>[
+            'driver'=>'token',
+            'provider'=>'nhan_vien',
         ],
     ],
 
@@ -75,6 +83,10 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+        'nhan_vien'=>[
+        'driver'=>'eloquent',
+        'model'=>App\NhanVien::class,
+        ],
     ],
 
     /*
@@ -95,6 +107,11 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+        'nhan_vien' => [
+            'provider' => 'nhan_vien',
             'table' => 'password_resets',
             'expire' => 60,
         ],

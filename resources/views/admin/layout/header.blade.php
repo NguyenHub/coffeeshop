@@ -50,9 +50,10 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
           <a class="dropdown-item" href="#">Settings</a>
-          <a class="dropdown-item" href="#">Activity Log</a>
+          <a class="dropdown-item" id="taikhoan" >Tài khoản</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Logout</a>
+          {{-- <a class="dropdown-item" href="dangxuat" data-toggle="modal" data-target="#logoutModal">Logout</a> --}}
+          <a class="dropdown-item" href="dangxuat">Đăng xuất</a>
         </div>
       </li>
     </ul>

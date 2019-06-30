@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Mon;
+use App\DonHang;
 class DonHangController extends Controller
 {
     public function index()
 	{
-		$data=Mon::all();
+		//$data=Mon::all();
 		if(request()->ajax())
 		{
-			return datatables()->of(CongThuc::latest()->get())
+			return datatables()->of(DonHang::latest()->get())
 			->addColumn('action', function($data){
 				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Edit</button>';
 				$button .= '&nbsp;&nbsp;';
@@ -21,6 +22,6 @@ class DonHangController extends Controller
 			->rawColumns(['action'])
 			->make(true);
 		}
-		return view('admin.donhang.danhsach',['data'=>$data]);
+		return view('admin.donhang.danhsach');
 	}
 }

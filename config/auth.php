@@ -54,6 +54,14 @@ return [
             'driver'=>'token',
             'provider'=>'nhan_vien',
         ],
+        'khach_hang'=>[
+            'driver'=>'session',
+            'provider'=>'khach_hang',
+        ],
+        'khach_hang-api'=>[
+            'driver'=>'token',
+            'provider'=>'khach_hang',
+        ],
     ],
 
     /*
@@ -87,6 +95,10 @@ return [
         'driver'=>'eloquent',
         'model'=>App\NhanVien::class,
         ],
+        'khach_hang'=>[
+        'driver'=>'eloquent',
+        'model'=>App\KhachHang::class,
+        ],
     ],
 
     /*
@@ -112,6 +124,11 @@ return [
         ],
         'nhan_vien' => [
             'provider' => 'nhan_vien',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+        'khach_hang' => [
+            'provider' => 'khach_hang',
             'table' => 'password_resets',
             'expire' => 60,
         ],

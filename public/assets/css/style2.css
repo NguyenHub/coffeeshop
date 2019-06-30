@@ -1,0 +1,55 @@
+.login-form-container input {
+    background-color: transparent;
+    border: 1px solid #ebebeb;
+    color: #666;
+    font-size: 16px;
+    height: 38px;
+    margin-bottom: 10px;
+    padding: 0 15px;
+}
+.login-form-container {
+    background: transparent none repeat scroll 0 0;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+    padding: 50px;
+    text-align: left;
+}
+/*.product-quantity .cart-plus-minus {
+    display: inline-block;
+    float: none;
+    height: 40px;
+    padding: 0;
+    position: relative;
+    width: 110px;
+}*/
+.input-group-btn {
+    font-size: 0;
+    white-space: nowrap;
+   
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.btn {
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 0px 15px;
+    height: 45px;
+    line-height: 30px;
+}
+td {
+    text-align: center;
+}
+.line-through{
+    text-decoration: line-through;
+}
+/*.grand-totall > button {
+    background-color: #e02c2b;
+    border-radius: 3px;
+    color: #fff;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    padding: 18px 10px 19px;
+    text-align: center;
+    text-transform: uppercase;
+}*/

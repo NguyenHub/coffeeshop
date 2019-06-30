@@ -19,10 +19,26 @@ Route::get('index',
 		'as'=>'trangchu',
 		'uses'=>'PageController@Index'
 	]);
+
 Route::get('dangnhap-dangky',
 	[
 		'as'=>'dangnhap-dangky',
 		'uses'=>'KhachHangController@LoginOrRegister'
+	]);
+Route::post('dangky',
+	[
+		'as'=>'dangky',
+		'uses'=>'KhachHangController@postRegister'
+	]);
+Route::post('dangnhap',
+	[
+		'as'=>'dangnhap',
+		'uses'=>'KhachHangController@postLogin'
+	]);
+Route::get('khachhang/dangxuat',
+	[
+		'as'=>'dangxuat',
+		'uses'=>'KhachHangController@getLogout'
 	]);
 Route::get('admin/trangchu',
 	[
@@ -36,11 +52,50 @@ Route::get('dangxuat',
 		'uses'=>'NhanVienController@getLogout'
 	]
 );
-// Route::get('dangnhap',
-// [
-// 	'as'=>'dangnhap',
-// 	'uses'=>'PageController@getLogin'
-// ]);
+Route::get('chitiet-sanpham/{id}',
+	[
+		'as'=>'chitiet-sanpham',
+		'uses'=>'PageController@getChiTiet'
+	]
+);
+Route::get('add-to-cart/{id}',
+	[
+		'as'=>'add-to-cart',
+		'uses'=>'PageController@getAddToCart'
+	]
+);
+Route::get('reduce-item/{id}',
+	[
+		'as'=>'reduce-item',
+		'uses'=>'PageController@getReduceItem'
+	]
+);
+Route::get('delete-cart/{id}',
+	[
+		'as'=>'delete-cart',
+		'uses'=>'PageController@getDelCart'
+	]
+);
+Route::get('gio-hang',
+[
+	'as'=>'gio-hang',
+	'uses'=>'PageController@getCart'
+]);
+Route::get('gio-hang/thanh-toan',
+[
+	'as'=>'gio-hang/thanh-toan',
+	'uses'=>'PageController@getCheckout'
+]);
+Route::get('giam-gia/{code}',
+[
+	'as'=>'giam-gia',
+	'uses'=>'PageController@getDiscount'
+]);
+Route::post('dat-hang',
+[
+	'as'=>'dat-hang',
+	'uses'=>'PageController@getBill'
+]);
 Route::group(['prefix'=>'admin'],function(){
 	Route::get('dangnhap','NhanVienController@getLogin');
 	Route::post('login','NhanVienController@postLogin');

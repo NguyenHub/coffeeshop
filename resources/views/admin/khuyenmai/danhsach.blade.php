@@ -108,7 +108,7 @@
  <div class="form-group row">
   <label class="control-label col-md-4" >Ngày Bắt Đầu * : </label>
   <div class="col-md-8">
-   <input type="datetime-local"  name="ngaybatdau" id="ngaybatdau" class="form-control" required="" />
+   <input type="datetime-local"  name="ngaybatdau" id="ngaybatdau" value="2019-06-02+0701:00" class="form-control" required="" />
  </div>
 </div>
 <div class="form-group row">

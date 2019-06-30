@@ -91,8 +91,8 @@ class KhuyenMaiController extends Controller
 		if(request()->ajax())
 		{
 			$data = KhuyenMai::find($id);
-			$batdau= date("Y-m-dTH:i",strtotime($data->ngaybatdau));
-			$ketthuc= date("Y-m-dTH:i",strtotime($data->ngayketthuc));
+			$batdau= date("Y-m-dTH:m",strtotime($data->ngaybatdau));
+			$ketthuc= date("Y-m-dTH:m",strtotime($data->ngayketthuc));
 			$batdau=str_replace("UTC", "T", $batdau);
 			$ketthuc=str_replace("UTC", "T", $ketthuc);
 			return response()->json(['data' => $data,'batdau'=>$batdau,'ketthuc'=>$ketthuc]);

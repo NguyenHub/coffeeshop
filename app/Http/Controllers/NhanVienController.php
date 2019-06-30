@@ -48,7 +48,6 @@ class NhanVienController extends Controller
 			'tennhanvien.max'=>'Tên nhân viên quá dài',
 			'email.regex'=>'Vui lòng nhập đúng định dạng email',
 			'email.unique'=>'Email đã tồn tại',
-			'tennhanvien.regex'=>'Tên nhân viên không hợp lệ',
 			'cmnd.regex'=>'Số chứng minh không hợp lệ',
 			'cmnd.digits'=>'Vui lòng nhập đủ 9 số',
 			'cmnd.unique'=>'Số chứng minh đã tồn tại',

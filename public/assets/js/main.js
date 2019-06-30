@@ -2,11 +2,21 @@
     'use strict';
     
     /* Cart Currency Search toggle active */
-    $(".header-cart a").on("click", function(e) {
+    $(".header-cart a").mouseenter( function(e) {
         e.preventDefault();
         $(this).parent().find('.shopping-cart-content').slideToggle('medium');
+        //$('.shopping-cart-content').show();
     })
-    
+        /* Cart Currency Search toggle active */
+   // $("#mini_cart").mouseon( function(e) {
+   //      e.preventDefault();
+   //      $(this).parent().find('.shopping-cart-content').show();
+   //  })
+    /* Cart Currency Search toggle active */
+   $("#mini_cart").mouseleave( function(e) {
+        e.preventDefault();
+        $('.shopping-cart-content').slideToggle('hide');
+    })
     /*--
     Menu Stick
     -----------------------------------*/

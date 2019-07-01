@@ -147,7 +147,8 @@ Route::group(['prefix'=>'admin'],function(){
 		Route::resource('danh-sach','DonHangController');
 		Route::post('add','DonHangController@add');
 		Route::get('destroy/{id}', 'DonHangController@destroy');
-		Route::get('edit/{id}', 'DonHangController@edit');
+		Route::get('xuly/{id}/{trangthai}', 'DonHangController@xuly');
+		Route::get('chitiet/{id}', 'DonHangController@chitiet');
 		Route::post('update','DonHangController@update');
 	});
 	Route::group(['prefix'=>'loaikhachhang'],function(){

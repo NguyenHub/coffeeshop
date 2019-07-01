@@ -23,11 +23,12 @@
            <thead>
             <tr>
               <th >MÃ</th>
-              <th >KHU VỰC</th>
+              <th >NGÀY ĐẶT</th>
+              <th >THÀNH TIỀN</th>
               <th >GHI CHÚ</th>
-              <th >CREATED_AT</th>
-              <th >UPDATED_AT</th>
-              <th >Action
+              <th >TRẠNG THÁI</th>
+              <th >CẬP NHẬT</th>
+              <th >Thao Tác
                 <button type="button" name="create_record" id="create_record" class="btn btn-success btn-sm">Tạo mới</button>
               </tr>
             </thead>
@@ -42,32 +43,55 @@
    <div class="modal-dialog">
     <div class="modal-content">
      <div class="modal-header">
-      <h4 class="modal-title">Thêm Khu Vực</h4>
+      <h4 class="modal-title"></h4>
       <button type="button" class="close" data-dismiss="modal">&times;</button>     
     </div>
     <div class="modal-body">
-     <span id="form_result"></span>
-     <form method="post" id="sample_form" class="form-horizontal" enctype="multipart/form-data">
+     <span id="form_result" style="color: green;"></span>
+     <form id="sample_form" class="form-horizontal">
       {{csrf_field()}}
       <div class="form-group row">
-        <label class="control-label col-md-4" >Tên Khu Vực : </label>
-        <div class="col-md-8">
-         <input type="text" name="name" id="name" class="form-control" required="" />
-       </div>
+        <div class="col-md-6 ngaydat">Ngày Đặt : </div>
+        <div class="col-md-6 tongtien">Tổng Tiền :</div>
+      </div>
+      <div class="form-group row">
+        <div class="col-md-12 diachi">Địa Chỉ :</div>
+      </div>
+      <div class="form-group row">
+        <div class="col-md-12 sdt">SĐT Người Nhận :</div>
+      </div>
+      <div class="form-group row">
+        <div class="col-md-12 ghichu">Ghi Chú :</div>
+      </div>
+      <div class="form-group row">
+        <div class="col-md-12 makhuyenmai">Mã Khuyến Mãi :</div>
+      </div>
+      <div class="form-group row">
+        <div class="col-md-12 trangthai">Trạng Thái :</div>
+      </div>
+      <div>
+       <table class="table table-bordered table-striped ">
+         <thead>
+           <tr>
+             <td>MÃ</td>
+             <td>TÊN</td>
+             <td>SL</td>
+             <td>ĐƠN GIÁ</td>
+           </tr>
+         </thead>
+         <tbody class="body_table_detail">
+
+         </tbody>
+       </table>
      </div>
-     <div class="form-group row">
-      <label class="control-label col-md-4">Ghi Chú : </label>
-      <div class="col-md-8">
-       <input type="text" name="note" id="note" class="form-control" />
-     </div>
-   </div>
-   <br />
-   <div class="form-group" align="center">
-    <input type="hidden" name="action" id="action" />
-    <input type="hidden" name="hidden_id" id="hidden_id" />
-    <input type="submit" name="action_button" id="action_button" class="btn btn-warning" value="Add" />
-  </div>
-</form>
+     <br />
+     <div class="form-group" align="center">
+      <input type="hidden" name="action" id="action" />
+      <input type="hidden" name="hidden_id" id="hidden_id" />
+      <input type="submit" name="action_button" id="action_xuly" class="btn btn-warning" value="Xử Lý" />
+      <input type="submit" name="action_button" id="action_huy" class="btn btn-warning" value="Hủy Đơn" />
+    </div>
+  </form>
 </div>
 </div>
 </div>
@@ -78,7 +102,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-title_confirm">Xác Nhận !</h2>
+        <h2 class="modal-title_confirm">Xác Nhận Hủy !</h2>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
       </div>
       <div class="modal-body">
@@ -110,6 +134,7 @@
   $(document).ready(function(){
 
    $('#data_table').DataTable({
+    "order":[1,'desc'],
     processing: true,
     serverSide: true,
     ajax:{
@@ -118,19 +143,32 @@
    columns:[
    {
     data: 'id',
-    name: 'id'
+    name: 'id',
   },
   {
-    data: 'tenkhuvuc',
-    name: 'tenkhuvuc'
+    data: 'ngaydat',
+    name: 'ngaydat',
+    // "render": function(data)
+    // {
+    //   var d = new Date(data);
+    //   return  d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear();
+    // }
+  },
+  {
+    data: 'thanhtien',
+    name: 'thanhtien',
   },
   {
     data: 'ghichu',
     name: 'ghichu'
   },
   {
-    data: 'created_at',
-    name: 'created_at'
+    data: 'trangthai',
+    name: 'trangthai',
+    "render":function(data)
+    {
+      return format_trangthai(data);
+    }
   },
   {
     data: 'updated_at',
@@ -149,7 +187,7 @@
   $(document).ready(function(){
     {{-- Start Call Form --}}
     var html ='';
-     $('#create_record').click(function(){
+    $('#create_record').click(function(){
       $('.modal-title').text("Tạo Mới Dữ Liệu");
       $('#action_button').val("Add");
       $('#action').val("Add");
@@ -241,22 +279,13 @@
     $(document).on('click', '.edit', function(){
       var id = $(this).attr('id');
       $('#form_result').html('');
+      $('.modal-title').text("Chi Tiết Đơn Hàng "+id);
+      $('#formModal').modal('show');
       $.ajax({
-       url:"admin/khuvuc/edit/"+id,
+       url:"admin/donhang/chitiet/"+id,
        dataType:"json",
-       success:function(html){
-        $('#name').val(html.data.tenkhuvuc);
-        $('#note').val(html.data.ghichu);
-        $('#hidden_id').val(html.data.id);
-        $('.modal-title').text("Cập Nhật Khu Vực");
-        $('#action_button').val("OK");
-        $('#action').val("Edit");
-        $('#formModal').modal('show');
-        $('#action_button').attr('disabled',true);
-        $('input').change(function()
-          {
-            $('#action_button').attr('disabled',false);
-          });
+       success:function(chitiet){
+        chiTietDonHang(chitiet);
       }
     })
     });
@@ -270,23 +299,74 @@
     });
     {{-- End Call Confirm Form Delete --}}
     {{-- Start Confirm Delete --}}
-    $('#ok_button').click(function(){
+    
+    {{-- End Confirm Delete --}}
+    {{-- Xủ lý đơn hàng --}}
+    $('#action_xuly').click(function(){
+      var id= $('#hidden_id').val();
+      var trangthai =1;
+      //alert(id);
       $.ajax({
-       url:"admin/khuvuc/destroy/"+id,
-       beforeSend:function(){
-        $('#ok_button').text('Deleting...');
-      },
-      success:function(data)
-      {
+       url:"admin/donhang/xuly/"+id+"/"+trangthai,
+       success:function()
+       {
+        $('#form_result').text('Xử lý đơn hàng thành công!');
+        $('#data_table').DataTable().ajax.reload();
         setTimeout(function(){
-        $('#confirmModal').modal('hide');
-         $('#data_table').DataTable().ajax.reload();
-       }, 2000);
-        $('#ok_button').text('OK');
+          $('#form_result').text('');
+          $('#formModal').modal('hide');
+        }, 2000);
       }
     })
     });
-    {{-- End Confirm Delete --}}
-  });
+    {{--End xử lý đơn hàng --}}
+    {{--Hủy đơn hàng --}}
+    $('#action_huy').click(function(){
+      var id= $('#hidden_id').val();
+      var trangthai =3;
+      $('#confirmModal').modal('show');
+      $('#ok_button').click(function(){
+        $.ajax({
+         url:"admin/donhang/xuly/"+id+"/"+trangthai,
+         success:function()
+         {
+          $('#confirmModal').modal('hide');
+          $('#form_result').text('Hủy đơn hàng thành công!');
+          setTimeout(function(){
+            $('#form_result').text('');
+            $('#data_table').DataTable().ajax.reload();
+            $('#formModal').modal('hide');
+          }, 2000);
+        }
+      })
+      });
+    });
+    {{--End hủy đơn hàng --}}
+    function chiTietDonHang(chitiet)
+    { var row='';
+    $.each(chitiet,function(key,value){
+      $.each(value,function(k,v){
+        row+='<tr>'
+        row+='<td>'+v.mamon+'</td>'
+        row+='<td>'+v.tenmon+'</td>'
+        row+='<td>'+v.soluong+'</td>'
+        row+='<td>'+v.dongia+'</td>'
+        row+='</tr>'
+        var date=v.ngaydat;
+        $('.ngaydat').text("Ngày Đặt : "+format_datetime(date));
+        $('.tongtien').text("Tổng Tiền : "+format_number(v.thanhtien));
+        $('.diachi').text("Địa Chỉ : "+v.diachi);
+        $('.sdt').text("SĐT Người Nhận : "+v.sdt);
+        v.ghichu=v.ghichu==null?"":v.ghichu;
+        v.makhuyenmai=v.makhuyenmai==null?"":v.makhuyenmai;
+        $('.ghichu').text("Ghi Chú : "+v.ghichu);
+        $('.makhuyenmai').text("Mã Khuyến Mãi : "+v.makhuyenmai);
+        $('.trangthai').text("Trạng Thái : "+format_trangthai(v.trangthai));
+        $('#hidden_id').val(v.id);
+      });
+    });
+    $('.body_table_detail').html(row);
+  }
+});
 </script>
 @endsection

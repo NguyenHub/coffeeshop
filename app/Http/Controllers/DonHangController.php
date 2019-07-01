@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Mon;
 use App\DonHang;
+use DB;
 class DonHangController extends Controller
 {
     public function index()
@@ -23,5 +24,21 @@ class DonHangController extends Controller
 			->make(true);
 		}
 		return view('admin.donhang.danhsach');
+	}
+	public function chitiet($id)
+	{
+		$chitiet=DB::table('don_hang')
+					->join('chitiet_donhang','don_hang.id','chitiet_donhang.madonhang')
+					->join('mon','chitiet_donhang.mamon','=','mon.id')
+					->select('don_hang.*','chitiet_donhang.mamon','chitiet_donhang.soluong','chitiet_donhang.dongia','mon.tenmon')
+					->where('don_hang.id',$id)
+					->get();
+		return response()->json(['chitiet'=>$chitiet]);
+	}
+	public function xuly($id,$trangthai)
+	{
+		$donhang = DonHang::find($id);
+		$donhang->trangthai=$trangthai;
+		$donhang->save();
 	}
 }

@@ -274,11 +274,50 @@
   });
 </script>
 <script type="text/javascript">
-  $(function() {
-    $('#datetimepicker1').datetimepicker({
-      language: 'pt-BR'
-    });
-  });
+  // $(function() {
+  //   $('#datetimepicker1').datetimepicker({
+  //     language: 'pt-BR'
+  //   });
+  // });
+  function format_datetime(datetime)
+  {
+    var date=new Date(datetime);
+    var day =date.getDate();
+    var month =(date.getMonth()+1);
+    var year =date.getFullYear();
+    var hour =date.getHours();
+    var minute =date.getMinutes();
+    var second =date.getSeconds();
+    day=day<10?"0"+day:day;
+    month=month<10?"0"+month:month;
+    hour=hour<10?"0"+hour:hour;
+    minute=minute<10?"0"+minute:minute;
+    second=second<10?"0"+second:second;
+    return  day+"/"+month+"/"+year+" "+hour+":"+minute+":"+second;
+  }
+  function format_number(number)
+  {
+    return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
+  }
+  function format_trangthai(trangthai)
+  {
+    if(trangthai==0)
+    {
+      return "Chờ Xử Lý";
+    }
+    else if(trangthai==1)
+    {
+      return "Đã Xử Lý";
+    }
+    else if(trangthai==2)
+    {
+      return "Hoàn Thành";
+    }
+    else
+    {
+      return "Hủy";
+    }
+  }
 </script>
 </body>
 

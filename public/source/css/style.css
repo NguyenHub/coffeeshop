@@ -2,3 +2,6 @@ td.highlight {
         font-weight: bold;
         color: blue;
     }
+.btn_width{
+	width: 110px;
+}

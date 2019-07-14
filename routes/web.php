@@ -19,11 +19,45 @@ Route::get('index',
 		'as'=>'trangchu',
 		'uses'=>'PageController@Index'
 	]);
-
+Route::get('lien-he',
+	[
+		'as'=>'lien-he',
+		'uses'=>'PageController@getContact'
+	]);
+Route::get('san-pham',
+	[
+		'as'=>'san-pham',
+		'uses'=>'PageController@productIndex'
+	]);
 Route::get('dangnhap-dangky',
 	[
 		'as'=>'dangnhap-dangky',
 		'uses'=>'KhachHangController@LoginOrRegister'
+	])->middleware('khachhang_login');
+Route::get('xacnhan-dangky/{email}',
+	[
+		'as'=>'xacnhan-dangky',
+		'uses'=>'KhachHangController@getConfirm'
+	]);
+Route::get('tai-khoan/quen-mat-khau',
+	[
+		'as'=>'tai-khoan/quen-mat-khau',
+		'uses'=>'KhachHangController@getResetPass'
+	])->middleware('khachhang_login');
+Route::post('tai-khoan/quen-mat-khau',
+	[
+		'as'=>'tai-khoan/quen-mat-khau',
+		'uses'=>'KhachHangController@postResetPass'
+	]);
+Route::get('tai-khoan/khoi-phuc-mat-khau/{emai}/{token}',
+	[
+		'as'=>'tai-khoan/khoi-phuc-mat-khau',
+		'uses'=>'KhachHangController@resetPassWord',
+	])->middleware('khachhang_login');
+Route::post('khoi-phuc-mat-khau',
+	[
+		'as'=>'khoi-phuc-mat-khau',
+		'uses'=>'KhachHangController@postResetPassWord',
 	]);
 Route::post('dangky',
 	[
@@ -40,70 +74,97 @@ Route::get('khachhang/dangxuat',
 		'as'=>'dangxuat',
 		'uses'=>'KhachHangController@getLogout'
 	]);
+Route::get('khach-hang/tai-khoan',
+	[
+		'as'=>'khach-hang/tai-khoan',
+		'uses'=>'PageController@getTaikhoan'
+	])->middleware('khachhang_login');
+Route::post('khach-hang/cap-nhat',
+	[
+		'as'=>'khach-hang/cap-nhat',
+		'uses'=>'KhachHangController@getTaikhoanUpdate'
+	]);
+Route::get('khach-hang/don-hang/{id}',
+	[
+		'as'=>'khach-hang/don-hang',
+		'uses'=>'PageController@getDonHang'
+	])->middleware('khachhang_login');
+Route::get('don-hang/chi-tiet/{id}',
+	[	
+		'as'=>'don-hang/chi-tiet',
+		'uses'=>'PageController@getChiTietDonHang'
+	])->middleware('khachhang_login');
 Route::get('admin/trangchu',
 	[
 		'as'=>'home',
 		'uses'=>'PageController@getIndex'
-	]
-);
+	]);
 Route::get('dangxuat',
 	[
 		'as'=>'home',
 		'uses'=>'NhanVienController@getLogout'
-	]
-);
+	]);
 Route::get('chitiet-sanpham/{id}',
 	[
 		'as'=>'chitiet-sanpham',
 		'uses'=>'PageController@getChiTiet'
-	]
-);
-Route::get('add-to-cart/{id}',
+	]);
+Route::get('add-to-cart/{id}/{sl}',
 	[
 		'as'=>'add-to-cart',
 		'uses'=>'PageController@getAddToCart'
-	]
-);
+	]);
 Route::get('reduce-item/{id}',
 	[
 		'as'=>'reduce-item',
 		'uses'=>'PageController@getReduceItem'
-	]
-);
+	])->middleware('cart');
+Route::get('san-pham/chi-tiet/{id}',
+	[
+		'as'=>'chi-tiet',
+		'uses'=>'PageController@getDetail'
+	]);
+Route::get('sendmail',
+	[
+		'as'=>'sendmail',
+		'uses'=>'KhachHangController@sendMail'
+	]);
 Route::get('delete-cart/{id}',
 	[
 		'as'=>'delete-cart',
 		'uses'=>'PageController@getDelCart'
-	]
-);
+	])->middleware('cart');
 Route::get('gio-hang',
-[
-	'as'=>'gio-hang',
-	'uses'=>'PageController@getCart'
-]);
+	[
+		'as'=>'gio-hang',
+		'uses'=>'PageController@getCart'
+	])->middleware('cart');
 Route::get('gio-hang/thanh-toan',
-[
-	'as'=>'gio-hang/thanh-toan',
-	'uses'=>'PageController@getCheckout'
-]);
+	[
+		'as'=>'gio-hang/thanh-toan',
+		'uses'=>'PageController@getCheckout'
+	])->middleware('cart');
 Route::get('giam-gia/{code}',
-[
-	'as'=>'giam-gia',
-	'uses'=>'PageController@getDiscount'
-]);
+	[
+		'as'=>'giam-gia',
+		'uses'=>'PageController@getDiscount'
+	])->middleware('cart');
 Route::post('dat-hang',
-[
-	'as'=>'dat-hang',
-	'uses'=>'PageController@getBill'
-]);
-Route::group(['prefix'=>'admin'],function(){
-	Route::get('dangnhap','NhanVienController@getLogin');
-	Route::post('login','NhanVienController@postLogin');
+	[
+		'as'=>'dat-hang',
+		'uses'=>'PageController@getBill'
+	])->middleware('cart');
+Route::post('search',
+	[
+		'as'=>'search',
+		'uses'=>'PageController@getSearch'
+	]);
+Route::get('admin/dangnhap','NhanVienController@getLogin');
+Route::post('admin/login','NhanVienController@postLogin');
+Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){	
 	Route::group(['prefix'=>'loaimon'],function(){
 		Route::resource('danh-sach','LoaiMonController');
-		//Route::get('danh-sach','LoaiMonController@getDanhsach');
-		//Route::resource('addPost', 'LoaiMonController')->except(['store']);
-		Route::post('addPost','LoaiMonController@addPost');
+		Route::post('add','LoaiMonController@add');
 		Route::get('destroy/{id}', 'LoaiMonController@destroy');
 		Route::get('edit/{id}', 'LoaiMonController@edit');
 		Route::post('update','LoaiMonController@update');

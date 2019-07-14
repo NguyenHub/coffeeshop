@@ -169,34 +169,41 @@
    columns:[
    {
     data: 'id',
-    name: 'id'
+    name: 'id',
+    autoWidth:true,
   },
   {
     data: 'mamon',
-    name: 'mamon'
+    name: 'mamon',
+    autoWidth:true,
   },
   {
     data: 'tencongthuc',
-    name: 'tencongthuc'
+    name: 'tencongthuc',
+    autoWidth:true,
   },
   {
     data: 'ghichu',
     name: 'ghichu',
+    autoWidth:true,
   },
   {
     data: 'created_at',
     name: 'created_at',
-    visible:false 
+    visible:false,
+    autoWidth:true, 
   },
   {
     data: 'updated_at',
     name: 'updated_at',
-    visible:false
+    visible:false,
+    autoWidth:true,
   },
   {
     data: 'action',
     name: 'action',
-    orderable: false
+    orderable: false,
+    autoWidth:true,
   }
   ]
 });

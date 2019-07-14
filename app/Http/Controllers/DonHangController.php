@@ -39,6 +39,7 @@ class DonHangController extends Controller
 	{
 		$donhang = DonHang::find($id);
 		$donhang->trangthai=$trangthai;
+		$donhang->updated_at=date('Y-m-d H:m:i');
 		$donhang->save();
 	}
 }

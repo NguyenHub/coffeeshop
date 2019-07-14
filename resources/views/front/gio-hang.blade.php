@@ -29,23 +29,32 @@
 							</tr>
 						</thead>
 						<tbody>
-								{{-- <tr>
-									<td class="product-thumbnail">
-										<a href="#"><img src="assets/img/cart/cart-3.jpg" alt=""></a>
-									</td>
-									<td class="product-name"><a href="#">PRODUCTS NAME HERE </a></td>
-									<td class="product-price-cart"><span class="amount">$260.00</span></td>
-									<td class="product-quantity">
-										<div class="cart-plus-minus">
-											<input class="cart-plus-minus-box" type="text" name="qtybutton" value="2">
-										</div>
-									</td>
-									<td class="product-subtotal">$110.00</td>
+							@if(Session::has('cart'))
+							@foreach($product_cart as $cart)
+							<tr>
+								<td class="product-thumbnail">
+									<a href="#"><img style="height: 80px; width: 80px" src="hinhanh/upload/{{$cart['item']['hinhanh']}}"></a>
+								</td>
+								<td class="product-name"><a href="#">{{$cart['item']['tenmon']}}</a></td>
+								<td class="product-price-cart"><span class="amount">{{$cart['item']['dongia']}}</span></td>
+								<td class="product-quantity">
+									<div class="cart-plus-minus2">
+										<div class="dec qtybutton decrement" id="{{$cart['item']['id']}}">-</div>
+										<input readonly="" type="text" class="cart-plus-minus-box"  name="qtybutton" value="{{$cart['qty']}}">
+										<div class="inc qtybutton increment" id="{{$cart['item']['id']}}">+</i></div>
+									</div></td>
+									<td class="product-subtotal">{{$cart['qty']*$cart['item']['dongia']}}</td>
 									<td class="product-remove">
-										<a href="#"><i class="fa fa-pencil"></i></a>
-										<a href="#"><i class="fa fa-times"></i></a>
+										<a class="del_item" id="{{$cart['item']['id']}}" ><i class="fa fa-times" title="Xóa"></i></a>
 									</td>
-								</tr> --}}
+								</tr>
+								@endforeach
+								@else
+								<tr>
+									<td colspan="6"><h5>Giỏ Hàng Rỗng</h5>
+									</td>
+								</tr>
+								@endif
 							</tbody>
 						</table>
 					</div>
@@ -169,138 +178,48 @@
 @section('script')
 <script>
 	$(document).ready(function(){
-		load_cart();
-		function load_cart(){
-			$.ajax({
-				url:'gio-hang',
-				dataType:'json',
-				success:function(cart)
-				{
-					console.log(cart.cart);
-					var row='';//mini cart
-					var html='';//cart
-					if(cart.cart==null)
-					{
-						$('.count_cart').text(0);
-						$('.price_cart').text(0);
-						row+='<div class="shopping-cart-btn">'
-						row+='<a >Giỏ Hàng Rỗng</a>'
-						row+='</div>'
-						html+='<tr>'
-						html+='<td colspan="6"><h5>Giỏ Hàng Rỗng</h5>'
-						html+='</td>'
-						html+='</tr>'
-						$('#mini_cart').html(row);
-						$('tbody').html(html);
-					}		
-					else
-					{
-						$('.count_cart').text(cart.cart.totalQty);
-						$('.price_cart').text(cart.cart.totalPrice);
-
-						$.each(cart,function(key,value){
-							row+='<ul>'
-							$.each(value.items,function(k,v){
-								row+='<li class="single-shopping-cart">'
-								row+='<div class="shopping-cart-img">'
-								row+='<a><img style="height: 80px; width: 80px" alt="" src={{URL::to('/')}}/hinhanh/upload/'+v.item.hinhanh+'></a>'
-								row+='</div>'
-								row+='<div class="shopping-cart-title">'
-								row+='<h4><a href="#">'+v.item.tenmon+'</a></h4>'
-								row+='<h6>Qty: '+v.qty+'</h6>'
-								row+='<span>'+v.price+'</span>'
-								row+='</div>'
-								row+='<div class="shopping-cart-delete">'
-								row+='<a class="del" id="'+v.item.id+'"><i class="ion ion-close"></i></a>'
-								row+='</div>'
-								row+='</li>'
-							//cart
-							html+='<tr>'
-							html+='<td class="product-thumbnail">'
-							html+='<a href="#"><img style="height: 80px; width: 80px" src={{URL::to('/')}}/hinhanh/upload/'+v.item.hinhanh+'></a>'
-							html+='</td>'
-							html+='<td class="product-name"><a href="#">'+v.item.tenmon+'</a></td>'
-							html+='<td class="product-price-cart"><span class="amount">'+v.item.dongia+'</span></td>'
-							html+='<td class="product-quantity">'
-							html+='<div class="cart-plus-minus">'
-							html+='<div class="dec qtybutton decrement" id="'+v.item.id+'">-</div>'
-							html+='<input readonly="" type="text" class="cart-plus-minus-box"  name="qtybutton" value="'+v.qty+'">'
-							html+='<div class="inc qtybutton increment" id="'+v.item.id+'">+</i></div>'
-							html+='</div></td>'
-							html+='<td class="product-subtotal">'+v.price+'</td>'
-							html+='<td class="product-remove">'
-							html+='<a class="del" id="'+v.item.id+'" ><i class="fa fa-times" title="Xóa"></i></a>'
-							html+='</td>'
-							html+='</tr>'
-						})
-							row+='</ul>'
-							row+='<div class="shopping-cart-total">'
-							row+='<h4>Tổng tiền : <span class="shop-total">'+value.totalPrice+'</span></h4>'
-							row+='</div>'
-							row+='<div class="shopping-cart-btn">'
-							row+='<a href="gio-hang">Xem Giỏ Hàng</a>'
-							row+='<a href="gio-hang/thanh-toan">Thanh Toán</a>'
-							row+='</div>'
-							if(value.totalPrice>50000)
-							{
-								$('.ship').text(0);
-								$('.tong-tien').text(0+value.totalPrice);
-							}
-							else
-							{
-								$('.ship').text(15000);
-								$('.tong-tien').text(15000+value.totalPrice);
-							}
-						});
-						$('#mini_cart').html(row);
-						$('tbody').html(html);
-					}
-				}
-			})
-		}
+		//load_cart();
 		
-		$(document).on('click','.del',function(){
+
+		$(document).on('click','.del_item',function(){
 			var id = $(this).attr('id');
 			$.ajax({
 				url:"delete-cart/"+id,
 				dataType:"json",
-				success:function()
+				success:function(cart)
 				{
-
+					load_cart(cart.cart);
+					load_mini_cart(cart.cart);
 				}
 			})
-			load_cart();
 		});
 		$(document).on('click','.increment',function(){
 			var id =$(this).attr('id');
-			//alert(id);
+			var sl=1;
 			$.ajax({
-				url:"add-to-cart/"+id,
+				url:"add-to-cart/"+id+"/"+sl,
 				dataType:"json",
-				success:function()
+				success:function(cart)
 				{
-					//$('#count_cart').text(html.cart.totalQty);
-					//$('#price_cart').text(html.cart.totalPrice);
+					load_cart(cart.cart);
+					load_mini_cart(cart.cart);
 				}
 				
 			})
-			load_cart();
 		});
 		$(document).on('click','.decrement',function(){
 			var id =$(this).attr('id');
-			//alert(id);
 			$.ajax({
 				url:"reduce-item/"+id,
 				dataType:"json",
-				success:function()
+				success:function(cart)
 				{
-					//$('#count_cart').text(html.cart.totalQty);
-					//$('#price_cart').text(html.cart.totalPrice);
+					load_cart(cart.cart);
+					load_mini_cart(cart.cart);
 				}
 				
 			})
-			load_cart();
-		});
+		 });
 	});
 </script>
 @endsection

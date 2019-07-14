@@ -5,7 +5,7 @@
       <span>Dashboard</span>
     </a>
   </li>
-  <li class="nav-item dropdown">
+  {{-- <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <i class="fas fa-fw fa-folder"></i>
       <span>Pages</span>
@@ -20,26 +20,26 @@
       <a class="dropdown-item" href="404.html">404 Page</a>
       <a class="dropdown-item" href="blank.html">Blank Page</a>
     </div>
-  </li>
-  <li class="nav-item">
+  </li> --}}
+  {{-- <li class="nav-item">
     <a class="nav-link" href="charts.html">
       <i class="fas fa-fw fa-chart-area"></i>
       <span>Charts</span></a>
-    </li>
-    <li class="nav-item">
+    </li> --}}
+    {{-- <li class="nav-item">
       <a class="nav-link" href="tables.html">
         <i class="fas fa-fw fa-table"></i>
         <span>Tables</span></a>
-      </li>
+      </li> --}}
       <li class="nav-item">
       <a class="nav-link" href="admin/loaimon/danh-sach">
         <i class="fas fa-fw fa-table"></i>
-        <span>Loại Món</span></a>
+        <span>Loại Sản Phẩm</span></a>
       </li>
       <li class="nav-item">
       <a class="nav-link" href="admin/mon/danh-sach">
         <i class="fas fa-fw fa-table"></i>
-        <span>Món</span></a>
+        <span>Sản Phẩm</span></a>
       </li>
       <li class="nav-item">
       <a class="nav-link" href="admin/congthuc/danh-sach">

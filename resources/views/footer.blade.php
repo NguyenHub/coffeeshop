@@ -6,19 +6,19 @@
                     <div class="footer-about mb-40">
                         <div class="footer-logo">
                             <a href="index.html">
-                                <img src="assets/img/logo/footer-logo.png" alt="">
+                                <img src="assets/img/logo/footer-logo2.png" alt="">
                             </a>
                         </div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incidi ut labore et dolore magna aliqua. Ut enim ad minim veniam,</p>
+                        <p></p>
                         <div class="payment-img">
-                            <a href="#">
+                            <a >
                                 <img src="assets/img/icon-img/payment.png" alt="">
                             </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-6 col-sm-6">
-                    <div class="footer-widget mb-40">
+                    {{-- <div class="footer-widget mb-40">
                         <div class="footer-title mb-22">
                             <h4>Information</h4>
                         </div>
@@ -32,10 +32,10 @@
                                 <li><a href="#">Return Policy</a></li>
                             </ul>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="col-lg-2 col-md-6 col-sm-6">
-                    <div class="footer-widget mb-40">
+                    {{-- <div class="footer-widget mb-40">
                         <div class="footer-title mb-22">
                             <h4>My Account</h4>
                         </div>
@@ -49,27 +49,27 @@
                                 <li><a href="#">International Orders</a></li>
                             </ul>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="col-lg-4 col-md-6 col-sm-6">
                     <div class="footer-widget mb-40">
                         <div class="footer-title mb-22">
-                            <h4>Get in touch</h4>
+                            <h4>Liên hệ</h4>
                         </div>
                         <div class="footer-contact">
                             <ul>
-                                <li>Address: 123 Main Street, Anytown, CA 12345 - USA.</li>
-                                <li>Telephone Enquiry: (012) 800 456 789-987 </li>
-                                <li>Email: <a href="#">Info@example.com</a></li>
+                                <li>Địa chỉ: 180 Cao Lỗ, Phường 4, Quận 8.</li>
+                                <li>Phone: 0387 370 052 </li>
+                                <li>Email: <a >smartcoffee97@gmail.com</a></li>
                             </ul>
                         </div>
                         <div class="mt-35 footer-title mb-22">
-                            <h4>Get in touch</h4>
+                            <h4>Hoạt động</h4>
                         </div>
                         <div class="footer-time">
                             <ul>
                                 <li>Open:  <span>8:00 AM</span> - Close: <span>18:00 PM</span></li>
-                                <li>Saturday - Sunday: <span>Close</span></li>
+                                
                             </ul>
                         </div>
                     </div>

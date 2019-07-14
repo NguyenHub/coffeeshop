@@ -1328,7 +1328,7 @@ textarea:focus {
     background: #2f333a
 }
 .black-bg-2 {
-    background: #26292e
+    background: #0e0d0d;
 }
 .theme-bg {
     background: #e02c2b;
@@ -1633,7 +1633,7 @@ textarea:focus {
 
 /* header bottom cart */
 .header-middle {
-    padding: 30px 0 26px;
+    padding: 30px 0 0px;
 }
 .header-middle-right {
     display: flex;

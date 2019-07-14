@@ -10,8 +10,10 @@
   <meta name="author" content="">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   {{-- <meta name="_token" content="{{csrf_token()}}" /> --}}
-  <title>SB Admin - Dashboard</title>
+  <title>Admin-SmartCoffee</title>
   <base href="{{ asset('') }}">
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/x-icon" href="assets/img/logo/footer-logo2.PNG">
   <!-- Custom fonts for this template-->
   <link href="source/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
@@ -22,7 +24,9 @@
   <link href="source/css/sb-admin.css" rel="stylesheet" type="text/css">
   <link href="source/css/style.css" rel="stylesheet" type="text/css">
   <link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" >
-  
+  <link rel="stylesheet" type="text/css" href="daterangepicker/daterangepicker.css" />
+  <link rel="stylesheet" href="bootstrap-fileinput/css/fileinput.css" media="all" type="text/css">
+  <link href="bootstrap-fileinput/themes/explorer-fas/theme.css" media="all" rel="stylesheet" type="text/css"/>
 </head>
 
 <body id="page-top">
@@ -177,7 +181,29 @@
 <!-- Demo scripts for this page-->
 <script src="source/js/demo/datatables-demo.js"></script>
 {{-- <script src="source/js/demo/chart-area-demo.js"></script> --}}
-<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+{{-- <script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script> --}}
+<script src="daterangepicker/moment.min.js"></script>
+<script src="daterangepicker/daterangepicker.js"></script>
+<script src="bootstrap-fileinput/js/plugins/piexif.js" type="text/javascript"></script>
+<script src="bootstrap-fileinput/js/plugins/sortable.js" type="text/javascript"></script>
+<script src="bootstrap-fileinput/js/fileinput.js" type="text/javascript"></script>
+<script src="bootstrap-fileinput/js/locales/fr.js" type="text/javascript"></script>
+<script src="bootstrap-fileinput/js/locales/es.js" type="text/javascript"></script>
+<script src="bootstrap-fileinput/themes/fas/theme.js" type="text/javascript"></script>
+<script src="bootstrap-fileinput/themes/explorer-fas/theme.js" type="text/javascript"></script>
+<script src="bootstrap-fileinput/themes/gly/theme.js" type="text/javascript"></script>
+<script src="bootstrap-fileinput/themes/gly/theme.min.js" type="text/javascript"></script>
+{{-- <script src="bootstrap-fileinput/js/fileinput.js"></script>
+<script src="bootstrap-fileinput/themes/fa/theme.js"></script> --}}
+<script src="ckeditor/ckeditor.js"></script>
+<script> CKEDITOR.replace( 'mota', {
+ height:100,
+ uiColor: '#14B8C4',
+ toolbar: [
+ [ 'Source','Bold', 'Italic','Underline', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink' ],
+ [ 'FontSize', 'TextColor', 'BGColor' ]
+ ]
+});</script>
 @yield('script')
 {{-- Start Call Form --}}
 <script type="text/javascript">
@@ -319,6 +345,32 @@
     }
   }
 </script>
+<script>  
+  $(document).ready(function(){  
+    $('#search').keyup(function(){
+      search_table($(this).val());  
+    });  
+    function search_table(value){  
+      $('#data_table tr').each(function(){ 
+        var found = 'false';  
+        $(this).each(function(){  
+          if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0)  
+          {  
+            found = 'true';  
+          }  
+        });  
+        if(found == 'true')  
+        {  
+          $(this).show();  
+        }  
+        else  
+        {  
+          $(this).hide();  
+        }  
+      });  
+    }  
+  });  
+</script>  
 </body>
 
 </html>

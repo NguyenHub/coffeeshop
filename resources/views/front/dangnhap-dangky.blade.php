@@ -36,7 +36,7 @@
                                             <div class="login-toggle-btn">
                                                 <input type="checkbox">
                                                 <label>Ghi nhớ mật khẩu?</label>
-                                                <a href="#">Quên mật khẩu?</a>
+                                                <a href="tai-khoan/quen-mat-khau">Quên mật khẩu?</a>
                                             </div>
                                             <button type="submit"><span>Đăng Nhập</span></button>
                                         </div>
@@ -141,13 +141,14 @@
                     if(data.errors)
                     {
                         html = '<div class="alert" style="color: red">' + data.errors + '</div>';
+                        $('#login_result').html(html);
                     }
                     if(data.success)
                     {
                         window.location.href="index";
                         //$('#register_form')[0].reset();
                     }
-                    $('#login_result').html(html);
+                    // $('#login_result').html(html);
              }
          })
         });

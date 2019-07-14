@@ -9,6 +9,10 @@ use App\Mon;
 use Illuminate\Support\Facades\DB;
 class MonController extends Controller
 {
+	// $data=DB::table('donhang')
+	// ->select('donhang.*')
+	// ->where('donhang.ma_kh','=',$id)
+	// ->get();
 	public function index()
 	{
 		$loai=LoaiMon::all();
@@ -20,9 +24,9 @@ class MonController extends Controller
 				->select('mon.*','loai_mon.tenloai')
 				->latest()->get())
 			->addColumn('action', function($data){
-				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Edit</button>';
+				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Sửa</button>';
 				$button .= '&nbsp;&nbsp;';
-				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Delete</button>';
+				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Xóa</button>';
 				return $button;
 			})
 			->rawColumns(['action'])
@@ -38,7 +42,8 @@ class MonController extends Controller
 			// 'soluong'    =>  'required',
 			'tenmon'=>'required|unique:mon,tenmon',
 			'dongia'=>'bail|regex:/([0-9]{1,9})$/',
-			'hinhanh' => 'image|mimes:jpg,png,gif',
+			//'hinhanh' => 'image|mimes:jpg,png,gif',
+			'hinhanh' => 'image',
 			'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
 		],
 		[
@@ -53,6 +58,7 @@ class MonController extends Controller
 		}
 		else
 		{
+			$request->dongia=str_replace(" ", "", $request->dongia);
 			if(($request->dongia % 500)!=0)
 			{
 				$errors=array('0'=>'Đơn giá không hợp lệ');
@@ -70,8 +76,10 @@ class MonController extends Controller
 				$data->hinhanh=$name;
 				$data->trangthai=$request->trangthai;
 				$data->ghichu=$request->ghichu;
+				$data->mota=$request->mota;
 				$data->created_at=date('Y-m-d H:m:s');
 				$data->save();
+				//dd($data);
 				return response()->json(['success' => 'Thêm Thành Công!']);
 			}
 			
@@ -101,7 +109,7 @@ class MonController extends Controller
 			$validator =Validator::make($request->all(),[
 				'tenmon'=>'required|unique:mon,tenmon,'.$request->hidden_id,
 				'dongia'=>'bail|regex:/([0-9]{1,9})$/',
-				'hinhanh' => 'bail|image|mimes:jpg,png,gif',
+				//'hinhanh' => 'bail|image|mimes:jpg,png,gif',
 				'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
 			],
 			[
@@ -117,6 +125,7 @@ class MonController extends Controller
 			}
 			else
 			{
+				$request->dongia=str_replace(" ", "", $request->dongia);
 				if(($request->dongia % 500)!=0)
 				{
 					$errors=array('0'=>'Đơn giá không hợp lệ');
@@ -132,6 +141,7 @@ class MonController extends Controller
 					$data->dongia=$request->dongia;
 					$data->hinhanh=$name;
 					$data->trangthai=$request->trangthai;
+					$data->mota=$request->mota;
 					$data->ghichu=$request->ghichu;
 					$data->updated_at=date('Y-m-d H:m:s');
 					$data->save();
@@ -158,6 +168,7 @@ class MonController extends Controller
 			}
 			else
 			{
+				$request->dongia=str_replace(" ", "", $request->dongia);
 				if(($request->dongia % 500)!=0)
 				{
 					$errors=array('0'=>'Đơn giá không hợp lệ');
@@ -171,6 +182,7 @@ class MonController extends Controller
 					$data->dongia=$request->dongia;
 					$data->trangthai=$request->trangthai;
 					$data->ghichu=$request->ghichu;
+					$data->mota=$request->mota;
 					$data->updated_at=date('Y-m-d H:m:s');
 					$data->save();
 					return response()->json(['success' => 'Cập Nhật Thành Công!']);

@@ -170,10 +170,10 @@
 @section('script')
 <script type="text/javascript">
   $(document).ready(function(){
-      // Setup - add a text input to each footer cell
+      //Setup - add a text input to each footer cell
       $('#data_table tfoot th').each( function () {
         var title = $(this).text();
-        $(this).html( '<input type="text" placeholder="Search" />' );
+        $(this).html( '<input type="text" class="form-control" placeholder="Search" />' );
       } );
     // DataTable
     var table =  $('#data_table').DataTable({
@@ -284,7 +284,6 @@
         }
       } );
     } );
-
     $('a.toggle-vis').on( 'click', function (e) {
         e.preventDefault();
  

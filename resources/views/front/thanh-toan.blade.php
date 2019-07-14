@@ -189,14 +189,26 @@
 														</tr>
 													</thead>
 													<tbody>
-														{{-- tbody --}}
-													</tbody>
-													<tfoot>
+														@if(Session::has('cart'))
+														@foreach($product_cart as $cart)
 														<tr>
-															<td colspan="3">Tổng Tiền </td>
-															<td class="price_cart" colspan="1"></td>
+															<td class="product-thumbnail">
+																<a href="#"><img style="height: 80px; width: 80px" src="hinhanh/upload/{{$cart['item']['hinhanh']}}"></a>
+															</td>
+															<td class="product-name"><a href="#">{{$cart['item']['tenmon']}}</a></td>
+															<td class="product-price-cart"><span class="amount">{{$cart['item']['dongia']}}</span></td>
+															<td class="product-subtotal">{{$cart['qty']}}</td>
+															<td class="product-subtotal">{{$cart['item']['dongia']*$cart['qty']}}</td>
 														</tr>
-													</tfoot>
+														@endforeach
+														<tfoot>
+															<tr>
+																<td colspan="3">Tổng Tiền </td>
+																<td class="price_cart" colspan="1">{{Session('cart')->totalPrice}}</td>
+															</tr>
+														</tfoot>
+														@endif
+													</tbody>
 												</table>
 											</div>
 											{{-- <div class="billing-back-btn">
@@ -223,12 +235,28 @@
 						<div class="title-wrap">
 							<h4 class="cart-bottom-title section-bg-gary-cart">Giỏ Hàng</h4>
 						</div>
-						<h5>Tạm tính <span id="price_cart"></span></h5>
+						<h5>Tạm tính 
+							<span id="price_cart">
+								@if(Session::has('cart'))
+								@if(Session('cart')->totalPrice>50000)
+								{{Session('cart')->totalPrice}}
+								@endif
+								@endif
+							</span>
+						</h5>
 						<h5>Giảm giá <span class="discount_cart"></span></h5>
 						<div id="ma_giam_gia"></div>
 						<div class="total-shipping">
 							<h5>Phí giao hàng 
-								<span id="ship" style="float: right;"></span>
+								<span id="ship" style="float: right;">
+									@if(Session::has('cart'))
+									@if(Session('cart')->totalPrice>50000)
+									{{0}}
+									@else
+									{{15000}}
+									@endif
+									@endif
+								</span>
 							</h5>
 								{{-- <ul>
 									<li><input type="checkbox"> Standard <span>$20.00</span></li>
@@ -236,17 +264,24 @@
 								</ul> --}}
 							</div>
 							<div class="total-shipping">
-								<input class="form-control" type="text" id="ghichu" name="ghichu" placeholder="Ghi chú đơn hàng">
+								<input class="form-control" type="text" id="ghichu" name="ghichu" placeholder="Ghi chú đơn hàng" autocomplete="off">
 							</div>
 							<div id="codekm_resutl" style="color: red;"></div>
 							<div class="input-group">
-								<input class="form-control" type="text" id="codekm" name="codekm" required="" placeholder="Nhập mã khuyến mãi" />
+								<input class="form-control" type="text" id="codekm" name="codekm" required="" placeholder="Nhập mã khuyến mãi" autocomplete="off" />
 								<span class="input-group-btn">
 									<button id="makm" class="btn btn-warning" type="submit">Áp dụng</button>
 								</span>
 							</div>
 							<h5 class="grand-totall-title" style="
-							padding-top: 10px;">Tổng Tiền<span class="tong-tien"></span></h5>
+							padding-top: 10px;">Tổng Tiền<span class="tong-tien">
+								@if(Session::has('cart'))
+								@if(Session('cart')->totalPrice>50000)
+								{{Session('cart')->totalPrice}}
+								@else
+								{{Session('cart')->totalPrice+15000}}
+								@endif
+							@endif</span></h5>
 							<h4 class="grand-totall-title" style="
 							padding-top: 10px;"><span class="da_giam"></span></h4>
 							<a  id="thanh-toan">THANH TOÁN</a>
@@ -282,90 +317,7 @@
 @section('script')
 <script>
 	$(document).ready(function(){
-		load_cart();
-		function load_cart(){
-			$.ajax({
-				url:'gio-hang/thanh-toan',
-				dataType:'json',
-				success:function(cart){
-					var row='';//mini cart
-					var html='';//cart
-					if(cart.null)
-					{
-						$('.count_cart').text(0);
-						$('.price_cart').text(0);
-						row+='<div class="shopping-cart-btn">'
-						row+='<a >Giỏ Hàng Rỗng</a>'
-						row+='</div>'
-						html+='<tr>'
-						html+='<td colspan="6"><h5>Giỏ Hàng Rỗng</h5>'
-						html+='</td>'
-						html+='</tr>'
-						$('#mini_cart').html(row);
-						$('tbody').html(html);
-					}		
-					else
-					{
-						//$('#sdt').val(khachhang.khachhang.sdt);
-						$('.count_cart').text(cart.cart.totalQty);
-						$('.price_cart').text(cart.cart.totalPrice);
-						$('#price_cart').text(cart.cart.totalPrice);
-
-
-						$.each(cart,function(key,value){
-							//$('#diachi').val(value.diachi);
-							//$('#sdt').val(value.sdt);
-							row+='<ul>'
-							$.each(value.items,function(k,v){
-								row+='<li class="single-shopping-cart">'
-								row+='<div class="shopping-cart-img">'
-								row+='<a><img style="height: 80px; width: 80px" alt="" src={{URL::to('/')}}/hinhanh/upload/'+v.item.hinhanh+'></a>'
-								row+='</div>'
-								row+='<div class="shopping-cart-title">'
-								row+='<h4><a href="#">'+v.item.tenmon+'</a></h4>'
-								row+='<h6>Qty: '+v.qty+'</h6>'
-								row+='<span>'+v.price+'</span>'
-								row+='</div>'
-								row+='<div class="shopping-cart-delete">'
-								row+='<a class="del" id="'+v.item.id+'"><i class="ion ion-close"></i></a>'
-								row+='</div>'
-								row+='</li>'
-							//cart
-							html+='<tr>'
-							html+='<td class="product-thumbnail">'
-							html+='<a href="#"><img style="height: 80px; width: 80px" src={{URL::to('/')}}/hinhanh/upload/'+v.item.hinhanh+'></a>'
-							html+='</td>'
-							html+='<td class="product-name"><a href="#">'+v.item.tenmon+'</a></td>'
-							html+='<td class="product-price-cart"><span class="amount">'+v.item.dongia+'</span></td>'
-							html+='<td class="product-subtotal">'+v.qty+'</td>'
-							html+='<td class="product-subtotal">'+v.price+'</td>'
-							html+='</tr>'
-						})
-							row+='</ul>'
-							row+='<div class="shopping-cart-total">'
-							row+='<h4>Tổng tiền : <span class="shop-total">'+value.totalPrice.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")+" đ"+'</span></h4>'
-							row+='</div>'
-							row+='<div class="shopping-cart-btn">'
-							row+='<a href="gio-hang">Xem Giỏ Hàng</a>'
-							row+='<a href="checkout.html">Thanh Toán</a>'
-							row+='</div>'
-							if(value.totalPrice>50000)
-							{
-								$('#ship').text(0);
-								$('.tong-tien').text(0+value.totalPrice);
-							}
-							else
-							{
-								$('#ship').text(15000);
-								$('.tong-tien').text(15000+value.totalPrice);
-							}
-						});
-						$('#mini_cart').html(row);
-						$('tbody').html(html);
-					}
-				}
-			})
-		}
+		$('#mini_cart').attr('hidden',true);
 		//hàm kiểm tra mã km
 		$('#makm').click(function(event){
 			event.preventDefault();
@@ -405,19 +357,6 @@
 				})
 			}
 		});
-		$(document).on('click','.del',function(event){
-			event.preventDefault();
-			var id = $(this).attr('id');
-			$.ajax({
-				url:"delete-cart/"+id,
-				dataType:"json",
-				success:function()
-				{
-
-				}
-			})
-			load_cart();
-		});
 		$('#thanh-toan').click(function(){
 			$('#diachi_result').text('');
 			$('#sdt_result').text('');
@@ -436,11 +375,16 @@
 			}
 			else
 			{
+				if($('.da_giam').text()!='')
+				{
+					$('.tong-tien').text($('.da_giam').text());
+				}
 				var formData=new FormData($('#dataform')[0]);
 				formData.append('diachi',$('#diachi').val());
 				formData.append('sdt',$('#sdt').val());
 				formData.append('makhuyenmai',$('#ma_giam_gia').text());
 				formData.append('thanhtien',$('.tong-tien').text());
+				formData.append('ship',$('#ship').text());
 				$.ajax({
 					headers:{'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')},
 					method:'POST',
@@ -456,19 +400,18 @@
 					cache:false,
 					dataType:'json',
 					success:function(){
-						// $('#confirmModal').modal('show');
-						// setTimeout(function(){
-						// 	$('#confirmModal').modal('hide');
-						// 	window.location.href="index";
-						// }, 2000);
-					}
-
-				})
-				$('#confirmModal').modal('show');
+						$('#confirmModal').modal('show');
 						setTimeout(function(){
 							$('#confirmModal').modal('hide');
 							window.location.href="index";
 						}, 2000);
+					}
+				})
+				// $('#confirmModal').modal('show');
+				// setTimeout(function(){
+				// 	$('#confirmModal').modal('hide');
+				// 	window.location.href="index";
+				// }, 2000);
 			}
 
 		});

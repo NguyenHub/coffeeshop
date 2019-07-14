@@ -13,7 +13,7 @@
     </ol>
     <!-- DataTables Example -->
     <div class="card mb-3">
-<div class="card-header">
+      <div class="card-header">
         <i class="fas fa-table"></i>
       </div> 
       <div class="row card-body">
@@ -47,19 +47,19 @@
      <span id="form_result"></span>
      <form method="post" id="sample_form" class="form-horizontal" enctype="multipart/form-data">
       {{csrf_field()}}
-     <div class="form-group row">
-      <label class="control-label col-md-4" >Lương Cơ Bản : </label>
-      <div class="col-md-8">
-       <input type="text" name="luongcoban" id="luongcoban" class="form-control" placeholder="Nhập Mức Lương" required=""  />
+      <div class="form-group row">
+        <label class="control-label col-md-4" >Lương Cơ Bản : </label>
+        <div class="col-md-8">
+         <input type="text" name="luongcoban" id="luongcoban" class="form-control" placeholder="Nhập Mức Lương" required=""  />
+       </div>
      </div>
-   </div>
- <br />
- <div class="form-group" align="center">
-  <input type="hidden" name="action" id="action" />
-  <input type="hidden" name="hidden_id" id="hidden_id" />
-  <input type="submit" name="action_button" id="action_button" class="btn btn-warning" value="Add" />
-</div>
-</form>
+     <br />
+     <div class="form-group" align="center">
+      <input type="hidden" name="action" id="action" />
+      <input type="hidden" name="hidden_id" id="hidden_id" />
+      <input type="submit" name="action_button" id="action_button" class="btn btn-warning" value="Add" />
+    </div>
+  </form>
 </div>
 </div>
 </div>
@@ -121,7 +121,7 @@
     name: 'luongcoban',
     "render":function(data)
     {
-    	 return data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
+      return data.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ")
     },
   },
   {
@@ -132,45 +132,45 @@
     	if(data!=null)
     	{
     		var d = new Date(data);
-     	 return  d.getDate()+"-"+(d.getMonth()+1)+"-"+d.getFullYear();  
-     	 } 
-     	 else
-    	{
-    		return data;
-    	} 
-    }
-  },
-  {
-    data: 'updated_at',
-    name: 'updated_at',
-    "render": function(data)
-    {
-    	if(data!=null)
-    	{
-    		var d = new Date(data);
-      	return  d.getDate()+"-"+(d.getMonth()+1)+"-"+d.getFullYear();
-    	} 
-    	else
-    	{
-    		return data;
-    	}
-    }
-  },
-  {
-    data: 'action',
-    name: 'action',
-    orderable: false
+       return  d.getDate()+"-"+(d.getMonth()+1)+"-"+d.getFullYear();  
+     } 
+     else
+     {
+      return data;
+    } 
   }
-  ]
+},
+{
+  data: 'updated_at',
+  name: 'updated_at',
+  "render": function(data)
+  {
+   if(data!=null)
+   {
+    var d = new Date(data);
+    return  d.getDate()+"-"+(d.getMonth()+1)+"-"+d.getFullYear();
+  } 
+  else
+  {
+    return data;
+  }
+}
+},
+{
+  data: 'action',
+  name: 'action',
+  orderable: false
+}
+]
 });
  });
 </script>
 <script>
   $(document).ready(function(){
-  	format_number();
+  	//format_number();
     {{-- Start Call Form --}}
-     var html = '';
-     $('#create_record').click(function(){
+    var html = '';
+    $('#create_record').click(function(){
       $('.modal-title').text("Tạo Mới Dữ Liệu");
       $('#action_button').val("Add");
       $('#action').val("Add");
@@ -267,7 +267,7 @@
        dataType:"json",
        success:function(html){
         var  number=html.data.luongcoban;
-       number= number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
+        number= number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
         $('#luongcoban').val(number);
         $('#hidden_id').val(html.data.id);
         $('.modal-title').text("Cập Nhật Lương");
@@ -276,9 +276,9 @@
         $('#formModal').modal('show');
         $('#action_button').attr('disabled',true);
         $('input').change(function()
-        	{
-        		$('#action_button').attr('disabled',false);
-        	});
+        {
+          $('#action_button').attr('disabled',false);
+        });
       }
     })
     });
@@ -309,6 +309,17 @@
     })
     });
     {{-- End Confirm Delete --}}
+    //function format_number (){
+      $('#luongcoban').keyup(function(){
+        var number =$('#luongcoban').val();
+        $('#luongcoban').val(number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 "));
+      });
+      $('#luongcoban').keydown(function(){
+        var number =$('#luongcoban').val();
+        number= number.toString().replace(/\s+/g,"");
+        $('#luongcoban').val(number);
+      });
+      //}
   });
 </script>
 @endsection

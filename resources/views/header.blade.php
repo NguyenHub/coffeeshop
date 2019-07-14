@@ -1,52 +1,11 @@
     <header class="header-area">
-{{--         <div class="header-top black-bg">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-4 col-md-4 col-12 col-sm-4">
-                        <div class="welcome-area">
-                            <p>Default welcome msg! </p>
-                        </div>
-                    </div>
-                    <div class="col-lg-8 col-md-8 col-12 col-sm-8">
-                        <div class="account-curr-lang-wrap f-right">
-                            <ul>
-                                <li class="top-hover"><a href="#">Language: (ENG) <i class="ion-chevron-down"></i></a>
-                                    <ul>
-                                        <li><a href="#">Bangla </a></li>
-                                        <li><a href="#">Arabic</a></li>
-                                        <li><a href="#">Hindi </a></li>
-                                        <li><a href="#">Spanish</a></li>
-                                    </ul>
-                                </li>
-                                <li class="top-hover"><a href="#">Currency: (USD) <i class="ion-chevron-down"></i></a>
-                                    <ul>
-                                        <li><a href="#">Taka (BDT)</a></li>
-                                        <li><a href="#">Riyal (SAR)</a></li>
-                                        <li><a href="#">Rupee (INR)</a></li>
-                                        <li><a href="#">Dirham (AED)</a></li>
-                                    </ul>
-                                </li>
-                                <li class="top-hover"><a href="#">Setting  <i class="ion-chevron-down"></i></a>
-                                    <ul>
-                                        <li><a href="wishlist.html">Wishlist  </a></li>
-                                        <li><a href="login-register.html">Login</a></li>
-                                        <li><a href="login-register.html">Register</a></li>
-                                        <li><a href="my-account.html">my account</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
         <div class="header-middle">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3 col-md-4 col-12 col-sm-4">
                         <div class="logo">
-                            <a href="index.html">
-                                <img alt="" src="assets/img/logo/logo.png">
+                            <a href="index">
+                                <img alt="" src="assets/img/logo/logo2.png">
                             </a>
                         </div>
                     </div>
@@ -64,7 +23,7 @@
                                             {{Auth::guard('khach_hang')->user()->tenkhachhang}}
                                         </p>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">Tài khoản</a>
+                                            <a class="dropdown-item" href="khach-hang/tai-khoan">Tài khoản</a>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="khachhang/dangxuat">Đăng xuất</a>
                                         </div>
@@ -77,14 +36,14 @@
                                 </div>
                             </div>
                             <div class="header-wishlist">
-                                <a href="wishlist.html">
+                                {{-- <a href="wishlist.html">
                                     <div class="header-icon-style">
                                         <i class="icon-heart icons"></i>
                                     </div>
                                     <div class="wishlist-text">
                                         <p>Your <br> <span>Wishlist</span></p>
                                     </div>
-                                </a>
+                                </a> --}}
                             </div>
                             <div class="header-cart">
                                 <a >
@@ -109,9 +68,9 @@
                                        </span>
                                    </div>
                                </a>
-                               {{-- @if(Session::has('cart')) --}}
+                               @if(Session::has('cart'))
                                <div id="mini_cart" class="shopping-cart-content">
-{{--                                 <ul>
+                                <ul>
                                     @foreach($product_cart as $cart)
                                     <li class="single-shopping-cart">
                                         <div class="shopping-cart-img">
@@ -130,20 +89,20 @@
                                 </ul>
                                 <div class="shopping-cart-total">
                                     {{-- <h4>Shipping : <span>$20.00</span></h4> --}}
-                                    {{--<h4>Tổng tiền : <span class="shop-total">{{Session('cart')->totalPrice}}</span></h4>
+                                    <h4>Tổng tiền : <span class="shop-total">{{Session('cart')->totalPrice}}</span></h4>
                                 </div>
                                 <div class="shopping-cart-btn">
-                                    <a href="cart-page.html">Xem Giỏ Hàng</a>
-                                    <a href="checkout.html">Thanh Toán</a>
-                                </div> --}}
+                                    <a href="gio-hang">Xem Giỏ Hàng</a>
+                                    <a href="gio-hang/thanh-toan">Thanh Toán</a>
+                                </div>
                             </div>
-                            {{-- @else
+                            @else
                             <div class="shopping-cart-content">
                                 <div class="shopping-cart-btn">
                                     <a >Giỏ Hàng Rỗng</a>
                                 </div>
                             </div>
-                            @endif --}}
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -153,93 +112,33 @@
     <div class="header-bottom transparent-bar black-bg">
         <div class="container">
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-12">
+                <div class="col-lg-6 col-md-6 col-6">
+                    <div class="row">
+                        <div class="col-md-6 col-6">
+                            <input id="search" class="form-control " type="text " style="background: #bdc1c5; margin-top: 9px;" placeholder="Tìm kiếm...">
+                            <div id="search_result"  class="search-content">
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-4">
+                            <select name="" id="select_loai" class="form-control" style="background: #bdc1c5; margin-top: 12px;">
+                                <option value="0">All</option>
+                                @foreach($loai_mon as $loai)
+                                <option value="{{$loai->id}}">{{$loai->tenloai}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-6">
                     <div class="main-menu">
                         <nav>
                             <ul>
-                                <li class="top-hover"><a href="index.html">home <i class="ion-chevron-down"></i></a>
-                                    <ul class="submenu">
-                                        <li><a href="index.html">home version 1</a></li>
-                                        <li><a href="index-2.html">home version 2</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="about-us.html">about</a></li>
-                                <li class="mega-menu-position top-hover"><a href="shop.html">shop <i class="ion-chevron-down"></i></a>
-                                    <ul class="mega-menu">
-                                        <li>
-                                            <ul>
-                                                <li class="mega-menu-title"><a href="#">Categories 01</a></li>
-                                                <li><a href="shop.html">salad</a></li>
-                                                <li><a href="shop.html">sandwich</a></li>
-                                                <li><a href="shop.html">bread</a></li>
-                                                <li><a href="shop.html">steak</a></li>
-                                                <li><a href="shop.html">tuna steak</a></li>
-                                                <li><a href="shop.html">spaghetti </a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <ul>
-                                                <li class="mega-menu-title"><a href="#">Categories 02</a></li>
-                                                <li><a href="shop.html">rice</a></li>
-                                                <li><a href="shop.html">pizza</a></li>
-                                                <li><a href="shop.html">hamburger</a></li>
-                                                <li><a href="shop.html">eggs</a></li>
-                                                <li><a href="shop.html">sausages</a></li>
-                                                <li><a href="shop.html">apple juice</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <ul>
-                                                <li class="mega-menu-title"><a href="#">Categories 03</a></li>
-                                                <li><a href="shop.html">milk</a></li>
-                                                <li><a href="shop.html">grape juice</a></li>
-                                                <li><a href="shop.html">cookie</a></li>
-                                                <li><a href="shop.html">candy</a></li>
-                                                <li><a href="shop.html">cake</a></li>
-                                                <li><a href="shop.html">cupcake</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <ul>
-                                                <li class="mega-menu-title"><a href="#">Categories 04</a></li>
-                                                <li><a href="shop.html">pie</a></li>
-                                                <li><a href="shop.html">stoberry</a></li>
-                                                <li><a href="shop.html">sandwich</a></li>
-                                                <li><a href="shop.html">bread</a></li>
-                                                <li><a href="shop.html">steak</a></li>
-                                                <li><a href="shop.html">hamburger</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="top-hover"><a href="blog-rightsidebar.html">blog <i class="ion-chevron-down"></i></a>
-                                    <ul class="submenu">
-                                        <li><a href="blog.html">Blog No sidebar</a></li>
-                                        <li><a href="blog-rightsidebar.html">Blog sidebar</a></li>
-                                        <li><a href="blog-details.html">Blog details</a></li>
-                                        <li><a href="blog-details-gallery.html">Blog details gallery</a></li>
-                                        <li><a href="blog-details-video.html">Blog details video</a></li>
-                                    </ul>
-                                </li>
-                                <li class="top-hover"><a href="#">pages <i class="ion-chevron-down"></i></a>
-                                    <ul class="submenu">
-                                        <li><a href="about-us.html">about us </a></li>
-                                        <li><a href="shop.html">shop Grid</a></li>
-                                        <li><a href="shop-list.html">shop list</a></li>
-                                        <li><a href="product-details.html">product details</a></li>
-                                        <li><a href="cart-page.html">cart page</a></li>
-                                        <li><a href="checkout.html">checkout</a></li>
-                                        <li><a href="wishlist.html">wishlist</a></li>
-                                        <li><a href="my-account.html">my account</a></li>
-                                        <li><a href="login-register.html">login / register</a></li>
-                                        <li><a href="contact.html">contact</a></li>
-                                        <li><a href="testimonial.html">Testimonials</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="contact.html">contact us</a></li>
-                                <li><a href="shop.html">burger</a></li>
+                                <li><a href="index">Trang Chủ</a></li>
+                                <li><a href="san-pham">Sản Phẩm</a></li>
+                                <li><a href="lien-he">LIÊN HỆ</a></li>
+                                {{-- <li><a href="shop.html">burger</a></li>
                                 <li><a href="shop.html">pizza</a></li>
-                                <li><a href="shop.html">cold drink</a></li>
+                                <li><a href="shop.html">cold drink</a></li> --}}
                             </ul>
                         </nav>
                     </div>
@@ -248,7 +147,7 @@
         </div>
     </div>
     <!-- mobile-menu-area-start -->
-    <div class="mobile-menu-area">
+    <div class="mobile-menu-area" >
         <div class="container">
          <div class="row">
           <div class="col-lg-12">

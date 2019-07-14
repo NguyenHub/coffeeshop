@@ -9,7 +9,7 @@
       <li class="breadcrumb-item">
         <a href="admin/trangchu">Trang chủ</a>
       </li>
-      <li class="breadcrumb-item active">Món</li>
+      <li class="breadcrumb-item active">Sản Phẩm</li>
     </ol>
     <!-- DataTables Example -->
     <div class="card mb-3">
@@ -54,53 +54,65 @@
      <form method="post" id="sample_form" class="form-horizontal" enctype="multipart/form-data">
       {{csrf_field()}}
       <div class="form-group row">
-        <label class="control-label col-md-4" >Loại Món : </label>
+        <label class="control-label col-md-4" >Loại SP : </label>
         <div class="col-md-8">
          <select name="maloai" id="maloai" class="form-control">
            @foreach($data as $dt)
            {
             <option value="{{$dt->id}}">{{$dt->id."-".$dt->tenloai}}</option>
-           }
-           @endforeach()
-         </select>
-       </div>
-     </div>
-     <div class="form-group row">
+          }
+          @endforeach()
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
       <label class="control-label col-md-4" >Tên Món * : </label>
       <div class="col-md-8">
-       <input type="text" name="tenmon" id="tenmon" class="form-control" placeholder="Nhập Tên Món" required="" />
+       <input type="text" name="tenmon" id="tenmon" class="form-control" placeholder="Nhập Tên Món" required="" autocomplete="off" />
      </div>
    </div>
    <div class="form-group row">
-      <label class="control-label col-md-4" >Đơn Giá * : </label>
-      <div class="col-md-8">
-       <input type="text" name="dongia" id="dongia" class="form-control" placeholder="Nhập Đơn Giá" required="" />
-     </div>
+    <label class="control-label col-md-4" >Đơn Giá * : </label>
+    <div class="col-md-8">
+     <input type="text" name="dongia" id="dongia" class="form-control" placeholder="Nhập Đơn Giá" required=""  autocomplete="off" />
    </div>
-   <div class="form-group row">
-      <label class="control-label col-md-4" >Ghi Chú : </label>
-      <div class="col-md-8">
-       <input type="text" name="ghichu" id="ghichu" class="form-control" placeholder="Nhập Ghi Chú"  />
-     </div>
-   </div>
-   <div class="form-group row">
-        <label class="control-label col-md-4" >Trạng Thái : </label>
-        <div class="col-md-8">
-         <select  name="trangthai" id="trangthai" class="form-control">
-            <option value="0">Còn hàng</option>
-            <option id="option" disabled="" value="1">Hết hàng</option>
-         </select>
-       </div>
-     </div>
-   <div class="form-group row">
-      <label class="control-label col-md-4" >Hình Ảnh : </label>
-      <div class="col-md-8">
-       <input type="file" name="hinhanh" id="hinhanh" class="form-control"  placeholder=""  />
-       <span id="store_img"></span>
-     </div>
-   </div>  
- <br />
- <div class="form-group" align="center">
+ </div>
+ <div class="form-group row">
+  <label class="control-label col-md-4" >Ghi Chú : </label>
+  <div class="col-md-8">
+   <input type="text" name="ghichu" id="ghichu" class="form-control" autocomplete="off" placeholder="Nhập Ghi Chú"  />
+ </div>
+</div>
+<div class="form-group row" id="select_trangthai">
+  <label class="control-label col-md-4" >Trạng Thái : </label>
+  <div class="col-md-8">
+   <select  name="trangthai" id="trangthai" class="form-control">
+    <option value="0">Còn hàng</option>
+    <option id="option" disabled="" value="1">Hết hàng</option>
+  </select>
+</div>
+</div>
+<div class="form-group row">
+  <label class="control-label col-md-4" >Hình Ảnh : </label>
+  <div class="col-md-8">
+    <div class="file-loading"> 
+      <input id="input-b6" name="hinhanh" type="file" placeholder="Chọn file">
+    </div>
+  </div>
+</div>
+<div class="form-group row">
+ <label class="control-label col-md-4" >Mô Tả : </label>
+</div> 
+<div class="form-group row">
+  {{-- <label class="control-label col-md-12" >Mô Tả : </label> --}}
+  <div class="col-md-12">
+    <textarea class="form-control" name="mota" id="mota">
+    </textarea>
+    {{-- <input type="textaria" name="mota" id="mota" class="form-control" placeholder=""  /> --}}
+  </div>
+</div>  
+<br/>
+<div class="form-group" align="center">
   <input type="hidden" name="action" id="action" />
   <input type="hidden" name="hidden_id" id="hidden_id" />
   <input type="submit" name="action_button" id="action_button" class="btn btn-warning" value="Add" />
@@ -165,16 +177,6 @@
   {
     data: 'tenloai',
     name: 'tenloai',
-    // "render": function(data,row,loai)
-    //   {
-    //     for (var i = 0; loai.length; i++) {
-    //       if(data==1)
-    //       {
-    //         return 'scf';
-    //       }         
-    //     }
-    //     return data ;
-    //   },
   },
   {
     data: 'tenmon',
@@ -182,7 +184,11 @@
   },
   {
     data: 'dongia',
-    name: 'dongia'
+    name: 'dongia',
+    render:function (data)
+    {
+      return format_number(data);
+    }
   },
   {
     data: 'hinhanh',
@@ -196,19 +202,23 @@
   },
   {
     data: 'ghichu',
-    name: 'ghichu'
+    name: 'ghichu',
+    visible:false
   },
   {
     data: 'trangthai',
-    name: 'trangthai'
+    name: 'trangthai',
+    visible:false
   },
   {
     data: 'created_at',
-    name: 'created_at'
+    name: 'created_at',
+    visible:false
   },
   {
     data: 'updated_at',
-    name: 'updated_at'
+    name: 'updated_at',
+    visible:false
   },
   {
     data: 'action',
@@ -223,14 +233,26 @@
   $(document).ready(function(){
     {{-- Start Call Form --}}
     var html='';
-     $('#create_record').click(function(){
+    $('#create_record').click(function(){
       $('.modal-title').text("Tạo Mới Dữ Liệu");
       $('#action_button').val("Add");
       $('#action').val("Add");
-      $('#option').attr('disabled',true);
+      //$('#option').attr('disabled',true);
+      $('#select_trangthai').attr('hidden',true);
       $('#formModal').modal('show');
+      $("#input-b6").fileinput({
+        allowedFileTypes:'image',
+        showUpload: false,
+        dropZoneEnabled: false,
+        //maxFileCount: 10,
+        //elErrorContainer: '#kartik-file-errors',
+        allowedFileExtensions: ["jpg", "png", "gif"],
+        initialPreview:false,
+        //mainClass: "input-group-lg"
+      });
       $('#sample_form')[0].reset();
       $('#form_result').html(html);
+      CKEDITOR.instances['mota'].setData('');
     });
     {{-- End Call Form --}}
     {{-- Start Submit --}}
@@ -239,108 +261,136 @@
       {{-- Start  Submit Insert --}}
       if($('#action').val() == 'Add')
       {
-       $.ajax({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        url:"admin/mon/add",
-        method:"POST",
-        data: new FormData(this),
-        contentType: false,
-        cache:false,
-        processData: false,
-        dataType:"json",
-        success:function(data)
-        {
-         var html = '';
-         if(data.errors)
-         {
-          html = '<div class="alert alert-danger">';
-          for(var count = 0; count < data.errors.length; count++)
+        //var val = $('textarea').val();
+        //var t = document.myform.editor1.value;
+        var content = CKEDITOR.instances['mota'].getData();
+        var formData=new FormData($('#sample_form')[0]);
+        formData.append('mota',content);
+        $.ajax({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          url:"admin/mon/add",
+          method:"POST",
+          data: formData,
+          contentType: false,
+          cache:false,
+          processData: false,
+          dataType:"json",
+          success:function(data)
           {
-           html += '<p>' + data.errors[count] + '</p>';
+           var html = '';
+           if(data.errors)
+           {
+            html = '<div class="alert alert-danger">';
+            for(var count = 0; count < data.errors.length; count++)
+            {
+             html += '<p>' + data.errors[count] + '</p>';
+           }
+           html += '</div>';
          }
-         html += '</div>';
-       }
-       if(data.success)
-       {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
-        $('#sample_form')[0].reset();
-        $('#data_table').DataTable().ajax.reload();
+         if(data.success)
+         {
+          html = '<div class="alert alert-success">' + data.success + '</div>';
+          $('#sample_form')[0].reset();
+          CKEDITOR.instances['mota'].setData('');
+          $('#data_table').DataTable().ajax.reload();
+        }
+        $('#form_result').html(html);
+        setTimeout(function(){
+          $('#form_result').html('');
+        },2000);
       }
-      $('#form_result').html(html);
-    }
-  })
-     }
-     {{-- End  Submit Insert --}}
-     {{-- Start  Submit Edit --}}
-     if($('#action').val() == "Edit")
-     {
-       $.ajax({
-        url:"admin/mon/update",
-        method:"POST",
-        data:new FormData(this),
-        contentType: false,
-        cache: false,
-        processData: false,
-        dataType:"json",
-        success:function(data)
-        {
-         var html = '';
-         if(data.errors)
-         {
-          html = '<div class="alert alert-danger">';
-          for(var count = 0; count < data.errors.length; count++)
+    })
+      }
+      {{-- End  Submit Insert --}}
+      {{-- Start  Submit Edit --}}
+      if($('#action').val() == "Edit")
+      {
+        var content = CKEDITOR.instances['mota'].getData();
+        var formData=new FormData($('#sample_form')[0]);
+        formData.append('mota',content);
+        $.ajax({
+          url:"admin/mon/update",
+          method:"POST",
+          data:formData,
+          contentType: false,
+          cache: false,
+          processData: false,
+          dataType:"json",
+          success:function(data)
           {
-           html += '<p>' + data.errors[count] + '</p>';
+           var html = '';
+           if(data.errors)
+           {
+            html = '<div class="alert alert-danger">';
+            for(var count = 0; count < data.errors.length; count++)
+            {
+             html += '<p>' + data.errors[count] + '</p>';
+           }
+           html += '</div>';
          }
-         html += '</div>';
-       }
-       if(data.success)
-       {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
-      $('#sample_form')[0].reset();
-      setTimeout(function(){
-       $('#formModal').modal('hide');
-       $('#data_table').DataTable().ajax.reload();
-     }, 1000);
-    }
-    $('#form_result').html(html);
-  }
-});
-     }
-     {{-- End Submit Edit --}}
-   });
+         if(data.success)
+         {
+          html = '<div class="alert alert-success">' + data.success + '</div>';
+          $('#sample_form')[0].reset();
+          setTimeout(function(){
+           $('#formModal').modal('hide');
+           $('#data_table').DataTable().ajax.reload();
+         }, 1000);
+        }
+        $('#form_result').html(html);
+      }
+    });
+      }
+      {{-- End Submit Edit --}}
+    });
     {{-- End Submit --}}
     {{-- Start  Get Edit --}}
     $(document).on('click', '.edit', function(){
-      var id = $(this).attr('id');
-      $('#form_result').html('');
-      $.ajax({
+     $('#mota').val('');
+     var id = $(this).attr('id');
+     $('#form_result').html('');
+     $.ajax({
        url:"admin/mon/edit/"+id,
        dataType:"json",
        success:function(html){
+        $('#select_trangthai').removeAttr('hidden');
         $('#maloai').val(html.data.maloai);
         $('#tenmon').val(html.data.tenmon);
         $('#dongia').val(html.data.dongia);
         $('#ghichu').val(html.data.ghichu);
+        CKEDITOR.instances['mota'].setData(html.data.mota);
+        $('#mota').val(html.data.mota);
         $('#trangthai').val(html.data.trangthai);
-        $('#store_img').html("<img src={{URL::to('/')}}/hinhanh/upload/"+html.data.hinhanh+" width='60' class='img-thumbnail'/>");
-        //$('#store_img').append("<input type='hidden' name='hidden_img' value='"+html.data.hinhanh+"' />");
+        $("#input-b6").fileinput({
+          allowedFileTypes:'image',
+          allowedFileExtensions: ['jpg', 'png', 'gif'],
+          dropZoneEnabled: false,
+          overwriteInitial: true,
+          showUpload: false,
+          initialPreview: [
+        "<img class='file-preview-image kv-preview-data' src={{URL::to('/')}}/hinhanh/upload/"+html.data.hinhanh+">",
+        ],
+        });
         $('#hidden_id').val(html.data.id);
         $('.modal-title').text("Cập Nhật Dữ Liệu");
         $('#action_button').val("Cập Nhật");
         $('#action').val("Edit");
         $('#formModal').modal('show');
         $('#option').removeAttr('disabled');
-        $('#action_button').attr('disabled',true);
-        $('input').change(function()
-          {
-            $('#action_button').attr('disabled',false);
-          });
+        //$('#action_button').attr('disabled',true);
+        // $('.form-control').change(function()
+        // {
+        //   $('#action_button').attr('disabled',false);
+        // });
+        // $(document).keyup(function()
+        // {
+        //   $('#action_button').attr('disabled',false);
+        // });
       }
     })
-    });
+   });
     {{-- End  Get Edit --}}
     {{-- Start Confirm Delete --}}
     $('#ok_button').click(function(){
@@ -360,6 +410,15 @@
     })
     });
     {{-- End Confirm Delete --}}
+    $('#dongia').keyup(function(){
+        var number =$('#dongia').val();
+        $('#dongia').val(number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 "));
+      });
+      $('#dongia').keydown(function(){
+        var number =$('#dongia').val();
+        number= number.toString().replace(/\s+/g,"");
+        $('#dongia').val(number);
+      });
   });
 </script>
 @endsection

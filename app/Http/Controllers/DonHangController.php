@@ -25,6 +25,27 @@ class DonHangController extends Controller
 		}
 		return view('admin.donhang.danhsach');
 	}
+	public function fillDate($date)
+	{
+		$start=substr($date,0,10);
+		$end=substr($date,13,10);
+		//dd($end);
+		//exit();
+		if(request()->ajax())
+		{
+			return datatables()->of(DonHang::latest()
+				->whereBetween('ngaydat',[$start,$end])
+				->get())
+			->addColumn('action', function($data){
+				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Edit</button>';
+				$button .= '&nbsp;&nbsp;';
+				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Delete</button>';
+				return $button;
+			})
+			->rawColumns(['action'])
+			->make(true);
+		}
+	}
 	public function chitiet($id)
 	{
 		$chitiet=DB::table('don_hang')

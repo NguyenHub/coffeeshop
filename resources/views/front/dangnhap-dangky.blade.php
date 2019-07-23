@@ -54,7 +54,7 @@
                                             <input type="text" name="hoten" class="form-control" placeholder="Nhập họ tên" required="">
                                         </div>
                                         <div class="form-group row col-md-12">
-                                            <input class="col-md-8" type="date" name="ngaysinh" class="form-control"  required="">
+                                            <input class="col-md-8" type="text" id="ngaysinh" name="ngaysinh" class="form-control"  required="" autocomplete="off">
                                             <div class="col-md-4" style="padding-right: 0px">
                                                 <select name="gioitinh" id="" class="form-control" >
                                                     <option value="0">Nam</option>
@@ -94,6 +94,20 @@
 @section('script')
 <script>
     $(document).ready(function(){
+        $('#ngaysinh').daterangepicker(
+        {
+            singleDatePicker: true,
+            autoUpdateInput: false,
+            startDate: moment().subtract(5475, 'days'),
+            showDropdowns: true,
+            minYear: parseInt(moment().format('YYYY'),10)-80,
+            maxYear: parseInt(moment().format('YYYY'),10)-15,
+        //maxYear: 2000,
+      //endDate: moment().add(24, 'hour'),
+  });
+        $('#ngaysinh').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD/MM/YYYY'));
+        });
         $('#register_form').on('submit',function(event){
             event.preventDefault();
             $.ajax({
@@ -112,18 +126,18 @@
                         html = '<div >';
                         for(var count = 0; count < data.errors.length; count++)
                         {
-                         html += '<p>' + data.errors[count] + '</p>';
-                        }
-                        html += '</div>';
-                    }
-                    if(data.success)
-                    {
-                        html = '<div class="alert alert-success">' + data.success + '</div>';
-                        $('#register_form')[0].reset();
-                    }
-                    $('#register_result').html(html);
-             }
-         })
+                           html += '<p>' + data.errors[count] + '</p>';
+                       }
+                       html += '</div>';
+                   }
+                   if(data.success)
+                   {
+                    html = '<div class="alert alert-success">' + data.success + '</div>';
+                    $('#register_form')[0].reset();
+                }
+                $('#register_result').html(html);
+            }
+        })
         });
         $('#login_form').on('submit',function(event){
             event.preventDefault();
@@ -149,8 +163,8 @@
                         //$('#register_form')[0].reset();
                     }
                     // $('#login_result').html(html);
-             }
-         })
+                }
+            })
         });
     });
 </script>

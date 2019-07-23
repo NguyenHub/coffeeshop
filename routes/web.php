@@ -33,7 +33,7 @@ Route::get('dangnhap-dangky',
 	[
 		'as'=>'dangnhap-dangky',
 		'uses'=>'KhachHangController@LoginOrRegister'
-	])->middleware('khachhang_login');
+	]);
 Route::get('xacnhan-dangky/{email}',
 	[
 		'as'=>'xacnhan-dangky',
@@ -43,7 +43,7 @@ Route::get('tai-khoan/quen-mat-khau',
 	[
 		'as'=>'tai-khoan/quen-mat-khau',
 		'uses'=>'KhachHangController@getResetPass'
-	])->middleware('khachhang_login');
+	]);
 Route::post('tai-khoan/quen-mat-khau',
 	[
 		'as'=>'tai-khoan/quen-mat-khau',
@@ -182,6 +182,9 @@ Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
 		Route::get('destroy/{id}', 'CongThucController@destroy');
 		Route::get('edit/{id}', 'CongThucController@edit');
 		Route::post('update','CongThucController@update');
+		Route::post('chi-tiet/update/{id}','CongThucController@UpdateDetail');
+		Route::post('chi-tiet/add/{id}','CongThucController@AddDetail');
+		Route::get('chi-tiet/delete/{id}','CongThucController@DeleteDetail');
 	});
 	Route::group(['prefix'=>'nguyenlieu'],function(){
 		Route::resource('danh-sach','NguyenLieuController');
@@ -211,6 +214,7 @@ Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
 		Route::get('xuly/{id}/{trangthai}', 'DonHangController@xuly');
 		Route::get('chitiet/{id}', 'DonHangController@chitiet');
 		Route::post('update','DonHangController@update');
+		Route::get('filt/{date}','DonHangController@fillDate');
 	});
 	Route::group(['prefix'=>'loaikhachhang'],function(){
 		Route::resource('danh-sach','LoaiKhachHangController');
@@ -218,6 +222,13 @@ Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
 		Route::get('destroy/{id}', 'LoaiKhachHangController@destroy');
 		Route::get('edit/{id}', 'LoaiKhachHangController@edit');
 		Route::post('update','LoaiKhachHangController@update');
+	});
+	Route::group(['prefix'=>'khachhang'],function(){
+		Route::resource('danh-sach','KhachHangController');
+		Route::post('add','KhachHangController@add');
+		Route::get('destroy/{id}', 'KhachHangController@destroy');
+		Route::get('edit/{id}', 'KhachHangController@edit');
+		Route::post('update','KhachHangController@update');
 	});
 	Route::group(['prefix'=>'khuyenmai'],function(){
 		Route::resource('danh-sach','KhuyenMaiController');

@@ -26,29 +26,29 @@
          <div class="col-md-1"><button id="action_fill" class="btn btn-success">Lọc</button></div>
        </div>
        <div class="form-group row col-md-2">
-            <select class="form-control" name="" id="select_trangthai">
-              <option value="">ALL</option>
-            </select>
-       </div>
-       <div class="table-responsive">
-        <table class="table table-bordered table-striped " id="data_table" width="100%" cellspacing="0">
+        <select class="form-control" name="" id="select_trangthai">
+          <option value="">ALL</option>
+        </select>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="data_table" width="100%" cellspacing="0">
          <thead>
           <tr>
             <th >MÃ</th>
             <th >NGÀY ĐẶT</th>
             <th >THÀNH TIỀN</th>
+            <th >SHIP</th>
             <th >GHI CHÚ</th>
             <th >TRẠNG THÁI</th>
             <th >CẬP NHẬT</th>
-            <th >Thao Tác
-              <button type="button" name="create_record" id="create_record" class="btn btn-success btn-sm">Tạo mới</button>
-            </tr>
-          </thead>
-        </table>
-      </div>
+            <th >Thao Tác</th>
+          </tr>
+        </thead>
+      </table>
     </div>
-    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
   </div>
+  <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+</div>
 </div>
 {{-- Start Form Insert --}}
 <div id="formModal" class="modal fade" role="dialog">
@@ -77,6 +77,9 @@
     </div>
     <div class="form-group row">
       <div class="col-md-12 makhuyenmai">Mã Khuyến Mãi :</div>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-12 phi_ship">Phí Ship :</div>
     </div>
     <div class="form-group row">
       <div class="col-md-12 trangthai">Trạng Thái :</div>
@@ -146,7 +149,7 @@
   $(document).ready(function(){
     var table= $('#data_table').DataTable({
       initComplete: function () {
-        this.api().columns(4).every( function () {
+        this.api().columns(5).every( function () {
           var column = this;
           var select = $('#select_trangthai')
           .appendTo('#select_trangthai')//headder hoặc footer
@@ -154,7 +157,6 @@
             var val = $.fn.dataTable.util.escapeRegex(
               $(this).val()
               );
-
             column
             .search( val ? '^'+val+'$' : '', true, false )
             .draw();
@@ -197,6 +199,112 @@
     data: 'thanhtien',
     name: 'thanhtien',
     autoWidth:true,
+    render:function(data)
+    {
+      return format_number(data);
+    }
+  },
+  {
+    data:'phi_giao_hang',
+    name:'phi_giao_hang'
+  },
+  {
+    data: 'ghichu',
+    name: 'ghichu',
+    autoWidth:true,
+  },
+  {
+    data: 'trangthai',
+    name: 'trangthai',
+    orderable: false,
+    autoWidth:true,
+    "render":function(data)
+    {
+      return format_trangthai(data);
+    }
+  },
+  {
+    data: 'updated_at',
+    name: 'updated_at',
+    autoWidth:true,
+  },
+  {
+    data: 'action',
+    name: 'action',
+    orderable: false,
+    autoWidth:true,
+  }
+  ]
+}); 
+    // Start Filter
+    $('#action_fill').click(function(){
+      //table.destroy();
+      var date=$('.daterange').val();
+      for(var i=0;i<=date.length;i++)
+      {
+        date= date.replace('/',"-");
+      }
+      var table= $('#data_table').DataTable({
+        destroy: true,
+        initComplete: function () {
+          this.api().columns(5).every( function () {
+            var column = this;
+            var select = $('#select_trangthai')
+          .appendTo('#select_trangthai')//headder hoặc footer
+          .on( 'change', function () {
+            var val = $.fn.dataTable.util.escapeRegex(
+              $(this).val()
+              );
+            column
+            .search( val ? '^'+val+'$' : '', true, false )
+            .draw();
+          } );
+
+          column.data().unique().sort().each( function ( d, j ) {
+            select.append( '<option value="'+d+'">'+format_trangthai(d)+'</option>' )
+          } );
+        } );
+        },
+        "order":[1,'desc'],
+        processing: true,
+        serverSide: true,
+        autoFill: true,
+      // "ordering": false,
+      // "info":     false
+    //bStateSave: false,
+    //"lengthChange": false, hiển thị số lượng dòng được hiển thị
+    //"ordering": false,
+    //"info":     false,
+    ajax:{
+     url: 'admin/donhang/filt/'+date,
+   },
+   columns:[
+   {
+    data: 'id',
+    name: 'id',
+    autoWidth:true,
+  },
+  {
+    data: 'ngaydat',
+    name: 'ngaydat',
+    autoWidth:true,
+    "render": function(data)
+    {
+      return  format_datetime(data);
+    }
+  },
+  {
+    data: 'thanhtien',
+    name: 'thanhtien',
+    autoWidth:true,
+    render:function(data)
+    {
+      return format_number(data);
+    }
+  },
+  {
+    data:'phi_giao_hang',
+    name:'phi_giao_hang'
   },
   {
     data: 'ghichu',
@@ -226,48 +334,27 @@
   }
   ]
 });
-    $('.daterange').daterangepicker(
-    {
-      //singleDatePicker: true,
-      //timePicker: true,
-      autoUpdateInput: false,
-      //startDate: moment(),
-      endDate: moment().add(24, 'hour'),
-      locale: {
-        cancelLabel: 'Clear'
-      }
     });
-    $('.daterange').on('apply.daterangepicker', function(ev, picker) {
-      $(this).val(picker.startDate.format('YYYY/MM/DD') + ' - ' + picker.endDate.format('YYYY/MM/DD'));
-    });
-
-    $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
-      $(this).val('');
-    });
-    // $.fn.dataTableExt.fnFilter.push(
-    //   function( settings, data, dataIndex ) {
-    //     date=$('.daterange').val();
-    //     start_date= date.substr(0,10);
-    //     end_date= date.substr(13,10);
-    //     var datetime = data[1] ; // use data for the age column
-
-    //     if ( (  start_date=='' && end_date=='' ) ||
-    //       ( start_date=='' && datetime <= end_date ) ||
-    //      ( start_date <= datetime   && end_date=='' ) ||
-    //      ( start_date <= datetime   && datetime <= end_date ) )
-    //     {
-    //       return true;
-    //     }
-    //     return false;
-    //   }
-    //   );
-    $('#action_fill').click(function(){
-      table.draw();
-    });
+    // End Filter
   });
 </script>
 <script>
   $(document).ready(function(){
+
+    $('.daterange').daterangepicker({
+        //timePicker24Hour: true,
+        startDate: moment(),
+        endDate: moment().startOf('hour').add(24, 'hour'),
+        locale: {
+          format: 'Y/MM/DD'
+        }
+      });
+    $('.daterange').val('');
+    $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+      $('.daterange').val('');
+       window.location.reload();
+
+    });
     {{-- Start Submit --}}
     $('#sample_form').on('submit', function(event){
       event.preventDefault();
@@ -369,7 +456,7 @@
           row+='<td>'+v.mamon+'</td>'
           row+='<td>'+v.tenmon+'</td>'
           row+='<td>'+v.soluong+'</td>'
-          row+='<td>'+v.dongia+'</td>'
+          row+='<td>'+format_number(v.dongia)+'</td>'
           row+='</tr>'
           var date=v.ngaydat;
           $('.ngaydat').text("Ngày Đặt : "+format_datetime(date));
@@ -380,6 +467,7 @@
           v.makhuyenmai=v.makhuyenmai==null?"":v.makhuyenmai;
           $('.ghichu').text("Ghi Chú : "+v.ghichu);
           $('.makhuyenmai').text("Mã Khuyến Mãi : "+v.makhuyenmai);
+          $('.phi_ship').text("Phí Ship : "+v.phi_giao_hang);
           $('.trangthai').text("Trạng Thái : "+format_trangthai(v.trangthai));
           $('#hidden_id').val(v.id);
         });

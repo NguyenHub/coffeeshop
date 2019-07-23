@@ -238,9 +238,7 @@
 						<h5>Tạm tính 
 							<span id="price_cart">
 								@if(Session::has('cart'))
-								@if(Session('cart')->totalPrice>50000)
 								{{Session('cart')->totalPrice}}
-								@endif
 								@endif
 							</span>
 						</h5>
@@ -342,17 +340,11 @@
 						{
 							$('#ma_giam_gia').text(code);
 							var tien_chua_giam=$('#price_cart').text();
-							if(html.giam_gia>tien_chua_giam)
-							{
-								html.giam_gia=tien_chua_giam;
-							}
 							var ship =Number($('#ship').text());
 							$('.tong-tien').addClass('line-through');
 							$('.discount_cart').text(html.giam_gia);
 							$('.da_giam').text(ship+=(tien_chua_giam-html.giam_gia));
 						}
-
-						
 					}
 				})
 			}
@@ -413,7 +405,6 @@
 				// 	window.location.href="index";
 				// }, 2000);
 			}
-
 		});
 		function validation(){//hàm kiểm tra thông tin nhận hàng
 			var diachi = $('#diachi').val();

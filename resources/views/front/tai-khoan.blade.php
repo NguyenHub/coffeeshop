@@ -259,7 +259,6 @@
 		$('#chitiet'+id+'').html(row);
 		//$('#chitiet_donhang').addClass('display-block');
 	}
-
 	$(document).on('click','.close_chitiet',function(event){
 		event.preventDefault();
 		var id=$(this).attr('id');

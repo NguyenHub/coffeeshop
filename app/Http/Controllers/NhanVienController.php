@@ -61,7 +61,7 @@ class NhanVienController extends Controller
 		{
 			$data = new NhanVien;
 			$data->tennhanvien=ucwords($request->tennhanvien);
-			$data->ngaysinh=$request->ngaysinh;
+			$data->ngaysinh=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngaysinh)));
 			$data->gioitinh=$request->gioitinh;
 			$data->email=$request->email;
 			$data->password=bcrypt($request->email);
@@ -71,7 +71,7 @@ class NhanVienController extends Controller
 			$data->machucvu=$request->chucvu;
 			$data->maloai=$request->loainhanvien;
 			$data->cmnd=$request->cmnd;
-			$data->ngayvaolam=$request->ngayvaolam;
+			$data->ngayvaolam=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngayvaolam)));
 			$data->ghichu=$request->ghichu;
 			$data->created_at=date('Y-m-d H:m:s');
 			$data->save();
@@ -90,7 +90,9 @@ class NhanVienController extends Controller
 		if(request()->ajax())
 		{
 			$data = NhanVien::find($id);
-			return response()->json(['data' => $data]);
+			$ngaysinh=date('d/m/Y',strtotime($data->ngaysinh));
+			$ngayvaolam=date('d/m/Y',strtotime($data->ngayvaolam));
+			return response()->json(['data' => $data,'ngaysinh'=>$ngaysinh,'ngayvaolam'=>$ngayvaolam]);
 		}
 	}
 	public function update(Request $request)
@@ -121,7 +123,7 @@ class NhanVienController extends Controller
 		{
 			$data =NhanVien::find($request->hidden_id);
 			$data->tennhanvien=ucwords($request->tennhanvien);
-			$data->ngaysinh=$request->ngaysinh;
+			$data->ngaysinh=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngaysinh)));
 			$data->gioitinh=$request->gioitinh;
 			$data->email=$request->email;
 			$data->password=bcrypt($request->email);
@@ -131,14 +133,12 @@ class NhanVienController extends Controller
 			$data->machucvu=$request->chucvu;
 			$data->maloai=$request->loainhanvien;
 			$data->cmnd=$request->cmnd;
-			$data->ngayvaolam=$request->ngayvaolam;
+			$data->ngayvaolam=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngayvaolam)));
 			$data->ghichu=$request->ghichu;
 			$data->updated_at=date('Y-m-d H:m:s');
 			$data->save();
-			return response()->json(['success' => 'Thêm Thành Công!']);
+			return response()->json(['success' => 'Cập Nhật Thành Công!']);
 		}
-
-
 	}
 	public function getLogin()
 	{

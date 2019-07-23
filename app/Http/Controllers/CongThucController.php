@@ -7,13 +7,19 @@ use App\CongThuc;
 use App\Mon;
 use App\NguyenLieu;
 use App\ChiTietCongThuc;
+use DB;
 use Validator;
 class CongThucController extends Controller
 {
 	public function index()
 	{
-		$data=Mon::all();
-		$nguyenlieu=NguyenLieu::all();
+		$data1=Mon::select('mon.id','mon.tenmon')
+		->whereNotIn('mon.id',function($query)
+		{
+			$query->select('mamon')->from('cong_thuc');
+		})
+		->get();
+		$nguyenlieu=NguyenLieu::select('nguyen_lieu.id','nguyen_lieu.tennguyenlieu')->get();
 		if(request()->ajax())
 		{
 			return datatables()->of(CongThuc::latest()->get())
@@ -26,19 +32,21 @@ class CongThucController extends Controller
 			->rawColumns(['action'])
 			->make(true);
 		}
-		return view('admin.congthuc.danhsach',['data'=>$data,'nguyenlieu'=>$nguyenlieu]);
+		return view('admin.congthuc.danhsach',['data'=>$data1,'nguyenlieu'=>$nguyenlieu]);
 	}
 	public function add( Request $request)
 	{
+		//dd($request);
 		$validator =Validator::make($request->all(),[
 			// 'tenkhuyenmai'    =>  'required',
 			// 'soluong'    =>  'required',
-			//'nguyenlieu.*'=>'required|unique:chitiet_congthuc,macongthuc,manguyenlieu',
+			'mamon'=>'unique:cong_thuc,mamon',
 			'dinhluong.*'=>'bail|regex:/([0-9]{1,9})$/',
 			'ghichu.*'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
 		],
 		[
-			'nguyenlieu.unique'=>'Nguyên liệu bị trùng',
+			'mamon.unique'=>'Sản phẩm đã có công thức',
+			//'manguyenlieu.required'=>'Vui lòng chọn nguyên liệu',
 			'dinhluong.regex'=>'Định lượng không không hợp lệ ',
 			'ghichu.regex'=>'Ghi chú không hợp lệ'
 		]);
@@ -48,7 +56,7 @@ class CongThucController extends Controller
 		}
 		else
 		{
-			if(count($request->nguyenlieu)>0)
+			if(count($request->manguyenlieu)>0)
 			{
 				$data = new CongThuc;
 				$data->mamon=$request->mamon;
@@ -56,75 +64,46 @@ class CongThucController extends Controller
 				$data->ghichu=$request->ghichu;
 				$data->created_at=date('Y-m-d H:m:s');
 				$data->save();
-				//CongThuc::insert($data)->id;
-				// $manguyenlieu = $request->nguyenlieu;
-				// $dinhluong = $request->dinhluong;
-				// $donvitinh = $request->donvitinh;
-				// $ghichu = $request->note;
-				// for($count = 0; $count < count($manguyenlieu); $count++)
-				// {
-				// 	$chitiet = array(
-				// 		'macongthuc' => 14,
-				// 		'manguyenlieu' => $manguyenlieu[$count],
-				// 		'dinhluong'  => $dinhluong[$count],
-				// 		'donvitinh'  => $donvitinh[$count],
-				// 		'ghichu'  => $ghichu[$count]
-				// 	);
-				// 	$insert_data[] = $chitiet; 
-					
-				// }
-				// ChiTietCongThuc::insert($insert_data);
-				return response()->json(['success' => 'Thêm Thành Công!','lastid'=>$lastid]);
+				$manguyenlieu = $request->manguyenlieu;
+				$dinhluong = $request->dinhluong;
+				$donvitinh = $request->donvitinh;
+				$ghichu = $request->note;
+				for($count = 0; $count < count($manguyenlieu); $count++)
+				{
+					$chitiet = array(
+						'macongthuc' => $data->id,
+						'manguyenlieu' => $manguyenlieu[$count],
+						'dinhluong'  => $dinhluong[$count],
+						'donvitinh'  => $donvitinh[$count],
+						'ghichu'  => $ghichu[$count],
+					);
+					$insert_data[] = $chitiet; 
+				}
+				ChiTietCongThuc::insert($insert_data);
+				return response()->json(['success' => 'Thêm Thành Công!']);
 			}
 			
-		}
-
-	}
-	function insert(Request $request)
-	{
-		if($request->ajax())
-		{
-			$rules = array(
-				'first_name.*'  => 'required',
-				'last_name.*'  => 'required'
-			);
-			$error = Validator::make($request->all(), $rules);
-			if($error->fails())
-			{
-				return response()->json([
-					'error'  => $error->errors()->all()
-				]);
-			}
-
-			$first_name = $request->first_name;
-			$last_name = $request->last_name;
-			for($count = 0; $count < count($first_name); $count++)
-			{
-				$data = array(
-					'first_name' => $first_name[$count],
-					'last_name'  => $last_name[$count]
-				);
-				$insert_data[] = $data; 
-			}
-
-			ChiTietCongThuc::insert($insert_data);
-			return response()->json([
-				'success'  => 'Data Added successfully.'
-			]);
 		}
 	}
 	public function destroy($id)
 	{
 		$data = CongThuc::find($id);
 		$data->delete();
+		$data2=ChiTietCongThuc::Where('macongthuc',$id);
+		$data2->delete();
 		return response()->json(['success' => 'Xóa Thành Công!']);
 	}
 	public function edit($id)
 	{
 		if(request()->ajax())
 		{
-			$data = Mon::find($id);
-			return response()->json(['data' => $data]);
+			$data = CongThuc::find($id);
+			$data2=DB::table('chitiet_congthuc')
+			->join('nguyen_lieu','chitiet_congthuc.manguyenlieu','=','nguyen_lieu.id')
+			->select('nguyen_lieu.tennguyenlieu','chitiet_congthuc.*')
+			->where('chitiet_congthuc.macongthuc',$id)
+			->get();
+			return response()->json(['data' => $data,'data2'=>$data2]);
 		}
 	}
 	public function update(Request $request)
@@ -132,13 +111,13 @@ class CongThucController extends Controller
 		$validator =Validator::make($request->all(),[
 			// 'tenkhuyenmai'    =>  'required',
 			// 'soluong'    =>  'required',
-			'tenmon'=>'required|unique:mon,tenmon,'.$request->hidden_id,
-			'dongia'=>'bail|regex:/([0-9]{1,9})$/',
+			//'tenmon'=>'required|unique:mon,tenmon,'.$request->hidden_id,
+			//'dongia'=>'bail|regex:/([0-9]{1,9})$/',
 			'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
 		],
 		[
-			'dongia.regex'=>'Giá trị không không hợp lệ ',
-			'ghichu.regex'=>'Ghi chú không hợp lệ'
+			//'dongia.regex'=>'Giá trị không không hợp lệ ',
+			//'ghichu.regex'=>'Ghi chú không hợp lệ'
 		]);
 		if($validator->fails())
 		{
@@ -146,24 +125,37 @@ class CongThucController extends Controller
 		}
 		else
 		{
-			if(($request->dongia % 500)!=0)
-			{
-				$errors=array('0'=>'Đơn giá không hợp lệ');
-				return response()->json(['errors' => $errors]);
-			}
-			else
-			{
-				$data = Mon::find($request->hidden_id);
-				$data->maloai=$request->maloai;
-				$data->tenmon=ucwords($request->tenmon);
-				$data->dongia=$request->dongia;
-				$data->trangthai=$request->trangthai;
-				$data->ghichu=$request->ghichu;
-				$data->updated_at=date('Y-m-d H:m:s');
-				$data->save();
-				return response()->json(['success' => 'Cập Nhật Thành Công!']);
-			}
-
+			$data = CongThuc::find($request->hidden_id);
+			$data->tencongthuc=$request->tencongthuc;
+			$data->ghichu=$request->ghichu;
+			$data->updated_at=date('Y-m-d H:m:s');
+			$data->save();
+			return response()->json(['success' => 'Cập Nhật Thành Công!']);
 		}
+	}
+	public function UpdateDetail(Request $request, $id)
+	{
+		$data= ChiTietCongThuc::find($id);
+		$data->dinhluong=$request->dinhluong;
+		$data->donvitinh=$request->donvitinh;
+		$data->ghichu=$request->ghichu;
+		$data->save();
+		return response()->json(['success'=>'Cập nhật thành công']);
+	}
+	public function AddDetail(Request $request, $id)
+	{
+		$data=new ChiTietCongThuc;
+		$data->macongthuc=$id;
+		$data->manguyenlieu=$request->manguyenlieu;
+		$data->dinhluong=$request->dinhluong;
+		$data->donvitinh=$request->donvitinh;
+		$data->save();
+		return response()->json(['success'=>'Thêm chi tiết thành công']);
+	}
+	public function DeleteDetail($id)
+	{
+		$data=ChiTietCongThuc::find($id);
+		$data->delete();
+		return response()->json(['success'=>'Xóa chi tiết thành công']);
 	}
 }

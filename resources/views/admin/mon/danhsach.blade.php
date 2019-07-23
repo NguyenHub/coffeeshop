@@ -156,6 +156,14 @@
 </div>
 @endsection
 @section('script')
+<script> CKEDITOR.replace( 'mota', {
+ height:100,
+ uiColor: '#14B8C4',
+ toolbar: [
+ [ 'Source','Bold', 'Italic','Underline', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink' ],
+ [ 'FontSize', 'TextColor', 'BGColor' ]
+ ]
+});</script>
 <script type="text/javascript">
   $(document).ready(function(){
    $('#data_table').DataTable({
@@ -370,8 +378,8 @@
           overwriteInitial: true,
           showUpload: false,
           initialPreview: [
-        "<img class='file-preview-image kv-preview-data' src={{URL::to('/')}}/hinhanh/upload/"+html.data.hinhanh+">",
-        ],
+          "<img class='file-preview-image kv-preview-data' src={{URL::to('/')}}/hinhanh/upload/"+html.data.hinhanh+">",
+          ],
         });
         $('#hidden_id').val(html.data.id);
         $('.modal-title').text("Cập Nhật Dữ Liệu");
@@ -411,14 +419,14 @@
     });
     {{-- End Confirm Delete --}}
     $('#dongia').keyup(function(){
-        var number =$('#dongia').val();
-        $('#dongia').val(number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 "));
-      });
-      $('#dongia').keydown(function(){
-        var number =$('#dongia').val();
-        number= number.toString().replace(/\s+/g,"");
-        $('#dongia').val(number);
-      });
+      var number =$('#dongia').val();
+      $('#dongia').val(number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 "));
+    });
+    $('#dongia').keydown(function(){
+      var number =$('#dongia').val();
+      number= number.toString().replace(/\s+/g,"");
+      $('#dongia').val(number);
+    });
   });
 </script>
 @endsection

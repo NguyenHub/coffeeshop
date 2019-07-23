@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\KhachHang;
+use App\LoaiKhachHang;
 use Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -12,8 +13,114 @@ use DB;
 //use App\Mail\SendMail;
 class KhachHangController extends Controller
 {
+	public function index()
+	{
+		$loai=LoaiKhachHang::select('id','tenloai')->get();
+		if(request()->ajax())
+		{
+			return datatables()->of(DB::table('khach_hang')
+				->join('loai_khach_hang','khach_hang.loaikhachhang','=','loai_khach_hang.id')
+				->select('khach_hang.*','loai_khach_hang.tenloai')
+				->latest()->get())
+			->addColumn('action', function($data){
+				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm" title="Cập nhật" style="width:30px"><i class="fa fa-edit" ></i></button>';
+				$button .= '&nbsp;&nbsp;';
+				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm" title="Xóa" style="width:30px"><i class="fa fa-trash"  ></i></button>';
+				return $button;
+			})
+			->rawColumns(['action'])
+			->make(true);
+		}
+		return view('admin.khachhang.danh-sach',['loai'=>$loai]);
+	}
+	public function add( Request $request)
+	{
+		$validator =Validator::make($request->all(),[
+			'tenkhachhang'=>'bail|regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{2,7})+([\s]*)+([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,7}))$/|min:2|max:50',
+			'email'=>'bail|regex:/^([a-zA-Z0-9_\.\-])+\@([a-zA-Z0-9_\.\-])+([a-zA-Z0-9]{2,4})+$/|unique:khach_hang,email|nullable',
+			'sdt' => 'bail|digits:10|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:khach_hang,sdt',
+		],
+		[
+			'tenkhachhang.regex'=>'Tên khách hàng không hợp lệ',
+			'tenkhachhang.min'=>'Tên khách hàng quá ngắn',
+			'tenkhachhang.max'=>'Tên khách hàng quá dài',
+			'email.regex'=>'Vui lòng nhập đúng định dạng email',
+			'email.unique'=>'Email đã tồn tại',
+			'sdt.regex'=>'Số điện thoại không hợp lệ',
+			'sdt.digits'=>'Số điện thoại không hợp lệ',
+			'sdt.unique'=>'Số điện thoại đã tồn tại',
+		]);
+		if($validator->fails())
+		{
+			return response()->json(['errors' => $validator->errors()->all()]);
+		}
+		else
+		{
+			//dd($request);
+			$data = new KhachHang;
+			$data->tenkhachhang=$request->tenkhachhang;
+			$data->gioitinh=$request->gioitinh;
+			$data->email=$request->email;
+			$data->password=$request->email!=''?bcrypt($request->email):null;
+			$data->sdt=$request->sdt;
+			$data->trangthai=$request->email!=''?1:0;
+			$data->loaikhachhang=$request->loaikhachhang;
+			$data->created_at=date('Y-m-d H:m:s');
+			$data->save();
+			return response()->json(['success' => 'Thêm Thành Công!']);
+		}
+
+	}
+	public function destroy($id)
+	{
+		$data = KhachHang::find($id);
+		$data->delete();
+		return response()->json(['success' => 'Xóa Thành Công!']);
+	}
+	public function edit($id)
+	{
+		if(request()->ajax())
+		{
+			$data = KhachHang::find($id);
+			return response()->json(['data' => $data]);
+		}
+	}
+	public function update(Request $request)
+	{
+		$validator =Validator::make($request->all(),[
+			'tenkhachhang'=>'bail|regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{2,7})+([\s]*)+([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,7}))$/|min:2|max:50',
+			'sdt' => 'bail|digits:10|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:khach_hang,sdt,'.$request->hidden_id,
+		],
+		[
+			'tenkhachhang.regex'=>'Tên khách hàng không hợp lệ',
+			'tenkhachhang.min'=>'Tên khách hàng quá ngắn',
+			'tenkhachhang.max'=>'Tên khách hàng quá dài',
+			'sdt.regex'=>'Số điện thoại không hợp lệ',
+			'sdt.digits'=>'Số điện thoại không hợp lệ',
+			'sdt.unique'=>'Số điện thoại đã tồn tại',
+		]);
+		if($validator->fails())
+		{
+			return response()->json(['errors' => $validator->errors()->all()]);
+		}
+		else
+		{
+			$data =KhachHang::find($request->hidden_id);
+			$data->tenkhachhang=$request->tenkhachhang;
+			$data->gioitinh=$request->gioitinh;
+			$data->sdt=$request->sdt;
+			$data->trangthai=$request->trangthai;
+			$data->updated_at=date('Y-m-d H:m:s');
+			$data->save();
+			return response()->json(['success' => 'Cập Nhật Thành Công!']);
+		}
+	}
 	public function LoginOrRegister()
 	{
+		if(Auth::guard('khach_hang')->check())
+		{
+			return redirect()->back();
+		}
 		return view('front/dangnhap-dangky');
 	}
 	public function postLogin(Request $request)
@@ -52,7 +159,7 @@ class KhachHangController extends Controller
 		$validator =Validator::make($request->all(),[
 			'hoten'=>'bail|regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{2,7})+([\s]*)+([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,7}))$/|min:5|max:50',
 			'email'=>'bail|regex:/^([a-zA-Z0-9_\.\-])+\@([a-zA-Z0-9_\.\-])+([a-zA-Z0-9]{2,4})+$/|required|unique:khach_hang,email',
-			'sdt' => 'bail|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:khach_hang,sdt',
+			'sdt' => 'bail|digits:10|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:khach_hang,sdt',
 			//'password'=>'bail|min:8|max:32|regex:/^(?=.*?[A-Z]{1,})(?=.*?[a-z]{1,})+(?=.*?[0-9]{1,})$/',
 			'confirmpassword'=>'bail|same:password',
 		],
@@ -62,6 +169,7 @@ class KhachHangController extends Controller
 			'hoten.max'=>'Tên quá dài',
 			'email.regex'=>'Vui lòng nhập đúng định dạng email',
 			'email.unique'=>'Email đã tồn tại',
+			'sdt.digits'=>'Số điện thoại không hợp lệ',
 			'sdt.regex'=>'Số điện thoại không hợp lệ'
 		]);
 		if($validator->fails())
@@ -72,7 +180,7 @@ class KhachHangController extends Controller
 		{
 			$data = new KhachHang;
 			$data->tenkhachhang=ucwords($request->hoten);
-			$data->ngaysinh=$request->ngaysinh;
+			$data->ngaysinh=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngaysinh)));
 			$data->gioitinh=$request->gioitinh;
 			$data->email=$request->email;
 			$data->password=bcrypt($request->password);
@@ -102,7 +210,7 @@ class KhachHangController extends Controller
 		{
 			$validator=Validator::make($request->all(),[
 				'hoten'=>'bail|regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{2,7})+([\s]*)+([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,7}))$/|min:5|max:50',
-				'sdt' => 'bail|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:khach_hang,sdt,'.$request->id,
+				'sdt' => 'bail|digits:10|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:khach_hang,sdt,'.$request->id,
 				'new_password'=>'bail|min:8|max:32|regex:/^(?=.*?[A-Z]{1,})(?=.*?[a-z]{1,})+(?=.*?[0-9]{1,})$/',
 				'confirm_password'=>'bail|same:new_password'
 			],
@@ -111,6 +219,7 @@ class KhachHangController extends Controller
 				'hoten.min'=>'Tên quá ngắn',
 				'hoten.max'=>'Tên quá dài',
 				'sdt.regex'=>'Số điện thoại không hợp lệ',
+				'sdt.digits'=>'Số điện thoại không hợp lệ',
 				'sdt.unique'=>'Số điện thoại đã tồn tại',
 				'new_password.min'=>'Mật khẩu phải từ 8-32 ký tự',
 				'new_password.min'=>'Mật khẩu phải từ 8-32 ký tự',
@@ -144,12 +253,13 @@ class KhachHangController extends Controller
 		{
 			$validator =Validator::make($request->all(),[
 				'hoten'=>'bail|regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{2,7})+([\s]*)+([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,7}))$/|min:5|max:50',
-				'sdt' => 'bail|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:khach_hang,sdt,'.$request->id,
+				'sdt' => 'bail|digits:10|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:khach_hang,sdt,'.$request->id,
 			],
 			[
 				'hoten.regex'=>'Tên không hợp lệ',
 				'hoten.min'=>'Tên quá ngắn',
 				'hoten.max'=>'Tên quá dài',
+				'sdt.digits'=>'Số điện thoại không hợp lệ',
 				'sdt.regex'=>'Số điện thoại không hợp lệ',
 				'sdt.unique'=>'Số điện thoại đã tồn tại',
 			]);

@@ -40,8 +40,8 @@
   </div>
   <!-- Start Form Insert -->
   <div id="formModal" class="modal fade" role="dialog" >
-   <div class="modal-dialog">
-    <div class="modal-content" style="width: 650px">
+   <div class="modal-dialog" style="max-width: 850px;">
+    <div class="modal-content">
      <div class="modal-header">
       <h4 class="modal-title"></h4>
       <button type="button" class="close" data-dismiss="modal">&times;</button>     
@@ -56,7 +56,7 @@
          <select name="mamon" id="mamon" class="form-control">
            @foreach($data as $dt)
            {
-            <option value="{{$dt->id}}">{{$dt->id."-".$dt->tenmon}}</option>
+            <option class="option_mon{{$dt->id}}" value="{{$dt->id}}">{{$dt->id."-".$dt->tenmon}}</option>
           }
           @endforeach()
         </select>
@@ -74,17 +74,30 @@
      <input type="text" name="ghichu" id="ghichu" class="form-control" placeholder="Nhập Ghi Chú"  />
    </div>
  </div>
- <table class="table table-bordered" >
-   <thead>
-     <tr>
-       <th>Nguyên Liệu</th>
-       <th>Định Lượng</th>
-       <th>Đơn Vị Tính</th>
-       <th>Ghi Chú</th>
-       <th></th>
-     </tr>
-   </thead>
-   <tbody id="table_addrow">
+ <div class="form-group row">
+  <label class="control-label col-md-4" >Nguyên Liệu : </label>
+  <div class="col-md-8">
+   <select name="nguyenlieu" id="nguyenlieu" class="form-control">
+    <option class="" id="" value="null"></option>
+    @foreach($nguyenlieu as $nl)
+    {
+      <option class="option_nl{{$nl->id}}" id="{{$nl->id}}" value="{{$nl->id}}">{{$nl->tennguyenlieu}}</option>
+    }
+    @endforeach()
+  </select>
+</div>
+</div>
+<table class="table table-bordered" id="table_detail" >
+ <thead>
+   <tr>
+     <th>Nguyên Liệu</th>
+     <th>Định Lượng</th>
+     <th>Đơn Vị Tính</th>
+     <th>Ghi Chú</th>
+     <th></th>
+   </tr>
+ </thead>
+ <tbody id="table_addrow">
    {{-- <tr >
      <td>
          <select name="nguyenlieu[]" id="nguyenlieu" class="form-control">
@@ -106,7 +119,7 @@
      <td><a href="#" class="btn btn-danger remove"><i class="fa fa-trash"></i></a></td>
    </tr>
  </tr> --}}
- </tbody>
+</tbody>
 </table>
 <br />
 <div class="form-group" align="center">
@@ -211,22 +224,29 @@
 </script>
 <script>
   $(document).ready(function(){
- var html='';
-    $('#create_record').click(function(){
-      $('.modal-title').text("Tạo Mới Dữ Liệu");
-      $('#action_button').val("Add");
-      $('#action').val("Add");
-      $('#formModal').modal('show');
-      $('#sample_form')[0].reset();
-      $('#form_result').html(html);
-    });
-    {{-- End Call Form --}}
+   var html='';
+   $('#create_record').click(function(){
+    $('.modal-title').text("Tạo Mới Dữ Liệu");
+    $('#action_button').val("Add");
+    $('#action').val("Add");
+    $('#formModal').modal('show');
+    $('#mamon').removeAttr('disabled');
+    $("#table_addrow tr").remove();
+    $('#nguyenlieu option').removeAttr('hidden');
+    $('#sample_form')[0].reset();
+    $('#form_result').html('');
+  });
+   {{-- End Call Form --}}
 
-    {{-- Start Submit --}}
-    $('#sample_form').on('submit', function(event){
-      event.preventDefault();
-      {{-- Start  Submit Insert --}}
-      if($('#action').val() == 'Add')
+   {{-- Start Submit --}}
+   $('#sample_form').on('submit', function(event){
+    event.preventDefault();
+    var id_mon = $('#mamon').val();
+    {{-- Start  Submit Insert --}}
+    if($('#action').val() == 'Add')
+      { var text = $('#table_addrow tr').length;
+      //var text=$('#manguyenlieu').val();
+      if(text>0)
       {
        $.ajax({
         headers: {
@@ -256,230 +276,262 @@
         html = '<div class="alert alert-success">' + data.success + '</div>';
         $('#sample_form')[0].reset();
         $('#data_table').DataTable().ajax.reload();
+        $("#table_addrow tr").remove();
+        $('#nguyenlieu option').removeAttr('hidden');
+        $('.option_mon'+id_mon).attr('disabled',true);
       }
       $('#form_result').html(html);
     }
   })
      }
-     {{-- End  Submit Insert --}}
-     {{-- Start  Submit Edit --}}
-     if($('#action').val() == "Edit")
-     {
-       $.ajax({
-        url:"admin/congthuc/update",
-        method:"POST",
-        data:new FormData(this),
-        contentType: false,
-        cache: false,
-        processData: false,
-        dataType:"json",
-        success:function(data)
-        {
-         var html = '';
-         if(data.errors)
-         {
-          html = '<div class="alert alert-danger">';
-          for(var count = 0; count < data.errors.length; count++)
-          {
-           html += '<p>' + data.errors[count] + '</p>';
-         }
-         html += '</div>';
-       }
-       if(data.success)
-       {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
-        $('#sample_form')[0].reset();
-        setTimeout(function(){
-         $('#formModal').modal('hide');
-         $('#data_table').DataTable().ajax.reload();
-       }, 1000);
-      }
-      $('#form_result').html(html);
-    }
-  });
-     }
-     {{-- End Submit Edit --}}
-   });
-    {{-- End Submit --}}
-    {{-- Start  Get Edit --}}
-    $(document).on('click', '.edit', function(){
-      var id = $(this).attr('id');
-      $('#form_result').html('');
-      $.ajax({
-       url:"admin/congthuc/edit/"+id,
-       dataType:"json",
-       success:function(html){
-        $('#maloai').val(html.data.maloai);
-        $('#tenmon').val(html.data.tenmon);
-        $('#dongia').val(html.data.dongia);
-        $('#ghichu').val(html.data.ghichu);
-        $('#trangthai').val(html.data.trangthai);
-        $('#hidden_id').val(html.data.id);
-        $('.modal-title').text("Cập Nhật Dữ Liệu");
-        $('#action_button').val("Cập Nhật");
-        $('#action').val("Edit");
-        $('#formModal').modal('show');
-        $('#trangthai_selected').removeAttr('hidden');
-      }
-    })
-    });
-    {{-- End  Get Edit --}}
-    {{-- Start Confirm Delete --}}
-    $('#ok_button').click(function(){
-      $.ajax({
-       url:"admin/congthuc/destroy/"+id,
-       beforeSend:function(){
-        $('#ok_button').text('Deleting...');
-      },
+   }
+   {{-- End  Submit Insert --}}
+   {{-- Start  Submit Edit --}}
+   if($('#action').val() == "Edit")
+   {
+     $.ajax({
+      url:"admin/congthuc/update",
+      method:"POST",
+      data:new FormData(this),
+      contentType: false,
+      cache: false,
+      processData: false,
+      dataType:"json",
       success:function(data)
       {
-        setTimeout(function(){
-         $('#confirmModal').modal('hide');
-         $('#data_table').DataTable().ajax.reload();
-       }, 1000);
-        $('#ok_button').text('OK');
-      }
-    })
-    });
-    {{-- End Confirm Delete --}}
+       var html = '';
+       if(data.errors)
+       {
+        html = '<div class="alert alert-danger">';
+        for(var count = 0; count < data.errors.length; count++)
+        {
+         html += '<p>' + data.errors[count] + '</p>';
+       }
+       html += '</div>';
+     }
+     if(data.success)
+     {
+      html = '<div class="alert alert-success">' + data.success + '</div>';
+      $('#sample_form')[0].reset();
+      setTimeout(function(){
+       $('#formModal').modal('hide');
+       $('#data_table').DataTable().ajax.reload();
+     }, 1000);
+    }
+    $('#form_result').html(html);
+  }
+});
+   }
+   {{-- End Submit Edit --}}
+ });
+   {{-- End Submit --}}
+   {{-- Start  Get Edit --}}
+   $(document).on('click', '.edit', function(){
+    var id = $(this).attr('id');
+    $('#form_result').html('');
+    $("#table_addrow tr").remove();
+    $('#nguyenlieu option').removeAttr('hidden');
+    $.ajax({
+     url:"admin/congthuc/edit/"+id,
+     dataType:"json",
+     success:function(html){
+      $('#maloai').val(html.data.maloai);
+      $('#mamon').val(html.data.mamon);
+      $('#mamon').attr('disabled',true);
+      $('#tencongthuc').val(html.data.tencongthuc);
+      $('#ghichu').val(html.data.ghichu);
+      $('#trangthai').val(html.data.trangthai);
+      $('#hidden_id').val(html.data.id);
+      edit_field(html.data2);
+      $('.modal-title').text("Cập Nhật Dữ Liệu");
+      $('#action_button').val("Cập Nhật");
+      $('#action').val("Edit");
+      $('#formModal').modal('show');
+      $('#trangthai_selected').removeAttr('hidden');
+    }
+  })
   });
+   function edit_field(data)
+   {
+    $.each(data,function(key,val){
+      if(val.ghichu==null)
+      {
+        val.ghichu="";
+      }
+      html = '<tr>';
+      html += '<td><input value='+val.manguyenlieu+' type="hidden" id="manguyenlieu'+val.id+'" name="manguyenlieu" class="form-control">'+val.tennguyenlieu+'</td>';
+      html += '<td><input type="text" value="'+val.dinhluong+'" name="dinhluong[]" id="dinhluong'+val.id+'" class="form-control" required=""></td>';
+      html += '<td><select name="donvitinh" id="donvitinh'+val.id+'" class="form-control donvitinh'+key+'"><option value="0">Gram</option><option  value="1">Mililit</option></select></td>';
+      html += '<td><input type="text" id="note'+val.id+'" name="note" value="'+val.ghichu+'" class="form-control budget"></td>';
+      html += '<td><button style="width:40px" type="button" name="remove" id="'+val.id+'" class="btn btn-danger remove_detail"><i class="fa fa-trash"></i></button><button style="width:40px" type="button" name="update" id="'+val.id+'" class="btn btn-primary update"><i class="fa fa-wrench"></i></button></td>';
+      html += '</tr>';
+      $('#table_addrow').append(html);
+      $('.donvitinh'+key).val(val.donvitinh);
+      $('.option_nl'+val.manguyenlieu).attr('hidden',true);
+    })
+    //}
+    //else
+    //{   
+      //html += '<td><button type="button" name="add" id="add" class="btn btn-success"><i class="fa fa-plus"></i></button></td></tr>';
+      //$('#table_addrow').html(html);
+    //}
+  }
+  {{-- End  Get Edit --}}
+  {{-- Start Confirm Delete --}}
+  $('#ok_button').click(function(){
+    $.ajax({
+     url:"admin/congthuc/destroy/"+id,
+     beforeSend:function(){
+      $('#ok_button').text('Deleting...');
+    },
+    success:function(data)
+    {
+      setTimeout(function(){
+       $('#confirmModal').modal('hide');
+       $('#data_table').DataTable().ajax.reload();
+     }, 1000);
+      $('#ok_button').text('OK');
+    }
+  })
+  });
+  {{-- End Confirm Delete --}}
+});
 </script>
 <script>
   $(document).ready(function(){
-        {{-- Start Call Form --}}
-   var count = 1;
-
-   dynamic_field(count);
-//    function lockDownDropDownList() {
-//     ddlName = "#" + ddlName;
-//     var chosenValue = $('#nguyenlieu').val();
-//     var downDownListItems = $(ddlName).children('option').map(function (i, e) {
-//         return e.value || e.innerText;
-//     }).get();
-
-//     downDownListItems.forEach(function (item) {
-//         if (item != chosenValue)
-//         {
-//             $("select option[value='" + item + "']").prop('disabled', true);
-//         }
-//     });
-// }
-  // function chon(chon)
-  // {
-  //   //var chon= $('#nguyenlieu').val();
-  //     //$("#nguyenlieu option[value='"+chon+"']").attr('disabled',true);
-  //     $("#nguyenlieu option[value='"+chon+"']").remove();
-
-  // }
-   function dynamic_field(number)
+   function dynamic_field(id,name)
    {
     html = '<tr>';
-    html += '<td><select name="nguyenlieu[]" id="nguyenlieu" class="form-control">@foreach($nguyenlieu as $nl){<option  value="{{$nl->id}}">{{$nl->id."-".$nl->tennguyenlieu}}</option>}@endforeach()</select></td>';
-    html += '<td><input type="text" name="dinhluong[]" class="form-control"></td>';
-    html += '<td><select name="donvitinh[]" id="donvitinh" class="form-control"><option value="0">Gram</option><option  value="1">Mililit</option></select></td>';
-    html += '<td><input type="text" name="note[]" class="form-control budget"></td>';
-    //var nl= $('#nguyenlieu').val();
-    //alert(nl);
-    // //$('option').val(nguyenlieu).disabled('disabled',true);
-    //$("#nguyenlieu option[value='"+nl+"']").remove();
-    //$('select option').attr('disabled',true);
-    //$('p').remove('div.test');
-    if(number > 1)
+    html += '<td><input value='+id+' type="hidden" id="manguyenlieu'+id+'" name="manguyenlieu[]" class="form-control">'+name+'</td>';
+    html += '<td><input type="text" id="dinhluong'+id+'" name="dinhluong[]" class="form-control" required=""></td>';
+    html += '<td><select name="donvitinh[]" id="donvitinh'+id+'" class="form-control"><option value="0">Gram</option><option  value="1">Mililit</option></select></td>';
+    html += '<td><input type="text" name="note[]" id="note'+id+'" class="form-control budget"></td>';
+    html += '<td><button style="width:40px" type="button" value="'+id+'" name="add" id="add'+id+'" class="btn btn-success add"><i id="fa" class="fa fa-plus"></i></button><button style="width:40px" type="button" value="'+id+'" name="remove" id="remove'+id+'" class="btn btn-danger remove"><i id="fa" class="fa fa-trash"></i></button></td></tr>';
+    $('#table_addrow').append(html);
+    //}
+    //else
+    //{   
+      //html += '<td><button type="button" name="add" id="add" class="btn btn-success"><i class="fa fa-plus"></i></button></td></tr>';
+      //$('#table_addrow').html(html);
+    //}
+  }
+  {{-- Start Click Append row --}}
+  $('#nguyenlieu').change(function(){
+    var id = $(this).val();
+    if(id!='null')
     {
-      html += '<td><button type="button" name="remove" id="" class="btn btn-danger remove"><i class="fa fa-trash"></i></button></td></tr>';
-      $('#table_addrow').append(html);
-      // var chon= $('#nguyenlieu').val();
-    //$("option[value='"+chon+"']").attr('disabled',true);
+      var name= $('.option_nl'+id).text();
+      dynamic_field(id,name);
+      $('.option_nl'+id).attr('hidden',true);
+      if($('#action').val() == "Add")
+      {
+        $('.add').attr('hidden',true);
+      }
+    }
+  });
+  {{-- End Click Append row --}}
+  {{-- Start Click Remove row --}}
+  $(document).on('click', '.remove', function(){
+    $(this).closest("tr").remove();
+    var id = $(this).val();
+    $('.option_nl'+id).removeAttr('hidden');
+  });
+  {{-- Start Click Remove row --}}
+  {{-- Start Click Delete detail --}}
+  $(document).on('click','.remove_detail',function(){
+    var id = $(this).attr('id');
+    var ma_nl=$('#manguyenlieu'+id).val();
+      $.ajax({
+        url:'admin/congthuc/chi-tiet/delete/'+id,
+        dataType:'json',
+        success:function(data)
+        {
+          var html='';
+          html = '<div class="alert alert-success">' + data.success + '</div>';
+          $('#form_result').html(html);
+          setTimeout(function(){
+           $('#form_result').html('');
+         }, 2000);  
+          $('.option_nl'+ma_nl).removeAttr('hidden');
+        }
+      })
+      $(this).closest("tr").remove();
+    });
+  {{-- End Click Delete detail --}}
+  {{-- Start Click Update detail --}}
+  $(document).on('click','.update', function(){
+    var id = $(this).attr('id');
+    var formData= new FormData();
+    formData.append('dinhluong',$('#dinhluong'+id).val());
+    formData.append('donvitinh',$('#donvitinh'+id).val());
+    formData.append('ghichu',$('#note'+id).val());
+    $.ajax({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      url:'admin/congthuc/chi-tiet/update/'+id,
+      method:'POST',
+      data:formData,
+      contentType: false,
+      cache: false,
+      processData: false,
+      dataType:'json',
+      success:function(data)
+      {
+        html = '<div class="alert alert-success">' + data.success + '</div>';
+        $('#form_result').html(html);
+        setTimeout(function(){
+         $('#form_result').html('');
+       }, 2000);
+      }
+    })
+  });
+  {{-- End Click Update detail --}}
+  {{-- Start Click Add detail --}}
+  $(document).on('click', '.add', function(){
+    var ma_ct=$('#hidden_id').val();
+    var id = $(this).val();
+    var formData= new FormData();
+    formData.append('manguyenlieu',$('#manguyenlieu'+id).val());
+    formData.append('dinhluong',$('#dinhluong'+id).val());
+    formData.append('donvitinh',$('#donvitinh'+id).val());
+    formData.append('ghichu',$('#note'+id).val());
+    if($('#dinhluong'+id).val()=='')
+    {
+      var html='';
+      html = '<div class="alert alert-danger">Vui lòng nhập định lượng</div>';
+      $('#form_result').html(html);
+      setTimeout(function(){
+       $('#form_result').html('');
+     }, 2000);
     }
     else
-    {   
-      html += '<td><button type="button" name="add" id="add" class="btn btn-success"><i class="fa fa-plus"></i></button></td></tr>';
-      $('#table_addrow').html(html);
+    {
+      $.ajax({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        url:'admin/congthuc/chi-tiet/add/'+ma_ct,
+        method:'POST',
+        data:formData,
+        contentType: false,
+        cache: false,
+        processData: false,
+        dataType:'json',
+        success:function(data)
+        {
+          $('#add'+id).attr('hidden',true);
+          $('#remove'+id).attr('hidden',true);
+          html = '<div class="alert alert-success">' + data.success + '</div>';
+          $('#form_result').html(html);
+          setTimeout(function(){
+           $('#form_result').html('');
+         }, 2000);
+        }
+      })
     }
-  }
-
-  $(document).on('click', '#add', function(){
-    count++;
-    alert(count);
-    dynamic_field(count);
-    //lockDownDropDownList();
-    // var nl= $('#nguyenlieu').val();
-    // alert(nl);
-    // //$('option').val(nguyenlieu).disabled('disabled',true);
-    // $("#nguyenlieu option[value='nl']").attr('disabled',true);
-    //$('select option').attr('disabled',true);
-    //$('p').remove('div.test');
-    
-
   });
-
-  $(document).on('click', '.remove', function(){
-    count--;
-    $(this).closest("tr").remove();
-  });
-
-  // $('#dynamic_form').on('submit', function(event){
-  //   event.preventDefault();
-  //   $.ajax({
-  //     url:'',
-  //     method:'post',
-  //     data:$(this).serialize(),
-  //     dataType:'json',
-  //     beforeSend:function(){
-  //       $('#save').attr('disabled','disabled');
-  //     },
-  //     success:function(data)
-  //     {
-  //       if(data.error)
-  //       {
-  //         var error_html = '';
-  //         for(var count = 0; count < data.error.length; count++)
-  //         {
-  //           error_html += '<p>'+data.error[count]+'</p>';
-  //         }
-  //         $('#result').html('<div class="alert alert-danger">'+error_html+'</div>');
-  //       }
-  //       else
-  //       {
-  //         dynamic_field(1);
-  //         $('#result').html('<div class="alert alert-success">'+data.success+'</div>');
-  //       }
-  //       $('#save').attr('disabled', false);
-  //     }
-  //   })
-  // });
-
+   {{-- Start Click Add detail --}}
 });
 </script>
-{{-- <script>
-      // Add row
-      $('.addRow').on('click',function(){
-        event.preventDefault();
-        addRow();
-      });
-      function addRow()
-      {
-        var tr='<tr >'+
-        '<td><select name="nguyenlieu[]" id="nguyenlieu" class="form-control">@foreach($nguyenlieu as $nl){<option value="{{$nl->id}}">{{$nl->id."-".$nl->tennguyenlieu}}</option>}@endforeach()</select></td>'+
-        '<td><input type="text" name="dinhluong[]" class="form-control"></td>'+
-        '<td><select name="donvitinh[]" id="donvitinh" class="form-control"><option value="0">Gram</option><option value="1">Mililit</option></select></td>'+
-        '<td><input type="text" name="ghichu[]" class="form-control budget"></td>'+
-        '<td><a href="#" class="btn btn-danger remove"><i class="fa fa-trash"></i></a></td>'+
-        '</tr>';
-        $('#table_addrow').append(tr);
-      };
-      $('.remove').on('click',function(){
-        event.preventDefault();
-        //var last=$('#table_addrow tr').length;
-        // if(last==3){
-        //   alert("you can not remove last row");
-        // }
-        // else
-        // {
-         $(this).parent().remove();
-         
-       //}
-
-     });
-   </script> --}}
-   @endsection
+@endsection

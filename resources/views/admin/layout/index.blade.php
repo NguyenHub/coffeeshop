@@ -196,14 +196,7 @@
 {{-- <script src="bootstrap-fileinput/js/fileinput.js"></script>
 <script src="bootstrap-fileinput/themes/fa/theme.js"></script> --}}
 <script src="ckeditor/ckeditor.js"></script>
-<script> CKEDITOR.replace( 'mota', {
- height:100,
- uiColor: '#14B8C4',
- toolbar: [
- [ 'Source','Bold', 'Italic','Underline', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink' ],
- [ 'FontSize', 'TextColor', 'BGColor' ]
- ]
-});</script>
+
 @yield('script')
 {{-- Start Call Form --}}
 <script type="text/javascript">

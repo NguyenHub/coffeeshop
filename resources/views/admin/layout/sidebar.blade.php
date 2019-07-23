@@ -82,11 +82,6 @@
         <span>Đơn Hàng</span></a>
       </li>
       <li class="nav-item">
-      <a class="nav-link" href="admin/chitiet_donhang/danh-sach">
-        <i class="fas fa-fw fa-table"></i>
-        <span>Chi Tiết Đơn Hàng</span></a>
-      </li>
-      <li class="nav-item">
       <a class="nav-link" href="admin/chucvu/danh-sach">
         <i class="fas fa-fw fa-table"></i>
         <span>Chức Vụ</span></a>

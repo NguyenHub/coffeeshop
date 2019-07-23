@@ -75,46 +75,40 @@
         <div class="form-group row">
           <label class="control-label col-md-4" >Tên Khuyến Mãi * : </label>
           <div class="col-md-8">
-           <input type="text" name="tenkhuyenmai" id="tenkhuyenmai" class="form-control" placeholder="Nhập Tên Khuyến Mãi" required="" />
+           <input type="text" name="tenkhuyenmai" id="tenkhuyenmai" class="form-control" placeholder="Nhập Tên Khuyến Mãi" required="" autocomplete="off" />
          </div>
        </div>
        <div class="form-group row">
-        <label class="control-label col-md-4" >Loại Khuyến Mãi * : </label>
+        <label class="control-label col-md-4" >Thời Gian * : </label>
         <div class="col-md-8">
-          <select name="loaikhuyenmai" id="loaikhuyenmai"  class="form-control">
-            <option value="0">Giảm Tiền</option>
-            <option value="1">Giảm %</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label class="control-label col-md-4" >Số Lượng : </label>
-        <div class="col-md-8">
-         <input type="text" name="soluong" id="soluong" class="form-control" placeholder="Nhập Số Lượng"  />
+         <input type="text" name="thoigian" id="thoigian" class="form-control" required="" autocomplete="off"  />
        </div>
      </div>
      <div class="form-group row">
-      <label class="control-label col-md-4" >Giá Trị * : </label>
+      <label class="control-label col-md-4" >Loại Khuyến Mãi * : </label>
       <div class="col-md-8">
-       <input type="text" name="giatri" id="giatri" class="form-control" placeholder="Nhập Giá Trị" required="" />
+        <select name="loaikhuyenmai" id="loaikhuyenmai"  class="form-control">
+          <option value="0">Giảm Tiền</option>
+          <option value="1">Giảm %</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="control-label col-md-4" >Số Lượng : </label>
+      <div class="col-md-8">
+       <input type="text" name="soluong" id="soluong" class="form-control" placeholder="Nhập Số Lượng" autocomplete="off" />
      </div>
    </div>
    <div class="form-group row">
-    <label class="control-label col-md-4" >Mã Code * : </label>
+    <label class="control-label col-md-4" >Giá Trị * : </label>
     <div class="col-md-8">
-     <input type="text" name="code_km" id="code_km" class="form-control" placeholder="Nhập Mã Code" required="" />
+     <input type="text" name="giatri" id="giatri" class="form-control" placeholder="Nhập Giá Trị" required="" autocomplete="off" />
    </div>
  </div>
  <div class="form-group row">
-  <label class="control-label col-md-4" >Ngày Bắt Đầu * : </label>
+  <label class="control-label col-md-4" >Mã Code * : </label>
   <div class="col-md-8">
-   <input type="datetime-local"  name="ngaybatdau" id="ngaybatdau" value="2019-06-02+0701:00" class="form-control" required="" />
- </div>
-</div>
-<div class="form-group row">
-  <label class="control-label col-md-4" >Ngày Kết Thúc * : </label>
-  <div class="col-md-8">
-   <input type="datetime-local" name="ngayketthuc" id="ngayketthuc" class="form-control" required=""  />
+   <input type="text" name="code_km" id="code_km" class="form-control" placeholder="Nhập Mã Code" required="" autocomplete="off" />
  </div>
 </div>
 <div class="form-group row">
@@ -238,8 +232,7 @@
     name: 'ngaybatdau',
     "render": function(data)
     {
-      var d = new Date(data);
-      return  d.getDate()+"-"+(d.getMonth()+1)+"-"+d.getFullYear();
+      return format_datetime(data);
     }
   },
   {
@@ -247,8 +240,7 @@
     name: 'ngayketthuc',
     "render": function(data)
     {
-      var d = new Date(data);
-     return  d.getDate()+"-"+(d.getMonth()+1)+"-"+d.getFullYear();
+      return format_datetime(data);
     }
   },
   {
@@ -285,14 +277,14 @@
       } );
     } );
     $('a.toggle-vis').on( 'click', function (e) {
-        e.preventDefault();
- 
+      e.preventDefault();
+
         // Get the column API object
         var column = table.column( $(this).attr('data-column') );
- 
+
         // Toggle the visibility
         column.visible( ! column.visible() );
-    } );
+      } );
   });
 </script>
 <script>
@@ -306,6 +298,15 @@
       $('#formModal').modal('show');
       $('#sample_form')[0].reset();
       $('#form_result').html(html);
+      $('#thoigian').daterangepicker({
+        timePicker24Hour: true,
+        startDate: moment().startOf('hour').add(24,'hour'),
+        endDate: moment().startOf('hour').add(48, 'hour'),
+        locale: {
+          format: 'Y/MM/DD HH:mm'
+        }
+      });
+      $('#thoigian').val('');
     });
     {{-- End Call Form --}}
     {{-- Start Submit --}}
@@ -395,13 +396,21 @@
        url:"admin/khuyenmai/edit/"+id,
        dataType:"json",
        success:function(html){
+        //var thoigian=
         $('#tenkhuyenmai').val(html.data.tenkhuyenmai);
         $('#loaikhuyenmai').val(html.data.loaikhuyenmai);
         $('#soluong').val(html.data.soluong);
         $('#giatri').val(html.data.giatri);
         $('#code_km').val(html.data.code_km);
-        $('#ngaybatdau').val(html.batdau);
-        $('#ngayketthuc').val(html.ketthuc);
+        $('#thoigian').daterangepicker({
+          timePicker24Hour: true,
+          startDate: moment().startOf('hour').add(24,'hour'),
+          endDate: moment().startOf('hour').add(48, 'hour'),
+          locale: {
+            format: 'Y/MM/DD HH:mm'
+          }
+        });
+        $('#thoigian').val(html.thoigian);
         $('#hidden_id').val(html.data.id);
         $('.modal-title').text("Cập Nhật Dữ Liệu");
         $('#action_button').val("Cập Nhật");
@@ -409,9 +418,9 @@
         $('#formModal').modal('show');
         $('#action_button').attr('disabled',true);
         $('input').change(function()
-          {
-            $('#action_button').attr('disabled',false);
-          });
+        {
+          $('#action_button').attr('disabled',false);
+        });
       }
     })
     });

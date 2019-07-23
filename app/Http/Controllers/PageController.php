@@ -22,9 +22,9 @@ class PageController extends Controller
  public function getContact()
  {
   return view('front/lien-he');
- }
- public function Index()
- {
+}
+public function Index()
+{
   $mon=Mon::paginate(4);
   return view('front/trangchu',['mon'=>$mon]);
 }
@@ -106,6 +106,7 @@ public function getDiscount($code)
       if($khuyenmai->loaikhuyenmai==0)
       {
         $giam_gia= Session('cart')->totalPrice-$khuyenmai->giatri;
+       $giam_gia=$giam_gia<Session('cart')->totalPrice?Session('cart')->totalPrice:$giam_gia;
       }
       else
       {
@@ -215,7 +216,6 @@ public function getDetail($id)
   ->where('mon.maloai','=',$data->maloai)
   ->where('mon.id','!=',$id)
   ->get();
-  //dd($data_relative);
   return view('front.chi-tiet',['data'=>$data,'data_relative'=>$data_relative]);
 }
 }

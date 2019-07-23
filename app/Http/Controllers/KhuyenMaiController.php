@@ -25,14 +25,15 @@ class KhuyenMaiController extends Controller
 	}
 	public function add( Request $request)
 	{
+
 		$validator =Validator::make($request->all(),[
 			// 'tenkhuyenmai'    =>  'required',
 			// 'soluong'    =>  'required',
 			'soluong'=>'bail|regex:/([0-9]{2,9})$/|nullable',
 			'giatri'    =>  'bail|regex:/([0-9]{1,9})$/',
 			'code_km'=>'bail|regex:/([0-9a-zA-Z]{2,9})$/|unique:khuyen_mai,code_km',
-			'ngaybatdau'=>'bail|before:ngayketthuc|after:tomorrow',
-			'ngayketthuc'=>'bail|after:ngaybatdau',
+			//'ngaybatdau'=>'bail|before:ngayketthuc|after:tomorrow',
+			//'ngayketthuc'=>'bail|after:ngaybatdau',
 			'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
 		],
 		[
@@ -40,9 +41,9 @@ class KhuyenMaiController extends Controller
 			'giatri.regex'=>'Giá trị không không hợp lệ ',
 			'code_km.regex'=>'Mã code không hợp lệ',
 			'code_km.unique'=>'Mã code đã tồn tại',
-			'ngaybatdau.before'=>'Ngày bắt đầu phải sớm hơn ngày kết thúc',
-			'ngaybatdau.after'=>'Ngày bắt đầu không hợp lệ',
-			'ngayketthuc.after'=>'Ngày kết thúc phải sau ngày bắt đầu',
+			//'ngaybatdau.before'=>'Ngày bắt đầu phải sớm hơn ngày kết thúc',
+			//'ngaybatdau.after'=>'Ngày bắt đầu không hợp lệ',
+			//'ngayketthuc.after'=>'Ngày kết thúc phải sau ngày bắt đầu',
 			'ghichu.regex'=>'Ghi chú không hợp lệ'
 		]);
 		if($validator->fails())
@@ -51,7 +52,7 @@ class KhuyenMaiController extends Controller
 		}
 		else
 		{
-			if($request->loaikhuyenmai==0 && (($request->giatri)/1000)!=0)
+			if($request->loaikhuyenmai==0 && (($request->giatri)%1000)!=0)
 			{
 				$errors=array('0'=>'Giá trị tiền giảm không hợp lệ');
 				return response()->json(['errors' => $errors]);
@@ -63,14 +64,17 @@ class KhuyenMaiController extends Controller
 			}
 			else
 			{
+				$date=str_replace('/', '-', $request->thoigian);
+				$batdau=substr($date,0,16).':00';
+				$ketthuc=substr($date,19,16).':00';
 				$khuyenmai = new KhuyenMai;
 				$khuyenmai->tenkhuyenmai=$request->tenkhuyenmai;
 				$khuyenmai->loaikhuyenmai=$request->loaikhuyenmai;
 				$khuyenmai->giatri=$request->giatri;
 				$khuyenmai->soluong=$request->soluong;
 				$khuyenmai->code_km=$request->code_km;
-				$khuyenmai->ngaybatdau=$request->ngaybatdau;
-				$khuyenmai->ngayketthuc=$request->ngayketthuc;
+				$khuyenmai->ngaybatdau=$batdau;
+				$khuyenmai->ngayketthuc=$ketthuc;
 				$khuyenmai->ghichu=$request->ghichu;
 				$khuyenmai->created_at=date('Y-m-d H:m:s');
 				$khuyenmai->save();
@@ -91,11 +95,10 @@ class KhuyenMaiController extends Controller
 		if(request()->ajax())
 		{
 			$data = KhuyenMai::find($id);
-			$batdau= date("Y-m-dTH:m",strtotime($data->ngaybatdau));
-			$ketthuc= date("Y-m-dTH:m",strtotime($data->ngayketthuc));
-			$batdau=str_replace("UTC", "T", $batdau);
-			$ketthuc=str_replace("UTC", "T", $ketthuc);
-			return response()->json(['data' => $data,'batdau'=>$batdau,'ketthuc'=>$ketthuc]);
+			$batdau= str_replace('-','/',substr($data->ngaybatdau,0,16));
+			$ketthuc= str_replace('-','/',substr($data->ngayketthuc,0,16));
+			$thoigian=$batdau." - ".$ketthuc;
+			return response()->json(['data' => $data,'thoigian'=>$thoigian]);
 		}
 	}
 	public function update(Request $request)
@@ -104,8 +107,8 @@ class KhuyenMaiController extends Controller
 			'soluong'=>'bail|regex:/([0-9]{2,9})$/|nullable',
 			'giatri'    =>  'bail|regex:/([0-9]{1,9})$/',
 			'code_km'=>'bail|regex:/([0-9a-zA-Z]{2,9})$/|unique:khuyen_mai,code_km,'.$request->hidden_id,
-			'ngaybatdau'=>'bail|before:ngayketthuc|after:tomorrow',
-			'ngayketthuc'=>'bail|after:ngaybatdau',
+			//'ngaybatdau'=>'bail|before:ngayketthuc|after:tomorrow',
+			//'ngayketthuc'=>'bail|after:ngaybatdau',
 			'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
 		],
 		[
@@ -113,9 +116,9 @@ class KhuyenMaiController extends Controller
 			'giatri.regex'=>'Giá trị không không hợp lệ ',
 			'code_km.regex'=>'Mã code không hợp lệ',
 			'code_km.unique'=>'Mã code đã tồn tại',
-			'ngaybatdau.before'=>'Ngày bắt đầu phải sớm hơn ngày kết thúc',
-			'ngaybatdau.after'=>'Ngày bắt đầu không hợp lệ',
-			'ngayketthuc.after'=>'Ngày kết thúc phải sau ngày bắt đầu',
+			//'ngaybatdau.before'=>'Ngày bắt đầu phải sớm hơn ngày kết thúc',
+			//'ngaybatdau.after'=>'Ngày bắt đầu không hợp lệ',
+			//'ngayketthuc.after'=>'Ngày kết thúc phải sau ngày bắt đầu',
 			'ghichu.regex'=>'Ghi chú không hợp lệ'
 		]);
 		if($validator->fails())
@@ -124,7 +127,7 @@ class KhuyenMaiController extends Controller
 		}
 		else
 		{
-			if($request->loaikhuyenmai==0 && (($request->giatri)/1000)!=0)
+			if($request->loaikhuyenmai==0 && (($request->giatri)%1000)!=0)
 			{
 				$errors=array('0'=>'Giá trị tiền giảm không hợp lệ');
 				return response()->json(['errors' => $errors]);
@@ -136,14 +139,17 @@ class KhuyenMaiController extends Controller
 			}
 			else
 			{
+				$date=str_replace('/', '-', $request->thoigian);
+				$batdau=substr($date,0,16).':00';
+				$ketthuc=substr($date,19,16).':00';
 				$khuyenmai = KhuyenMai::find($request->hidden_id);
 				$khuyenmai->tenkhuyenmai=$request->tenkhuyenmai;
 				$khuyenmai->loaikhuyenmai=$request->loaikhuyenmai;
 				$khuyenmai->giatri=$request->giatri;
 				$khuyenmai->soluong=$request->soluong;
 				$khuyenmai->code_km=$request->code_km;
-				$khuyenmai->ngaybatdau=$request->ngaybatdau;
-				$khuyenmai->ngayketthuc=$request->ngayketthuc;
+				$khuyenmai->ngaybatdau=$batdau;
+				$khuyenmai->ngayketthuc=$ketthuc;
 				$khuyenmai->ghichu=$request->ghichu;
 				$khuyenmai->updated_at=date('Y-m-d H:m:s');
 				$khuyenmai->save();

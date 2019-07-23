@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Middleware;
-
 use Closure;
 use Illuminate\Support\Facades\Auth;
 class AdminMiddleWare
@@ -15,7 +14,7 @@ class AdminMiddleWare
      */
     public function handle($request, Closure $next)
     {
-        if(Auth::check())
+        if(Auth::guard('nhan_vien')->check())
         {
             return $next($request);
         }

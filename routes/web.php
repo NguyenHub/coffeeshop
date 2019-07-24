@@ -193,6 +193,20 @@ Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
 		Route::get('edit/{id}', 'NguyenLieuController@edit');
 		Route::post('update','NguyenLieuController@update');
 	});
+	Route::group(['prefix'=>'nhacungcap'],function(){
+		Route::resource('danh-sach','NhaCungCapController');
+		Route::post('add','NhaCungCapController@add');
+		Route::get('destroy/{id}', 'NhaCungCapController@destroy');
+		Route::get('edit/{id}', 'NhaCungCapController@edit');
+		Route::post('update','NhaCungCapController@update');
+	});
+	Route::group(['prefix'=>'dathang'],function(){
+		Route::resource('danh-sach','DonDatHangController');
+		Route::post('add','DonDatHangController@add');
+		Route::get('destroy/{id}', 'DonDatHangController@destroy');
+		Route::get('edit/{id}', 'DonDatHangController@edit');
+		Route::post('update','DonDatHangController@update');
+	});
 	Route::group(['prefix'=>'khuvuc'],function(){
 		Route::resource('danh-sach','KhuVucController');
 		Route::post('add','KhuVucController@add');

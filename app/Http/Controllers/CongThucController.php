@@ -14,10 +14,10 @@ class CongThucController extends Controller
 	public function index()
 	{
 		$data1=Mon::select('mon.id','mon.tenmon')
-		->whereNotIn('mon.id',function($query)
-		{
-			$query->select('mamon')->from('cong_thuc');
-		})
+		// ->whereNotIn('mon.id',function($query)
+		// {
+		// 	$query->select('mamon')->from('cong_thuc');
+		// })
 		->get();
 		$nguyenlieu=NguyenLieu::select('nguyen_lieu.id','nguyen_lieu.tennguyenlieu')->get();
 		if(request()->ajax())

@@ -52,6 +52,16 @@
         <span>Nguyên Liệu</span></a>
       </li>
       <li class="nav-item">
+      <a class="nav-link" href="admin/nhacungcap/danh-sach">
+        <i class="fas fa-fw fa-table"></i>
+        <span>Nhà Cung Cấp</span></a>
+      </li>
+      <li class="nav-item">
+      <a class="nav-link" href="admin/dathang/danh-sach">
+        <i class="fas fa-fw fa-table"></i>
+        <span>Đặt Hàng</span></a>
+      </li>
+      <li class="nav-item">
       <a class="nav-link" href="admin/khuvuc/danh-sach">
         <i class="fas fa-fw fa-table"></i>
         <span>Khu Vực</span></a>

@@ -28,8 +28,8 @@
 								<th></th>
 							</tr>
 						</thead>
-						<tbody>
-							@if(Session::has('cart'))
+						<tbody id="table_cart">
+							{{-- @if(Session::has('cart'))
 							@foreach($product_cart as $cart)
 							<tr>
 								<td class="product-thumbnail">
@@ -54,7 +54,7 @@
 									<td colspan="6"><h5>Giỏ Hàng Rỗng</h5>
 									</td>
 								</tr>
-								@endif
+								@endif --}}
 							</tbody>
 						</table>
 					</div>
@@ -217,7 +217,6 @@
 					load_cart(cart.cart);
 					load_mini_cart(cart.cart);
 				}
-				
 			})
 		 });
 	});

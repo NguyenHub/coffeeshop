@@ -112,7 +112,7 @@
     processing: true,
     serverSide: true,
     ajax:{
-     url: "admin/loaimon/danh-sach",
+     url: "admin/loaisanpham/danh-sach",
    },
    columns:[
    {
@@ -165,7 +165,7 @@
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
-      url:'admin/loaimon/add',
+      url:'admin/loaisanpham/add',
       method:'POST',
       data: new FormData(this),
       contentType: false,
@@ -211,7 +211,7 @@
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
-      url:"admin/loaimon/update",
+      url:"admin/loaisanpham/update",
       method:"POST",
       data:new FormData(this),
       contentType: false,
@@ -253,7 +253,7 @@ $(document).on('click', '.edit', function(){
   var id = $(this).attr('id');
   $('#form_result').html('');
   $.ajax({
-   url:"admin/loaimon/edit/"+id,
+   url:"admin/loaisanpham/edit/"+id,
    dataType:"json",
    success:function(html){
     $('#tenloai').val(html.data.tenloai);
@@ -283,7 +283,7 @@ $(document).on('click', '.delete', function(){
 
 $('#ok_button').click(function(){
   $.ajax({
-   url:"admin/loaimon/destroy/"+id,
+   url:"admin/loaisanpham/destroy/"+id,
    beforeSend:function(){
     $('#ok_button').text('Deleting...');
   },

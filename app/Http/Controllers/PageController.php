@@ -13,12 +13,9 @@ use Session;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Mail;
 class PageController extends Controller
 {
-  public function getIndex() 
-  {
-   return view('admin/trang-chu');
- }
  public function getContact()
  {
   return view('front/lien-he');
@@ -30,9 +27,24 @@ public function Index()
 }
 public function productIndex(Request $request)
 {
-  $mon=Mon::paginate(12);
+  $mon=Mon::paginate(9);
   $loai=LoaiMon::all();
   return view('front.san-pham',['mon' => $mon,'loai'=>$loai]);
+}
+public function getProduct()
+{
+  $mon=Mon::paginate(9);
+  return view('front.san-pham2', compact('mon'))->render();
+}
+public function productType($id)
+{
+  $mon=Mon::where('mon.maloai',$id)->paginate(3);
+  return view('front.san-pham2', compact('mon'));
+}
+public function getProductType($type)
+{
+  $mon=Mon::where('mon.maloai',$type)->paginate(3);
+  return view('front.san-pham2', compact('mon'))->render();
 }
 public function getChiTiet ($id)
 {
@@ -72,6 +84,13 @@ public function getReduceItem($id)
   $cart=Session('cart')?Session::get('cart'):null;
   return response()->json(['cart'=>$cart]);
 }
+public function get_jsonCart()
+{
+  $oldCart =Session::has('cart')?Session::get('cart'):null;
+  $cart=new Cart($oldCart);
+  $cart=Session('cart')?Session::get('cart'):null;
+  return response()->json(['cart'=>$cart]);
+}
 public function getDelCart ($id)
 {
   $oldCart =Session::has('cart')?Session::get('cart'):null;
@@ -84,6 +103,12 @@ public function getDelCart ($id)
  }
  $cart=Session('cart')?Session::get('cart'):null;
  return response()->json(['cart'=>$cart]);
+}
+public function getDeleteCart()
+{
+  session()->forget('cart');
+  $cart=Session('cart')?Session::get('cart'):null;
+  return response()->json(['cart'=>$cart]);
 }
 public function getCart()
 {
@@ -101,12 +126,12 @@ public function getDiscount($code)
   $khuyenmai=KhuyenMai::Where('code_km',$code)->first();
   if($khuyenmai!=null)
   {
-    if(strtotime(date('Y-m-d H:i:m'))<=strtotime($khuyenmai->ngayketthuc)&&strtotime(date('Y-m-d H:i:m'))>=strtotime($khuyenmai->ngaybatdau))
+    if(strtotime(date('Y-m-d H:i:s'))<=strtotime($khuyenmai->ngayketthuc)&&strtotime(date('Y-m-d H:i:s'))>=strtotime($khuyenmai->ngaybatdau))
     {
       if($khuyenmai->loaikhuyenmai==0)
       {
         $giam_gia= Session('cart')->totalPrice-$khuyenmai->giatri;
-       $giam_gia=$giam_gia<Session('cart')->totalPrice?Session('cart')->totalPrice:$giam_gia;
+        $giam_gia=$giam_gia<Session('cart')->totalPrice?Session('cart')->totalPrice:$giam_gia;
       }
       else
       {
@@ -130,9 +155,10 @@ public function getDiscount($code)
 public function getBill(Request $request)
 {
   $id=Auth::guard('khach_hang')->check()?Auth::guard('khach_hang')->user()->id:null;
+  $email=Auth::guard('khach_hang')->check()?Auth::guard('khach_hang')->user()->email:null;
   $donhang=new DonHang;
   $donhang->makhachhang=$id;
-  $donhang->ngaydat=date('Y-m-d H:m:i');
+  $donhang->ngaydat=date('Y-m-d H:i:s');
   $donhang->thanhtien=$request->thanhtien;
   $donhang->phi_giao_hang=$request->ship;
   $donhang->makhuyenmai=$request->makhuyenmai;
@@ -140,7 +166,7 @@ public function getBill(Request $request)
   $donhang->diachi=$request->diachi;
   $donhang->sdt=$request->sdt;
   $donhang->trangthai=0;
-  $donhang->created_at=date('Y-m-d H:m:i');
+  $donhang->created_at=date('Y-m-d H:i:s');
   $donhang->save();
   $cart=Session('cart');
   foreach ($cart->items as $key => $value)
@@ -150,11 +176,60 @@ public function getBill(Request $request)
     $bill_detail->mamon=$key;
     $bill_detail->soluong=$value['qty'];
     $bill_detail->dongia=$value['price']/$value['qty'];
-    $bill_detail->created_at=date('Y-m-d H:m:i');
+    $bill_detail->created_at=date('Y-m-d H:i:s');
     $bill_detail->save();
   }
   Session::forget('cart');
+  if($id!=null)
+  {
+    $diem=$request->thanhtien/10000;
+    DB::table('khach_hang')->where('khach_hang.id',$id)->increment('khach_hang.diemtichluy',$diem);
+    $ten=Auth::guard('khach_hang')->check()?Auth::guard('khach_hang')->user()->tenkhachhang:'';
+    $email=Auth::guard('khach_hang')->user()->email;
+    $ship=$request->ship;
+    $thanhtien = $request->thanhtien;
+    $sdt=$request->sdt;
+    $diachi=$request->diachi;
+    $ngaydat=$donhang->ngaydat;
+    $dt = array('ten'=>$ten, "sdt" => $sdt,'diachi'=>$diachi,'ship'=>$ship,'thanhtien'=>$thanhtien,'ngaydat'=>$ngaydat,'cart'=>$cart);
+    Mail::send('front.mail-bill',$dt, function($message) use ($email) {
+     $message->to($email)->subject('Đặt Hàng Thành Công - Thông Tin Đơn Hàng!');
+   });
+  }
   return response()->json();
+}
+public function postBill(Request $request)
+{
+  $cart=Session('cart');
+  $donhang=new DonHang;
+  $donhang->makhachhang=$request->id_khachhang;
+  $donhang->ngaydat=date('Y-m-d H:i:s');
+  $donhang->thanhtien=$request->thanhtien;
+    //$donhang->phi_giao_hang=$request->ship;
+    //$donhang->makhuyenmai=$request->makhuyenmai;
+    //$donhang->ghichu=$request->ghichu;
+    //$donhang->diachi=$request->diachi;
+    //$donhang->sdt=$request->sdt;
+  $donhang->trangthai=2;
+  $donhang->created_at=date('Y-m-d H:i:s');
+  $donhang->save();
+  foreach ($cart->items as $key => $value)
+  {
+    $bill_detail= new ChiTietDonHang;
+    $bill_detail->madonhang=$donhang->id;
+    $bill_detail->mamon=$key;
+    $bill_detail->soluong=$value['qty'];
+    $bill_detail->dongia=$value['price']/$value['qty'];
+    $bill_detail->created_at=date('Y-m-d H:i:s');
+    $bill_detail->save();
+  }
+  if($request->id_khachhang!='')
+  {
+    $diem=$request->thanhtien/10000;
+    DB::table('khach_hang')->where('khach_hang.id',$request->id_khachhang)->increment('khach_hang.diemtichluy',$diem);
+  }
+  $cart=Session::forget('cart');
+  return response()->json(['cart'=>$cart]);
 }
 public function getSearch(Request $request)
 {

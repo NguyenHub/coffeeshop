@@ -45,7 +45,7 @@ class LuongController extends Controller
 		{
 			$data = new Luong;
 			$data->luongcoban=str_replace(" ", "", $request->luongcoban) ;
-			$data->created_at=date('Y-m-d H:m:s');
+			$data->created_at=date('Y-m-d H:i:s');
 			$data->save();
         //LoaiMon::create($form_data);
 			return response()->json(['success' => 'Thêm Thành Công!']);
@@ -88,7 +88,7 @@ class LuongController extends Controller
 		{
 			$data = Luong::find($request->hidden_id);
 			$data->luongcoban=str_replace(" ", "", $request->luongcoban) ;
-			$data->updated_at=date('Y-m-d H:m:s');
+			$data->updated_at=date('Y-m-d H:i:s');
 			$data->update();
 			return response()->json(['success' => 'Cập Nhật Thành Công']);
 		}

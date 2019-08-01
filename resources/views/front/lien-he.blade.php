@@ -56,20 +56,28 @@
 					<h4 class="contact-title">HỘP THƯ GÓP Ý</h4>
 					<div class="contact-message">
 						<form id="contact-form" action="assets/mail.php" method="post">
+							{{-- <div class="row">
+								<div class="form-group">
+									<input name="ten" class="form-control" placeholder="Họ Tên" type="text" required="">
+								</div>
+							</div> --}}
 							<div class="row">
-								<div class="col-lg-6">
-									<div class="contact-form-style mb-20">
-										<input name="ten" placeholder="Họ Tên" type="text" required="">
+								<div class="form-group col-md-6">
+									<div class="form-label-group">
+										<input name="ten" id="ten" class="form-control" placeholder="Họ Tên" type="text" required="">
+										<label for="ten">Tên</label>
 									</div>
 								</div>
-								<div class="col-lg-6">
-									<div class="contact-form-style mb-20">
-										<input name="email" placeholder="Địa Chỉ Email" type="email" required="">
+								<div class=" form-group col-md-6">
+									<div class="form-label-group">
+										<input name="email" id="email" class="form-control" placeholder="Địa Chỉ Email" type="email" required="">
+										<label for="email">Email</label>
 									</div>
 								</div>
-								<div class="col-lg-12">
-									<div class="contact-form-style mb-20">
-										<input name="subject" placeholder="Subject" type="text">
+								<div class="form-group col-md-12">
+									<div class="form-label-group">
+										<input name="subject" id="subject" class="form-control" placeholder="Subject" type="text">
+										<label for="subject">Subject</label>
 									</div>
 								</div>
 								<div class="col-lg-12">

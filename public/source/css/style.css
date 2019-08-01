@@ -5,3 +5,37 @@ td.highlight {
 .btn_width{
 	width: 110px;
 }
+.line-through{
+    text-decoration: underline;
+}
+.price_item{
+	right: 0px;
+	position: absolute;
+}
+.qty_item{
+	right: 100px;
+	position: absolute;
+}
+.fa-minus-circle{
+	padding-right: 10px;
+}
+.fa-plus-circle{
+	padding-left: 10px;
+}
+.search-content {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #ebebeb;
+    border-radius: 5px;
+    padding: 10px 10px 10px;
+    position: absolute;
+    /*right: 0;*/
+    top: 100%;
+   /* width: 300px;*/
+    width: 318px;
+    z-index: 9999;
+    display: none;
+}
+.display-block
+{
+    display: block;
+}

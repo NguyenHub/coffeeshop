@@ -45,7 +45,7 @@ class LoaiKhachHangController extends Controller
 		{
 			$loaikhach = new LoaiKhachHang;
 			$loaikhach->tenloai=$request->tenloai;
-			$loaikhach->created_at=date('Y-m-d H:m:s');
+			$loaikhach->created_at=date('Y-m-d H:i:s');
 			$loaikhach->save();
         //LoaiMon::create($form_data);
 
@@ -89,7 +89,7 @@ class LoaiKhachHangController extends Controller
 		{
 			$loaikhach = LoaiKhachHang::find($request->hidden_id);
 			$loaikhach->tenloai=$request->tenloai;
-			$loaikhach->updated_at=date('Y-m-d H:m:s');
+			$loaikhach->updated_at=date('Y-m-d H:i:s');
 			$loaikhach->update();
 			return response()->json(['success' => 'Cập Nhật Thành Công']);
 		}

@@ -48,36 +48,30 @@
 </style>
 </head>
 <body>
-	<p>Đơn Đặt Hàng</p>
+	<p><strong> Thông Tin Đơn Hàng<strong></p>
+	<div>Ngày Đặt: {{$ngaydat}}</div>
+	<div>Tên Khách Hàng: {{$ten}}</div>
+	<div>Số Điện Thoại: {{$sdt}}</div>
+	<div>Địa Chỉ Nhận Hàng: {{$diachi}}</div>
 	<table class="table table-bordered ">
 		<thead>
-			<th>STT</th>
-			<th>NGUYÊN LIỆU</th>
-			<th>SỐ LƯỢNG</th>
-			<th>DVT</th>
-			<th>GHI CHÚ</th>
+			<th>Sản Phẩm</th>
+			<th>Số Lượng</th>
+			<th>Đơn Giá</th>
 		</thead>
 		<tbody>
-			@foreach($dathang as $key=>$value)
+			@foreach($cart->items as $carts)
 			<tr>
-				<td>{{$key}}</td>
-				<td>{{$value['tennguyenlieu']}}</td>
-				<td>{{$value['soluong']}}</td>
-				<td>
-					@if($value['donvitinh']==0)
-					{{'Chai'}}
-					@elseif($value['donvitinh']==1)
-					{{'Thùng'}}
-					@elseif($value['donvitinh']==2)
-					{{'Kilogram'}}
-					@else
-					{{'Cái'}}
-					@endif
-				</td>
-				<td>{{$value['ghichu']}}</td>
+				<td>{{$carts['item']['tenmon']}}</td>
+				<td>{{$carts['item']['dongia']}}</td>
+				<td>{{$carts['qty']}}</td>
 			</tr>
 			@endforeach
 		</tbody>
 	</table>
+	<div>Tạm Tính: {{$cart->totalPrice}}</div>
+	<div>Phí Ship: {{$ship}}</div>
+	<div>Khuyến Mãi: {{$cart->totalPrice+$ship-$thanhtien}}</div>
+	<div>Thành Tiền: {{$thanhtien}}</div>
 </body>
 </html>

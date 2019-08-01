@@ -45,10 +45,10 @@ class NguyenLieuController extends Controller
 		{
 			$data = new NguyenLieu;
 			$data->tennguyenlieu=ucwords(strtolower($request->tennguyenlieu));
-			$data->soluong=$request->soluong;
+			$data->soluong=0;
 			$data->donvitinh=$request->donvitinh;
 			$data->ghichu=$request->ghichu;
-			$data->created_at=date('Y-m-d H:m:s');
+			$data->created_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Thêm Thành Công!']);
 		}
@@ -92,7 +92,7 @@ class NguyenLieuController extends Controller
 			$data->soluong=$request->soluong;
 			$data->donvitinh=$request->donvitinh;
 			$data->ghichu=$request->ghichu;
-			$data->updated_at=date('Y-m-d H:m:s');
+			$data->updated_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Cập Nhật Thành Công!']);
 		}

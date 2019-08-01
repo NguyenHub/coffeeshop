@@ -174,7 +174,7 @@
     processing: true,
     serverSide: true,
     ajax:{
-     url: "admin/mon/danh-sach",
+     url: "admin/sanpham/danh-sach",
      dataType:"json",
    },
    columns:[
@@ -260,6 +260,7 @@
       });
       $('#sample_form')[0].reset();
       $('#form_result').html(html);
+      $('.file-caption-name').attr('required',true);
       CKEDITOR.instances['mota'].setData('');
     });
     {{-- End Call Form --}}
@@ -278,7 +279,7 @@
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
-          url:"admin/mon/add",
+          url:"admin/sanpham/add",
           method:"POST",
           data: formData,
           contentType: false,
@@ -319,7 +320,7 @@
         var formData=new FormData($('#sample_form')[0]);
         formData.append('mota',content);
         $.ajax({
-          url:"admin/mon/update",
+          url:"admin/sanpham/update",
           method:"POST",
           data:formData,
           contentType: false,
@@ -360,7 +361,7 @@
      var id = $(this).attr('id');
      $('#form_result').html('');
      $.ajax({
-       url:"admin/mon/edit/"+id,
+       url:"admin/sanpham/edit/"+id,
        dataType:"json",
        success:function(html){
         $('#select_trangthai').removeAttr('hidden');
@@ -380,7 +381,11 @@
           initialPreview: [
           "<img class='file-preview-image kv-preview-data' src={{URL::to('/')}}/hinhanh/upload/"+html.data.hinhanh+">",
           ],
+          initialCaption: html.data.hinhanh,
         });
+        //$('.kv-file-remove').hide();
+        $('.kv-file-remove').hide();
+        $('.kv-file-zoom').hide();
         $('#hidden_id').val(html.data.id);
         $('.modal-title').text("Cập Nhật Dữ Liệu");
         $('#action_button').val("Cập Nhật");
@@ -403,7 +408,7 @@
     {{-- Start Confirm Delete --}}
     $('#ok_button').click(function(){
       $.ajax({
-       url:"admin/mon/destroy/"+id,
+       url:"admin/sanpham/destroy/"+id,
        beforeSend:function(){
         $('#ok_button').text('Deleting...');
       },
@@ -420,7 +425,18 @@
     {{-- End Confirm Delete --}}
     $('#dongia').keyup(function(){
       var number =$('#dongia').val();
-      $('#dongia').val(number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 "));
+      var substring=number.substring(number.length-1,number.length);
+      var sl;
+      var pattern_number= /(([0-9]{1,5})\b)/g;
+      if(pattern_number.test(substring)==false)
+      {
+        sl=number.substring(0,number.length-1);
+      }
+      else
+      {
+        sl= number;
+      }
+      $('#dongia').val(sl.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 "));
     });
     $('#dongia').keydown(function(){
       var number =$('#dongia').val();

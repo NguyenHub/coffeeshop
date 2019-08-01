@@ -35,6 +35,7 @@
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/logo/footer-logo2.PNG">
     <!-- all css here -->
+
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/animate.css">
     <link rel="stylesheet" href="assets/css/owl.carousel.min.css">
@@ -47,6 +48,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/style2.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
+    <link href="source/css/sb-admin.css" rel="stylesheet">
     <script src="assets/js/vendor/modernizr-2.8.3.min.js"></script>
     <link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" >
     <link rel="stylesheet" type="text/css" href="daterangepicker/daterangepicker.css" />
@@ -179,6 +181,22 @@
 </script> --}}
 @yield('script')
 <script>
+    $(document).ready(function(){
+        //get_jsonCart();
+    });
+    get_jsonCart();
+    function get_jsonCart()
+        {
+            $.ajax({
+                url:'get_jsonCart',
+                dataType:'json',
+                success:function(data)
+                {
+                    load_mini_cart(data.cart);
+                    load_cart(data.cart);
+                }
+            })
+        }
     function load_loai(loais)
     {
         var option='';
@@ -240,10 +258,11 @@
             html+='<td colspan="6"><h5>Giỏ Hàng Rỗng</h5>'
             html+='</td>'
             html+='</tr>'
-            $('tbody').html(html);
+            $('#table_cart').html(html);
         }       
         else
         {
+            //console.log(carts);
             $.each(carts.items,function(k,v){
                 html+='<tr>'
                 html+='<td class="product-thumbnail">'
@@ -263,10 +282,11 @@
                 html+='</td>'
                 html+='</tr>'
             })
-            $('tbody').html(html);
+            $('#table_cart').html(html);
+
         }
     }
-    $('.detail').click(function(event){
+    $(document).on('click','.detail',function(event){
         event.preventDefault();
         var id = $(this).attr('id');
         $('#exampleModal').modal('show');
@@ -362,7 +382,6 @@
             return  day+"/"+month+"/"+year+" "+hour+":"+minute+":"+second;
         }
         return  day+"/"+month+"/"+year;
-
     }
     function format_money(money)
     {
@@ -423,22 +442,6 @@
     $('#show_mon').html(html);
 }
 
-        //xem chi tiết sản phẩm
-
-        function String_replace(string)
-        {
-            // for(int i=0; i<=string.length;i++)
-            // {
-
-            // }
-            //&lt;p&gt;TRÀ ĐÀO CAM SẢ&lt;/p&gt;
-             //return tring.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
-             //var strings=string;
-           //return string.toString().replace('<p>','');
-            //string.toString().replace('</p>;','');
-             //string;
-            //console.log(string);
-        }
         //thêm vào giỏ hàng với số lượng 1
         $('.addToCart_byOne').click(function(event){
             event.preventDefault();
@@ -454,24 +457,24 @@
             })
         });
         //thêm vào giỏ hàng với số lượng tùy chọn
+        $('.dec').click(function(){
+            if($('#soluong').val()<1)
+            {
+                $('#soluong').val(1);
+            }
+        });
+        //nếu giảm số lượng <1 thì lấy bằng 1
         $(document).on('click','.addToCart',function(event){
             event.preventDefault();
-            //nếu giảm số lượng <1 thì lấy bằng 1
-            $('.dec').click(function(){
-                if($('#soluong').val()<1)
-                {
-                    $('#soluong').val(1);
-                }
-            });
             var id=$(this).attr('id');
             var sl=$('#soluong').val();
             $.ajax({
                 url:"add-to-cart/"+id+"/"+sl,
                 dataType:"json",
-                success:function(cart)
+                success:function()
                 {
 
-                    load_mini_cart(cart.cart);
+                    get_jsonCart();
                 }
             })
             $('#result_addTocart').removeAttr('hidden');
@@ -493,6 +496,8 @@
                 }
             })
         });
+
     </script>
+
 </body>
 </html>

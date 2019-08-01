@@ -82,7 +82,7 @@
 						</div>
 						<div class="product-quantity">
 							<div class="cart-plus-minus">
-								<input id="" class="cart-plus-minus-box soluong" type="text" name="qtybutton">
+								<input id="" value="1" class="cart-plus-minus-box soluong" type="text" name="qtybutton">
 							</div>
 						</div>
 					</div>
@@ -557,20 +557,20 @@
 @section('script')
 <script>
 	$(document).ready(function(){
-		$('.soluong').val(1);
+		//$('.soluong').val(1);
 		$('#result_addTocart2').attr('hidden',true);
 		//thêm vào giỏ hàng với số lượng tùy chọn
-		$(document).on('click','.addToCart2',function(event){
-			event.preventDefault();
-			//var sl= $('.soluong').val();
-			//alert(sl);
-            //nếu giảm số lượng <1 thì lấy bằng 1
-            $('.dec').click(function(){
+		$('.dec').click(function(){
             	if($('.soluong').val()<1)
             	{
             		$('.soluong').val(1);
             	}
             });
+		$(document).on('click','.addToCart2',function(event){
+			event.preventDefault();
+			//var sl= $('.soluong').val();
+			//alert(sl);
+            //nếu giảm số lượng <1 thì lấy bằng 1
             var id=$(this).attr('id');
             var sl=$('.soluong').val();
             $.ajax({
@@ -578,8 +578,8 @@
             	dataType:"json",
             	success:function(cart)
             	{
-
             		load_mini_cart(cart.cart);
+            		
             	}
             })
             $('#result_addTocart2').removeAttr('hidden');

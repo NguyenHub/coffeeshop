@@ -52,7 +52,7 @@ class NhaCungCapConTroller extends Controller
 			$data->sdt=$request->sdt;
 			$data->diachi=$request->diachi;
 			$data->ghichu=$request->ghichu;
-			$data->created_at=date('Y-m-d H:m:s');
+			$data->created_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Thêm Thành Công!']);
 		}
@@ -99,7 +99,7 @@ class NhaCungCapConTroller extends Controller
 			$data->sdt=$request->sdt;
 			$data->diachi=$request->diachi;
 			$data->ghichu=$request->ghichu;
-			$data->created_at=date('Y-m-d H:m:s');
+			$data->created_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Cập Nhật Thành Công!']);
 		}

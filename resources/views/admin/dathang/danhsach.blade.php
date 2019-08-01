@@ -86,11 +86,11 @@
 </div>
 </div>
 <div class="form-group row ngaydat">
-    <label class="control-label col-md-4" >Ngày Đặt : </label>
-    <div class="col-md-8">
-     <input type="text" name="ngaydat" id="ngaydat" class="form-control" />
-   </div>
+  <label class="control-label col-md-4" >Ngày Đặt : </label>
+  <div class="col-md-8">
+   <input type="text" name="ngaydat" id="ngaydat" class="form-control" />
  </div>
+</div>
 <table class="table table-bordered" id="table_detail" >
  <thead>
    <tr>
@@ -309,6 +309,16 @@
         $('.option_mon'+id_mon).attr('disabled',true);
       }
       $('#form_result').html(html);
+      setTimeout(function(){
+       $('#form_result').html('');
+     }, 1000);
+    },
+    error:function()
+    {
+      $('#form_result').html('Đặt hàng thất bại');
+      setTimeout(function(){
+       $('#form_result').html('');
+     }, 1000);
     }
   })
      }
@@ -358,9 +368,9 @@
       var id = $(this).attr('id');
       $('#form_result').html('');
       $("#table_addrow tr").remove();
-      $('.select_nguyenlieu').attr('hidden',true);
+      //$('.select_nguyenlieu').attr('hidden',true);
       $('.ngaydat').removeAttr('hidden');
-      $('#action_button').hide();
+      //$('#action_button').hide();
       $.ajax({
        url:"admin/dathang/edit/"+id,
        dataType:"json",
@@ -371,10 +381,9 @@
         $('#hidden_id').val(html.data.id);
         edit_field(html.data2);
         $('.modal-title').text("Cập Nhật Dữ Liệu");
-        $('#action_button').val("Cập Nhật");
-        $('#action').val("Edit");
+        $('#action_button').val("Đặt Lại");
+        $('#action').val("Add");
         $('#formModal').modal('show');
-        $('#trangthai_selected').removeAttr('hidden');
       }
     })
     });
@@ -386,15 +395,17 @@
           val.ghichu="";
         }
         html = '<tr>';
-        html += '<td style="max-width: 80px;" ><input value='+val.manguyenlieu+' type="text" id="manguyenlieu" name="manguyenlieu" class="form-control"></td>';
-        html += '<td style="max-width: 200px;" ><input type="text" id="tennguyenlieu'+val.manguyenlieu+'" name="tennguyenlieu" class="form-control"></td>';
+        html += '<td style="max-width: 80px;" ><input value='+val.manguyenlieu+' type="text" id="manguyenlieu" name="manguyenlieu[]" readonly="" class="form-control"></td>';
+        html += '<td style="max-width: 200px;" ><input type="text" readonly="" id="tennguyenlieu'+val.manguyenlieu+'" name="tennguyenlieu[]" class="form-control"></td>';
         html += '<td style="max-width: 100px;" ><input type="text" id="soluong" name="soluong[]" value="'+val.soluong+'" class="form-control soluong"></td>';
         html += '<td><select name="donvitinh[]" id="donvitinh'+val.manguyenlieu+'" class="form-control"><option value="0">Chai</option><option  value="1">Thùng</option><option  value="2">Kilogram</option><option  value="3">Cái</option></select></td>';
-        html += '<td><input type="text" id="note'+val.manguyenlieu+'" name="note" value="'+val.ghichu+'" class="form-control budget"></td>';
+        html += '<td><input type="text" id="note'+val.manguyenlieu+'" name="note[]" value="'+val.ghichu+'" class="form-control budget"></td>';
+        html += '<td><button style="width:40px" type="button" value="'+val.manguyenlieu+'" name="remove" id="remove" class="btn btn-danger remove"><i id="fa" class="fa fa-trash"></i></button></td>';
         html += '</tr>';
         $('#table_addrow').append(html);
         $('#tennguyenlieu'+val.manguyenlieu).val(val.tennguyenlieu);
         $('#donvitinh'+val.manguyenlieu).val(val.donvitinh);
+        $('.option_nl'+val.manguyenlieu).attr('hidden',true);
       })
     //}
     //else
@@ -432,7 +443,7 @@
     html += '<td style="max-width: 80px;" ><input value='+id+' type="text" id="manguyenlieu" name="manguyenlieu[]" readonly="" class="form-control"></td>';
     html += '<td style="max-width: 200px;" ><input type="text" id="tennguyenlieu'+id+'" name="tennguyenlieu[]" readonly="" class="form-control"></td>';
     html += '<td style="max-width: 100px;" ><input type="text" id="soluong" name="soluong[]" class="form-control soluong" required=""></td>';
-     html += '<td><select name="donvitinh[]" id="donvitinh'+id+'" class="form-control"><option value="0">Chai</option><option  value="1">Thùng</option><option  value="2">Kilogram</option><option  value="3">Cái</option></select></td>';
+    html += '<td><select name="donvitinh[]" id="donvitinh'+id+'" class="form-control"><option value="0">Chai</option><option  value="1">Thùng</option><option  value="2">Kilogram</option><option  value="3">Cái</option></select></td>';
     html += '<td><input type="text" name="note[]" id="note" class="form-control budget"></td>';
     html += '<td><button style="width:40px" type="button" value="'+id+'" name="remove" id="remove'+id+'" class="btn btn-danger remove"><i id="fa" class="fa fa-trash"></i></button></td></tr>';
     $('#table_addrow').append(html);
@@ -452,10 +463,6 @@
       var name= $('.option_nl'+id).text();
       dynamic_field(id,name);
       $('.option_nl'+id).attr('hidden',true);
-      if($('#action').val() == "Add")
-      {
-        $('.add').attr('hidden',true);
-      }
     }
   });
   {{-- End Click Append row --}}

@@ -6,12 +6,66 @@ use Illuminate\Http\Request;
 use App\NhanVien;
 use App\LoaiNhanVien;
 use App\ChucVu;
+use App\Mon;
+use App\LoaiMon;
+use App\KhachHang;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 class NhanVienController extends Controller
 {
+	public function getIndex()
+	{
+		return view('admin/trang-chu');
+	}
+	public function getSale()
+	{
+		$loai=LoaiMon::select('loai_mon.id','loai_mon.tenloai')->get();
+		
+		return view('admin/ban-hang',['loai'=>$loai]);
+	}
+	public function getJsonProduct($id)
+	{
+		if(request()->ajax())
+		{
+			if($id==0)
+			{
+				$sanpham=Mon::select('mon.id','mon.tenmon','mon.hinhanh')->get();
+			}
+			else
+			{
+				$sanpham=Mon::select('mon.id','mon.tenmon','mon.hinhanh')->where('mon.maloai',$id)->get();
+			}
+			return response()->json(['data'=>$sanpham]);
+		}
+	}
+	public function searchProduct($key)
+	{
+		if(request()->ajax())
+		{
+			
+			$sanpham=Mon::select('mon.id','mon.tenmon','mon.hinhanh')->where('mon.tenmon','like','%'.$key.'%')->get();
+
+		}
+		return response()->json(['data'=>$sanpham]);
+	}
+	public function searchCustomer($key)
+	{
+		if(request()->ajax())
+		{
+			
+			$khachhang=KhachHang::select('khach_hang.id','khach_hang.tenkhachhang','khach_hang.diemtichluy')
+			->orwhere('khach_hang.sdt',$key)
+			->orwhere('khach_hang.email','like','%'.$key.'%')
+			->get();
+		}
+		return response()->json(['data'=>$khachhang]);
+	}
+	public function getPrint()
+	{
+		return view('admin/print');
+	}
 	public function index()
 	{
 		$loainhanvien=LoaiNhanVien::all();
@@ -73,7 +127,7 @@ class NhanVienController extends Controller
 			$data->cmnd=$request->cmnd;
 			$data->ngayvaolam=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngayvaolam)));
 			$data->ghichu=$request->ghichu;
-			$data->created_at=date('Y-m-d H:m:s');
+			$data->created_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Thêm Thành Công!']);
 		}
@@ -135,7 +189,7 @@ class NhanVienController extends Controller
 			$data->cmnd=$request->cmnd;
 			$data->ngayvaolam=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngayvaolam)));
 			$data->ghichu=$request->ghichu;
-			$data->updated_at=date('Y-m-d H:m:s');
+			$data->updated_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Cập Nhật Thành Công!']);
 		}
@@ -148,6 +202,10 @@ class NhanVienController extends Controller
 	{
 		Auth::guard('nhan_vien')->logout();
 		return view('admin/dang-nhap');
+	}
+	public function getManager()
+	{
+		return view('admin/quan-ly');
 	}
 	public function postLogin(Request $request)
 	{
@@ -211,7 +269,7 @@ class NhanVienController extends Controller
 				$data->sdt=$request->sdt;
 				$data->diachi=$request->diachi;
 				$data->ghichu=$request->ghichu;
-				$data->updated_at=date('Y-m-d H:m:s');
+				$data->updated_at=date('Y-m-d H:i:s');
 				if(Hash::check($request->oldpassword,$data->password))
 				{
 					$data->save();
@@ -249,7 +307,7 @@ class NhanVienController extends Controller
 			$data->sdt=$request->sdt;
 			$data->diachi=$request->diachi;
 			$data->ghichu=$request->ghichu;
-			$data->updated_at=date('Y-m-d H:m:s');
+			$data->updated_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Cập Nhật Thành Công!']);
 		}

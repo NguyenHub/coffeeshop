@@ -46,7 +46,7 @@ class KhuVucController extends Controller
 			$khuvuc = new KhuVuc;
 			$khuvuc->tenkhuvuc=$request->name;
 			$khuvuc->ghichu=$request->note;
-			$khuvuc->created_at=date('Y-m-d H:m:s');
+			$khuvuc->created_at=date('Y-m-d H:i:s');
 			$khuvuc->save();
         //LoaiMon::create($form_data);
 
@@ -90,7 +90,7 @@ class KhuVucController extends Controller
 			$khuvuc = KhuVuc::find($request->hidden_id);
 			$khuvuc->tenkhuvuc=$request->name;
 			$khuvuc->ghichu=$request->note;
-			$khuvuc->updated_at=date('Y-m-d H:m:s');
+			$khuvuc->updated_at=date('Y-m-d H:i:s');
 			$khuvuc->update();
 			return response()->json(['success' => 'Cập Nhật Thành Công']);
 		}

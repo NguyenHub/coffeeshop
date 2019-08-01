@@ -55,8 +55,8 @@ class DonDatHangController extends Controller
 				$data = new DonDatHang;
 				$data->manhacungcap=$request->ma_ncc;
 				$data->ghichu=$request->ghichu;
-				$data->ngaydat=date('Y-m-d H:m:s');
-				$data->created_at=date('Y-m-d H:m:s');
+				$data->ngaydat=date('Y-m-d H:i:s');
+				$data->created_at=date('Y-m-d H:i:s');
 				$data->save();
 				$manguyenlieu = $request->manguyenlieu;
 				$tennguyenlieu = $request->tennguyenlieu;

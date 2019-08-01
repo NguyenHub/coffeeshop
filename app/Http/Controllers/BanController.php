@@ -51,7 +51,7 @@ class BanController extends Controller
 			$ban->makhuvuc=$request->khuvuc;
 			$ban->soban=$request->soban;
 			$ban->trangthai=$request->trangthai;
-			$ban->created_at=date('Y-m-d H:m:s');
+			$ban->created_at=date('Y-m-d H:i:s');
 			$ban->save();
         //LoaiMon::create($form_data);
 
@@ -95,7 +95,7 @@ class BanController extends Controller
 			$ban->makhuvuc=$request->khuvuc;
 			$ban->soban=$request->soban;
 			$ban->trangthai=$request->trangthai;
-			$ban->updated_at=date('Y-m-d H:m:s');
+			$ban->updated_at=date('Y-m-d H:i:s');
 			$ban->update();
 			return response()->json(['success' => 'Cập Nhật Thành Công']);
 		}

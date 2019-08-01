@@ -62,7 +62,7 @@ class CongThucController extends Controller
 				$data->mamon=$request->mamon;
 				$data->tencongthuc=ucwords($request->tencongthuc);
 				$data->ghichu=$request->ghichu;
-				$data->created_at=date('Y-m-d H:m:s');
+				$data->created_at=date('Y-m-d H:i:s');
 				$data->save();
 				$manguyenlieu = $request->manguyenlieu;
 				$dinhluong = $request->dinhluong;
@@ -128,7 +128,7 @@ class CongThucController extends Controller
 			$data = CongThuc::find($request->hidden_id);
 			$data->tencongthuc=$request->tencongthuc;
 			$data->ghichu=$request->ghichu;
-			$data->updated_at=date('Y-m-d H:m:s');
+			$data->updated_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Cập Nhật Thành Công!']);
 		}

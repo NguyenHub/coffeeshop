@@ -33,7 +33,7 @@ class MonController extends Controller
 			->make(true);
 			
 		}
-		return view('admin.mon.danhsach',['data'=>$loai]);
+		return view('admin.sanpham.danhsach',['data'=>$loai]);
 	}
 	public function add( Request $request)
 	{
@@ -77,7 +77,7 @@ class MonController extends Controller
 				$data->trangthai=$request->trangthai;
 				$data->ghichu=$request->ghichu;
 				$data->mota=$request->mota;
-				$data->created_at=date('Y-m-d H:m:s');
+				$data->created_at=date('Y-m-d H:i:s');
 				$data->save();
 				//dd($data);
 				return response()->json(['success' => 'Thêm Thành Công!']);
@@ -143,7 +143,7 @@ class MonController extends Controller
 					$data->trangthai=$request->trangthai;
 					$data->mota=$request->mota;
 					$data->ghichu=$request->ghichu;
-					$data->updated_at=date('Y-m-d H:m:s');
+					$data->updated_at=date('Y-m-d H:i:s');
 					$data->save();
 					return response()->json(['success' => 'Cập Nhật Thành Công!']);
 				}
@@ -183,7 +183,7 @@ class MonController extends Controller
 					$data->trangthai=$request->trangthai;
 					$data->ghichu=$request->ghichu;
 					$data->mota=$request->mota;
-					$data->updated_at=date('Y-m-d H:m:s');
+					$data->updated_at=date('Y-m-d H:i:s');
 					$data->save();
 					return response()->json(['success' => 'Cập Nhật Thành Công!']);
 				}

@@ -49,20 +49,20 @@
      <span id="form_result"></span>
      <form method="post" id="sample_form" class="form-horizontal" enctype="multipart/form-data">
       {{csrf_field()}}
-      <div class="form-group row">
-        <label class="control-label col-md-4" >Tên Khu Vực : </label>
-        <div class="col-md-8">
-         <input type="text" name="name" id="name" class="form-control" required="" />
-       </div>
-     </div>
-     <div class="form-group row">
-      <label class="control-label col-md-4">Ghi Chú : </label>
-      <div class="col-md-8">
-       <input type="text" name="note" id="note" class="form-control" />
-     </div>
-   </div>
-   <br />
-   <div class="form-group" align="center">
+      <div class="form-group">
+       <div class="form-label-group">
+        <input type="text" id="inputName" name="name" class="form-control" placeholder="Ten" required="required" autofocus="autofocus">
+        <label for="inputName">Tên Khu Vực</label>
+      </div>
+    </div>
+   <div class="form-group">
+    <div class="form-label-group">
+      <input type="text" id="inputNote" name="note" class="form-control" placeholder="Note" required="required" autofocus="autofocus">
+      <label for="inputNote">Ghi Chú</label>
+    </div>
+  </div>
+  <br />
+  <div class="form-group" align="center">
     <input type="hidden" name="action" id="action" />
     <input type="hidden" name="hidden_id" id="hidden_id" />
     <input type="submit" name="action_button" id="action_button" class="btn btn-warning" value="Add" />
@@ -148,8 +148,9 @@
 <script>
   $(document).ready(function(){
     {{-- Start Call Form --}}
+    $('.form-control').attr('autocomplete','off');
     var html ='';
-     $('#create_record').click(function(){
+    $('#create_record').click(function(){
       $('.modal-title').text("Tạo Mới Dữ Liệu");
       $('#action_button').val("Add");
       $('#action').val("Add");
@@ -254,9 +255,9 @@
         $('#formModal').modal('show');
         $('#action_button').attr('disabled',true);
         $('input').change(function()
-          {
-            $('#action_button').attr('disabled',false);
-          });
+        {
+          $('#action_button').attr('disabled',false);
+        });
       }
     })
     });
@@ -279,9 +280,9 @@
       success:function(data)
       {
         setTimeout(function(){
-        $('#confirmModal').modal('hide');
-         $('#data_table').DataTable().ajax.reload();
-       }, 2000);
+          $('#confirmModal').modal('hide');
+          $('#data_table').DataTable().ajax.reload();
+        }, 2000);
         $('#ok_button').text('OK');
       }
     })

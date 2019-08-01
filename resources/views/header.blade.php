@@ -50,92 +50,49 @@
                                     <div class="header-icon-style">
                                         <i class="icon-handbag icons"></i>
                                         <span class="count_cart" class="count-style">
-                                            @if(Session::has('cart'))
-                                            {{Session('cart')->totalQty}}
-                                            @else
-                                            0
-                                            @endif
                                         </span>
                                     </div>
                                     <div class="cart-text">
                                         <span class="digit">Giỏ Hàng</span>
                                         <span class="price_cart" class="cart-digit-bold">
-                                           @if(Session::has('cart'))
-                                           {{Session('cart')->totalPrice}}
-                                           @else
-                                           0
-                                           @endif
-                                       </span>
-                                   </div>
-                               </a>
-                               @if(Session::has('cart'))
-                               <div id="mini_cart" class="shopping-cart-content">
-                                <ul>
-                                    @foreach($product_cart as $cart)
-                                    <li class="single-shopping-cart">
-                                        <div class="shopping-cart-img">
-                                            <a><img style="height: 80px; width: 80px" alt="" src="hinhanh/upload/{{$cart['item']['hinhanh']}}"></a>
-                                        </div>
-                                        <div class="shopping-cart-title">
-                                            <h4><a href="#">{{$cart['item']['tenmon']}} </a></h4>
-                                            <h6>Qty: {{$cart['qty']}}</h6>
-                                            <span>{{ number_format($cart['qty'] *$cart['item']['dongia'])}}</span>
-                                        </div>
-                                        <div class="shopping-cart-delete">
-                                            <a class="del_item" id="{{$cart['item']['id']}}"><i class="ion ion-close"></i></a>
-                                        </div>
-                                    </li>
-                                    @endforeach
-                                </ul>
-                                <div class="shopping-cart-total">
-                                    {{-- <h4>Shipping : <span>$20.00</span></h4> --}}
-                                    <h4>Tổng tiền : <span class="shop-total">{{Session('cart')->totalPrice}}</span></h4>
-                                </div>
-                                <div class="shopping-cart-btn">
-                                    <a href="gio-hang">Xem Giỏ Hàng</a>
-                                    <a href="gio-hang/thanh-toan">Thanh Toán</a>
+                                        </span>
+                                    </div>
+                                </a>
+                                <div id="mini_cart" class="shopping-cart-content">
+
                                 </div>
                             </div>
-                            @else
-                            <div class="shopping-cart-content">
-                                <div class="shopping-cart-btn">
-                                    <a >Giỏ Hàng Rỗng</a>
-                                </div>
-                            </div>
-                            @endif
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="header-bottom transparent-bar black-bg">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-6">
-                    <div class="row">
-                        <div class="col-md-6 col-6">
-                            <input id="search" class="form-control " type="text " style="background: #bdc1c5; margin-top: 9px;" placeholder="Tìm kiếm...">
-                            <div id="search_result"  class="search-content">
+            <div class="header-bottom transparent-bar black-bg">
+                <div class="container">
+                    <div class="row" style="max-height: 57px;">
+                        <div class="col-lg-6 col-md-6 col-6">
+                            <div class="row">
+                                <div class="col-md-6 col-6">
+                                    <input id="search" class="form-control " type="text " style="background: #fff0; margin-top: 10px;" placeholder="Tìm kiếm...">
+                                    <div id="search_result"  class="search-content">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-4">
+                                    <select name="" id="select_loai" class="form-control" style="background: #fff0; margin-top: 10px;">
+                                        <option value="0">All</option>
+                                        @foreach($loai_mon as $loai)
+                                        <option value="{{$loai->id}}">{{$loai->tenloai}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4 col-4">
-                            <select name="" id="select_loai" class="form-control" style="background: #bdc1c5; margin-top: 12px;">
-                                <option value="0">All</option>
-                                @foreach($loai_mon as $loai)
-                                <option value="{{$loai->id}}">{{$loai->tenloai}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-md-6 col-6">
-                    <div class="main-menu">
-                        <nav>
-                            <ul>
-                                <li><a href="index">Trang Chủ</a></li>
-                                <li><a href="san-pham">Sản Phẩm</a></li>
-                                <li><a href="lien-he">LIÊN HỆ</a></li>
+                        <div class="col-lg-6 col-md-6 col-6">
+                            <div class="main-menu">
+                                <nav>
+                                    <ul>
+                                        <li><a href="index">Trang Chủ</a></li>
+                                        <li><a href="san-pham">Sản Phẩm</a></li>
+                                        <li><a href="lien-he">LIÊN HỆ</a></li>
                                 {{-- <li><a href="shop.html">burger</a></li>
                                 <li><a href="shop.html">pizza</a></li>
                                 <li><a href="shop.html">cold drink</a></li> --}}
@@ -149,90 +106,90 @@
     <!-- mobile-menu-area-start -->
     <div class="mobile-menu-area" >
         <div class="container">
-         <div class="row">
-          <div class="col-lg-12">
-           <div class="mobile-menu">
-            <nav id="mobile-menu-active">
-             <ul class="menu-overflow" id="nav">
-              <li><a href="index.html">Home</a>
-               <ul>
-                <li><a href="index.html">home version 1</a></li>
-                <li><a href="index-2.html">home version 2</a></li>
+           <div class="row">
+              <div class="col-lg-12">
+                 <div class="mobile-menu">
+                    <nav id="mobile-menu-active">
+                       <ul class="menu-overflow" id="nav">
+                          <li><a href="index.html">Home</a>
+                             <ul>
+                                <li><a href="index.html">home version 1</a></li>
+                                <li><a href="index-2.html">home version 2</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">pages</a>
+                         <ul>
+                            <li><a href="about-us.html">about us </a></li>
+                            <li><a href="shop.html">shop Grid</a></li>
+                            <li><a href="shop-list.html">shop list</a></li>
+                            <li><a href="product-details.html">product details</a></li>
+                            <li><a href="cart-page.html">cart page</a></li>
+                            <li><a href="checkout.html">checkout</a></li>
+                            <li><a href="wishlist.html">wishlist</a></li>
+                            <li><a href="my-account.html">my account</a></li>
+                            <li><a href="login-register.html">login / register</a></li>
+                            <li><a href="contact.html">contact</a></li>
+                            <li><a href="testimonial.html">Testimonials</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="shop.html"> Shop </a>
+                        <ul>
+                            <li><a href="#">Categories 01</a>
+                                <ul>
+                                    <li><a href="shop.html">salad</a></li>
+                                    <li><a href="shop.html">sandwich</a></li>
+                                    <li><a href="shop.html">bread</a></li>
+                                    <li><a href="shop.html">steak</a></li>
+                                    <li><a href="shop.html">tuna steak</a></li>
+                                    <li><a href="shop.html">spaghetti </a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Categories 02</a>
+                                <ul>
+                                    <li><a href="shop.html">rice</a></li>
+                                    <li><a href="shop.html">pizza</a></li>
+                                    <li><a href="shop.html">hamburger</a></li>
+                                    <li><a href="shop.html">eggs</a></li>
+                                    <li><a href="shop.html">sausages</a></li>
+                                    <li><a href="shop.html">apple juice</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Categories 03</a>
+                                <ul>
+                                    <li><a href="shop.html">milk</a></li>
+                                    <li><a href="shop.html">grape juice</a></li>
+                                    <li><a href="shop.html">cookie</a></li>
+                                    <li><a href="shop.html">candy</a></li>
+                                    <li><a href="shop.html">cake</a></li>
+                                    <li><a href="shop.html">cupcake</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">Categories 04</a>
+                                <ul>
+                                    <li><a href="shop.html">pie</a></li>
+                                    <li><a href="shop.html">stoberry</a></li>
+                                    <li><a href="shop.html">sandwich</a></li>
+                                    <li><a href="shop.html">bread</a></li>
+                                    <li><a href="shop.html">steak</a></li>
+                                    <li><a href="shop.html">hamburger</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="blog-rightsidebar.html">blog</a>
+                     <ul>
+                        <li><a href="blog.html">Blog No sidebar</a></li>
+                        <li><a href="blog-rightsidebar.html">Blog sidebar</a></li>
+                        <li><a href="blog-details.html">Blog details</a></li>
+                        <li><a href="blog-details-gallery.html">Blog details gallery</a></li>
+                        <li><a href="blog-details-video.html">Blog details video</a></li>
+                    </ul>
+                </li>
+                <li><a href="contact.html">contact us</a></li>
+                <li><a href="shop.html">burger</a></li>
             </ul>
-        </li>
-        <li><a href="#">pages</a>
-           <ul>
-            <li><a href="about-us.html">about us </a></li>
-            <li><a href="shop.html">shop Grid</a></li>
-            <li><a href="shop-list.html">shop list</a></li>
-            <li><a href="product-details.html">product details</a></li>
-            <li><a href="cart-page.html">cart page</a></li>
-            <li><a href="checkout.html">checkout</a></li>
-            <li><a href="wishlist.html">wishlist</a></li>
-            <li><a href="my-account.html">my account</a></li>
-            <li><a href="login-register.html">login / register</a></li>
-            <li><a href="contact.html">contact</a></li>
-            <li><a href="testimonial.html">Testimonials</a></li>
-        </ul>
-    </li>
-    <li><a href="shop.html"> Shop </a>
-        <ul>
-            <li><a href="#">Categories 01</a>
-                <ul>
-                    <li><a href="shop.html">salad</a></li>
-                    <li><a href="shop.html">sandwich</a></li>
-                    <li><a href="shop.html">bread</a></li>
-                    <li><a href="shop.html">steak</a></li>
-                    <li><a href="shop.html">tuna steak</a></li>
-                    <li><a href="shop.html">spaghetti </a></li>
-                </ul>
-            </li>
-            <li><a href="#">Categories 02</a>
-                <ul>
-                    <li><a href="shop.html">rice</a></li>
-                    <li><a href="shop.html">pizza</a></li>
-                    <li><a href="shop.html">hamburger</a></li>
-                    <li><a href="shop.html">eggs</a></li>
-                    <li><a href="shop.html">sausages</a></li>
-                    <li><a href="shop.html">apple juice</a></li>
-                </ul>
-            </li>
-            <li><a href="#">Categories 03</a>
-                <ul>
-                    <li><a href="shop.html">milk</a></li>
-                    <li><a href="shop.html">grape juice</a></li>
-                    <li><a href="shop.html">cookie</a></li>
-                    <li><a href="shop.html">candy</a></li>
-                    <li><a href="shop.html">cake</a></li>
-                    <li><a href="shop.html">cupcake</a></li>
-                </ul>
-            </li>
-            <li><a href="#">Categories 04</a>
-                <ul>
-                    <li><a href="shop.html">pie</a></li>
-                    <li><a href="shop.html">stoberry</a></li>
-                    <li><a href="shop.html">sandwich</a></li>
-                    <li><a href="shop.html">bread</a></li>
-                    <li><a href="shop.html">steak</a></li>
-                    <li><a href="shop.html">hamburger</a></li>
-                </ul>
-            </li>
-        </ul>
-    </li>
-    <li><a href="blog-rightsidebar.html">blog</a>
-       <ul>
-        <li><a href="blog.html">Blog No sidebar</a></li>
-        <li><a href="blog-rightsidebar.html">Blog sidebar</a></li>
-        <li><a href="blog-details.html">Blog details</a></li>
-        <li><a href="blog-details-gallery.html">Blog details gallery</a></li>
-        <li><a href="blog-details-video.html">Blog details video</a></li>
-    </ul>
-</li>
-<li><a href="contact.html">contact us</a></li>
-<li><a href="shop.html">burger</a></li>
-</ul>
-</nav>
-</div>
+        </nav>
+    </div>
 </div>
 </div>
 </div>

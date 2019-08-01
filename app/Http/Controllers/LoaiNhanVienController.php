@@ -46,7 +46,7 @@ class LoaiNhanVienController extends Controller
 		{
 			$data = new LoaiNhanVien;
 			$data->tenloai=$request->tenloai;
-			$data->created_at=date('Y-m-d H:m:s');
+			$data->created_at=date('Y-m-d H:i:s');
 			$data->save();
         //LoaiMon::create($form_data);
 
@@ -97,7 +97,7 @@ class LoaiNhanVienController extends Controller
 		{
 			$data = LoaiNhanVien::find($request->hidden_id);
 			$data->tenloai=$request->tenloai;
-			$data->updated_at=date('Y-m-d H:m:s');
+			$data->updated_at=date('Y-m-d H:i:s');
 			$data->update();
 			return response()->json(['success' => 'Cập Nhật Thành Công']);
 		}

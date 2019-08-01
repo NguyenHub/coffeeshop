@@ -40,7 +40,7 @@ class Cart
 	//xóa 1
 	public function reduceByOne($id){
 		$this->items[$id]['qty']--;
-		$this->items[$id]['price'] -= $this->items[$id]['item']['promotion_price'];
+		$this->items[$id]['price'] -= $this->items[$id]['item']['dongia'];
 		$this->totalQty--;
 		$this->totalPrice  -= $this->items[$id]['item']['dongia'];		
 		if($this->items[$id]['qty']<=0){

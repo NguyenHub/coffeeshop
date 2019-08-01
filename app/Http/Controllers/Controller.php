@@ -11,15 +11,4 @@ use Illuminate\Http\Request;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-    public function validation( Request $request)
-    {
-    	$validator =Validator::make($request->all(),[
-            'tenloai'    =>  'required|unique:loai_mon,tenloai',
-        ],
-        [
-                'tenloai.required'=>'Vui lòng nhập tên loại',
-                'tenloai.unique'=>'Tên loại đã tồn tại',
-        ]);
-        return $validator;
-    }
 }

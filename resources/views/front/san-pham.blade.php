@@ -17,22 +17,22 @@
 				{{-- <div class="banner-area pb-30">
 					<a href="product-details.html"><img alt="" src="assets/img/banner/banner-49.jpg"></a>
 				</div> --}}
-				<div class="shop-topbar-wrapper">
+				{{-- <div class="shop-topbar-wrapper">
 					<div class="shop-topbar-left">
 						<ul class="view-mode">
-							<li class="active"><a  data-view="product-grid"><i class="fa fa-th"></i></a></li>
+							<li class="active"><a  data-view="product-grid"><i class="fa fa-th"></i></a></li> --}}
 							{{-- <li><a href="#product-list" data-view="product-list"><i class="fa fa-list-ul"></i></a></li> --}}
-						</ul>
+						{{-- </ul>
 						<p></p>
 					</div>
 					<div class="product-sorting-wrapper">
 						<div class="product-shorting shorting-style">
-							{{-- <label>View:</label>
+							<label>View:</label>
 							<select>
 								<option value=""> 20</option>
 								<option value=""> 23</option>
 								<option value=""> 30</option>
-							</select> --}}
+							</select>
 						</div>
 						<div class="product-show shorting-style">
 							<label>Lọc theo:</label>
@@ -43,64 +43,18 @@
 							</select>
 						</div>
 					</div>
-				</div>
+				</div> --}}
 				<div class="grid-list-product-wrapper">
 					<div class="product-grid product-view pb-20">
-						<div class="row">
-							@foreach($mon as $sp)
-							<div class="product-width col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-30">
-								<div class="product-wrapper">
-									<div class="product-img">
-										<a href="" class="detail" id="{{$sp->id}}">
-											<img src="hinhanh/upload/{{$sp->hinhanh}}" style="height: 270px;" alt="">
-										</a>
-										<div class="product-action">
-											<div class="pro-action-left">
-												<a title="Chọn Mua" href="" class="addToCart_byOne" id="{{$sp->id}}"><i class="ion-android-cart"></i> Chọn Mua</a>
-											</div>
-											<div class="pro-action-right">
-												<a href="san-pham/chi-tiet/{{$sp->id}}" title="Chi Tiết" class="" id="{{$sp->id}}"><i class="ion-android-open"></i></a>
-											</div>
-										</div>
-									</div>
-									<div class="product-content">
-										<h4>
-											<a href="san-pham/chi-tiet/{{$sp->id}}">{{$sp->tenmon}}</a>
-										</h4>
-										<div class="product-price-wrapper">
-											<span>{{number_format( $sp->dongia)}} đ</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							@endforeach
-						</div>
-					</div>
-					<div class="pagination-total-pages">
-						<div class="pagination-style">
-							{{-- <ul>
-								<li><a class="prev-next prev" href="#"><i class="ion-ios-arrow-left"></i> Prev</a></li>
-								<li><a class="active" href="#">1</a></li>
-								<li><a href="#">2</a></li>
-								<li><a href="#">3</a></li>
-								<li><a href="#">...</a></li>
-								<li><a href="#">10</a></li>
-								<li><a class="prev-next next" href="#">Next<i class="ion-ios-arrow-right"></i> </a></li>
-							</ul> --}}
-							{{$mon->links()}}
-						</div>
-						{{-- <div class="total-pages">
-							<p>Showing 1 - 20 of 30 results  </p>
-						</div> --}}
+						@include('front.san-pham2')
 					</div>
 				</div>
-			</div>
-			<div class="col-lg-3">
-				<div class="shop-sidebar-wrapper gray-bg-7 shop-sidebar-mrg">
-					<div class="shop-widget">
-						<h4 class="shop-sidebar-title">Danh Mục</h4>
-						<div class="shop-catigory">
-							<ul id="faq">
+				<div class="col-lg-3">
+					<div class="shop-sidebar-wrapper gray-bg-7 shop-sidebar-mrg">
+						<div class="shop-widget">
+							<h4 class="shop-sidebar-title">Danh Mục</h4>
+							<div class="shop-catigory">
+								<ul id="faq">
 								{{-- <li> <a data-toggle="collapse" data-parent="#faq" href="#shop-catigory-1">Fast Foods <i class="ion-ios-arrow-down"></i></a>
 									<ul id="shop-catigory-1" class="panel-collapse collapse show">
 										<li><a href="#">Pizza </a></li>
@@ -134,7 +88,7 @@
 							</ul>
 						</div>
 					</div>
-					<div class="shop-price-filter mt-40 shop-sidebar-border pt-35">
+					{{-- <div class="shop-price-filter mt-40 shop-sidebar-border pt-35">
 						<h4 class="shop-sidebar-title">Price Filter</h4>
 						<div class="price_filter mt-25">
 							<span>Range:  $100.00 - 1.300.00 </span>
@@ -146,10 +100,75 @@
 								<button type="button">Filter</button> 
 							</div>
 						</div>
-					</div>
+					</div> --}}
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+@endsection
+@section('script')
+<script>
+	$(document).ready(function(){
+		$('.pagination').attr('id','all');
+		// $(window).on('hashchange',function(){
+		// 	page = window.location.hash.replace('#','');
+		// 	getProducts(page);
+		// });
+		location.hash='page='+1;
+		$('.loai_sp').click(function(even){
+			even.preventDefault();
+			var id = $(this).attr('id');
+			var text =$(this).text();
+			location.hash='type='+text+'?page='+1;
+			$('.loai_sp').removeClass('underline');
+			$(this).addClass('underline');
+			$('.shop-sidebar-title').attr('id',id);
+			$('.shop-sidebar-title').attr('title',text);
+			$.ajax({
+				url:'san-pham/'+id,
+				success:function(mon)
+				{
+					$('.product-view').html(mon);
+				}
+			})
+		})
+		$(document).on('click','.pagination a',function(event){
+			event.preventDefault();
+			var id=$('.pagination').attr('id');
+			var page=$(this).attr('href').split('page=')[1];
+			if(!id)
+			{
+				var type=$('.shop-sidebar-title').attr('id');
+				var name_type=$('.shop-sidebar-title').attr('title');
+				location.hash='type='+name_type+'?page='+page;
+				getProductsType(type,page);
+			}
+			else
+			{
+				location.hash='page='+page;
+				getProducts(page);
+			}		
+	});
+		function getProducts(page){
+			$.ajax({
+				url:'product?page=' + page,
+				success:function(mon)
+				{
+					$('.product-view').html(mon);
+					$('.pagination').attr('id','all');
+				}
+			})
+		}
+		function getProductsType(type,page){
+			$.ajax({
+				url:'product/'+type+'?page=' + page,
+				success:function(mon)
+				{
+					$('.product-view').html(mon);
+				}
+			})
+		}
+	});
+</script>
 @endsection

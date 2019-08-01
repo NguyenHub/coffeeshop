@@ -24,7 +24,7 @@ class LoaiMonController extends Controller
             ->rawColumns(['action'])
             ->make(true);
         }
-        return view('admin.loaimon.danhsach');
+        return view('admin.loaisanpham.danhsach');
     }
     public function add( Request $request)
     {
@@ -48,7 +48,7 @@ class LoaiMonController extends Controller
         {
             $data = new LoaiMon;
             $data->tenloai=$request->tenloai;
-            $data->created_at=date('Y-m-d H:m:s');
+            $data->created_at=date('Y-m-d H:i:s');
             $data->save();
             return response()->json(['success' => 'Thêm Thành Công!']);
         }
@@ -86,7 +86,7 @@ public function update(Request $request)
     {
         $data = LoaiMon::find($request->hidden_id);
         $data->tenloai=$request->tenloai;
-        $data->updated_at=date('Y-m-d H:m:s');
+        $data->updated_at=date('Y-m-d H:i:s');
         $data->save();
         return response()->json(['success' => 'Cập Nhật Thành Công']);
     }

@@ -65,7 +65,7 @@ class KhachHangController extends Controller
 			$data->sdt=$request->sdt;
 			$data->trangthai=$request->email!=''?1:0;
 			$data->loaikhachhang=$request->loaikhachhang;
-			$data->created_at=date('Y-m-d H:m:s');
+			$data->created_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Thêm Thành Công!']);
 		}
@@ -110,7 +110,7 @@ class KhachHangController extends Controller
 			$data->gioitinh=$request->gioitinh;
 			$data->sdt=$request->sdt;
 			$data->trangthai=$request->trangthai;
-			$data->updated_at=date('Y-m-d H:m:s');
+			$data->updated_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Cập Nhật Thành Công!']);
 		}
@@ -185,23 +185,18 @@ class KhachHangController extends Controller
 			$data->email=$request->email;
 			$data->password=bcrypt($request->password);
 			$data->sdt=$request->sdt;
-			$data->trangthai=0;
+			$data->trangthai=1;
 			$data->loaikhachhang=2;
 			$data->diachi=$request->diachi;
-			//$data->machucvu=$request->chucvu;
-			//$data->maloai=$request->loainhanvien;
-			//$data->cmnd=$request->cmnd;
-			//$data->ngayvaolam=$request->ngayvaolam;
-			//$data->ghichu=$request->ghichu;
-			$data->created_at=date('Y-m-d H:m:s');
+			$data->created_at=date('Y-m-d H:i:s');
 			$data->save();
-			$hoten=$request->hoten;
-			$to_email = $request->email;
-			$dt = array('name'=>$hoten, "body" => "Vui lòng xác minh tài khoản để hoàn thành đăng ký!",'email'=>$to_email);
-			Mail::send('front.mail',$dt, function($message) use ($to_email) {
-				$message->to($to_email)->subject('Xác Nhận Đăng Ký!');
-			});
-			return response()->json(['success' => 'Đăng Ký Thành Công-Vui Lòng Kiểm Tra Email Để Xác Nhận Tài Khoản!']);
+			// $hoten=$request->hoten;
+			// $to_email = $request->email;
+			// $dt = array('name'=>$hoten, "body" => "Vui lòng xác minh tài khoản để hoàn thành đăng ký!",'email'=>$to_email);
+			// Mail::send('front.mail',$dt, function($message) use ($to_email) {
+			// 	$message->to($to_email)->subject('Xác Nhận Đăng Ký!');
+			// });
+			return response()->json(['success' => 'Đăng Ký Thành Công!']);
 		}
 	}
 	public function getTaikhoanUpdate(Request $request)
@@ -239,7 +234,7 @@ class KhachHangController extends Controller
 				$data->password=bcrypt($request->new_password);
 				$data->sdt=$request->sdt;
 				$data->diachi=$request->diachi;
-				$data->updated_at=date('Y-m-d H:m:s');
+				$data->updated_at=date('Y-m-d H:i:s');
 				if(Hash::check($request->old_assword,$data->password))
 				{
 					$data->save();
@@ -276,7 +271,7 @@ class KhachHangController extends Controller
 			$data->gioitinh=$request->gioitinh;
 			$data->sdt=$request->sdt;
 			$data->diachi=$request->diachi;
-			$data->updated_at=date('Y-m-d H:m:s');
+			$data->updated_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Cập Nhật Thành Công!']);
 		}

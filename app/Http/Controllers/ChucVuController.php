@@ -61,7 +61,7 @@ class ChucVuController extends Controller
 			//$tenchucvu= strtolower($request->tenchucvu);
 			$data->tenchucvu=ucwords($request->tenchucvu);
 			$data->maluong=$request->luongcoban;
-			$data->created_at=date('Y-m-d H:m:s');
+			$data->created_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Thêm Thành Công!']);
 		}
@@ -98,7 +98,7 @@ class ChucVuController extends Controller
 			$data = ChucVu::find($request->hidden_id);
 			$data->tenchucvu=$request->tenchucvu;
 			$data->maluong=$request->luongcoban;
-			$data->updated_at=date('Y-m-d H:m:s');
+			$data->updated_at=date('Y-m-d H:i:s');
 			$data->update();
 			return response()->json(['success' => 'Cập Nhật Thành Công']);
 		}

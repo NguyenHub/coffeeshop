@@ -13,13 +13,13 @@
   <title>Admin-SmartCoffee</title>
   <base href="{{ asset('') }}">
   <!-- Favicon -->
+  
   <link rel="shortcut icon" type="image/x-icon" href="assets/img/logo/footer-logo2.PNG">
   <!-- Custom fonts for this template-->
   <link href="source/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
 
   <!-- Page level plugin CSS-->
   <link href="source/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
-
   <!-- Custom styles for this template-->
   <link href="source/css/sb-admin.css" rel="stylesheet" type="text/css">
   <link href="source/css/style.css" rel="stylesheet" type="text/css">
@@ -193,6 +193,7 @@
 <script src="bootstrap-fileinput/themes/explorer-fas/theme.js" type="text/javascript"></script>
 <script src="bootstrap-fileinput/themes/gly/theme.js" type="text/javascript"></script>
 <script src="bootstrap-fileinput/themes/gly/theme.min.js" type="text/javascript"></script>
+<script src="js/jquery.printPage.js" type="text/javascript"></script>
 {{-- <script src="bootstrap-fileinput/js/fileinput.js"></script>
 <script src="bootstrap-fileinput/themes/fa/theme.js"></script> --}}
 <script src="ckeditor/ckeditor.js"></script>
@@ -337,6 +338,34 @@
       return "Hủy";
     }
   }
+  function format_input_number(number)
+  {
+    var sl;
+    var diem=0;
+    for(var i=0;i<number.length;i++)
+    {
+     var str=number.substring(i,i+1);
+     if(str=='.')
+     {
+      diem++;
+    }
+  }
+  var pattern_number= /([0-9.])+$/;
+  //var pattern_dot= /([.]{1})\1+$/;
+  if(pattern_number.test(number)==false)
+  {
+    sl=number.substring(0,number.length-1);
+  }
+  else
+  {
+    if(diem>1)
+    {
+     number=number.replace(".","");
+   }
+    sl= number;
+}
+return sl;
+}
 </script>
 <script>  
   $(document).ready(function(){  

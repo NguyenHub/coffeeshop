@@ -159,17 +159,17 @@
 			<div class="best-food-width-1">
 				<div class="single-banner">
 					<div class="hover-style">
-						<a href="#"><img src="assets/img/banner/banner-5.jpg" alt=""></a>
+						<a href="#"><img src="assets/img/slider/banner_web_007fa9c13b95415cbcb983f497a5b20c_master.jpg" alt="" style="min-height: 290px;"></a>
 					</div>
 				</div>
 			</div>
 			<div class="best-food-width-2">
 				<div class="product-top-bar section-border mb-25">
 					<div class="section-title-wrap">
-						<h3 class="section-title section-bg-white">Sản Phẩm Bán Chạy</h3>
+						<h3 class="section-title section-bg-white">Sản Phẩm Nổi Bật</h3>
 					</div>
 					<div class="product-tab-list-2 nav section-bg-white">
-						<a class="active" href="san-pham" data-toggle="tab">
+						{{-- <a class="active" href="san-pham" data-toggle="tab">
 							<h4>All </h4>
 						</a>
 						<a data-toggle="tab">
@@ -177,7 +177,7 @@
 						</a>
 						<a  data-toggle="tab">
 							<h4> Drink </h4>
-						</a>
+						</a> --}}
 					</div>
 				</div>
 				<div class="tab-content jump">
@@ -200,7 +200,7 @@
 								</div>
 								<div class="product-content">
 									<h4>
-										<a href="">{{$sp->tenmon}}</a>
+										<a href="san-pham/chi-tiet/{{$sp->id}}">{{$sp->tenmon}}</a>
 									</h4>
 									<div class="product-price-wrapper">
 										<span>{{$sp->dongia}}</span>
@@ -420,7 +420,7 @@
 			<div class="best-food-width-1 mrg-small-35">
 				<div class="single-banner">
 					<div class="hover-style">
-						<a href="#"><img src="assets/img/banner/banner-6.jpg" alt=""></a>
+						<a href="#"><img src="assets/img/slider/800x400_kv_83f1030bb97a4e15921a31d595404e82_master.jpg" alt="" style="min-height: 290px"></a>
 					</div>
 				</div>
 			</div>
@@ -453,10 +453,8 @@
 </div>
 @endsection
 @section('script')
-<script>
+<{{-- script>
 	$(document).ready(function(){
-
-
 	$(window).on('hashchange',function(){
 			page = window.location.hash.replace('#','');
 			getProducts(page);
@@ -478,5 +476,5 @@
 		})
 	}
 });
-</script>
+</script> --}}
 @endsection

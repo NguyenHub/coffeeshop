@@ -41,6 +41,9 @@ td {
 .line-through{
     text-decoration: line-through;
 }
+.underline{
+    text-decoration: underline;
+}
 /*.grand-totall > button {
     background-color: #e02c2b;
     border-radius: 3px;
@@ -58,7 +61,7 @@ td {
     background: #d5d7dc;
 }
 .search-content {
-    background: #bdc1c5 none repeat scroll 0 0;
+    background: #fff none repeat scroll 0 0;
     border: 1px solid #ebebeb;
     border-radius: 5px;
     padding: 10px 10px 10px;

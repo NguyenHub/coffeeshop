@@ -28,32 +28,36 @@
 									<div class="billing-information-wrapper">
 										@if(Auth::guard('khach_hang')->check())
 										<div class="row">
-											<div class="col-lg-6 col-md-6">
-												<div class="billing-info">
-													<label>Địa Chỉ</label>
-													<input type="text" id="diachi" value="{{Auth::guard('khach_hang')->user()->diachi}}">
+											<div class="form-group col-lg-6 col-md-6">
+												<div class="form-label-group">
+													
+													<input type="text" class="form-control" id="diachi" name="diachi" value="{{Auth::guard('khach_hang')->user()->diachi}}" placeholder="Nhập địa chỉ nhập hàng">
+													<label for="diachi">Địa Chỉ</label>
+													<p style="color: red;" id="diachi_result"></p>
 												</div>
 											</div>
-											<div class="col-lg-6 col-md-6">
-												<div class="billing-info">
-													<label>Số Điện Thoại</label>
-													<input type="text" id="sdt" value="{{Auth::guard('khach_hang')->user()->sdt}}">
+											<div class="form-group col-lg-6 col-md-6">
+												<div class="form-label-group">
+													<input type="text" id="sdt" name="sdt" value="{{Auth::guard('khach_hang')->user()->sdt}}" class="form-control" placeholder="Nhập số điện thoại">
+													<label for="sdt">Số Điện Thoại</label>
+													<p style="color: red;" id="sdt_result"></p>
 												</div>
 											</div>
 										</div>
 										@else
 										<div class="row">
-											<div class="col-lg-6 col-md-6">
-												<div class="billing-info">
-													<label>Địa Chỉ</label>
-													<input type="text" id="diachi" name="diachi" value="" placeholder="Nhập địa chỉ nhập hàng">
+											<div class="form-group col-lg-6 col-md-6">
+												<div class="form-label-group">
+													
+													<input type="text" class="form-control" id="diachi" name="diachi" value="" placeholder="Nhập địa chỉ nhập hàng">
+													<label for="diachi">Địa Chỉ</label>
 													<p style="color: red;" id="diachi_result"></p>
 												</div>
 											</div>
-											<div class="col-lg-6 col-md-6">
-												<div class="billing-info">
-													<label>Số Điện Thoại</label>
-													<input type="text" id="sdt" name="sdt" value="" placeholder="Nhập số điện thoại">
+											<div class="form-group col-lg-6 col-md-6">
+												<div class="form-label-group">
+													<input type="text" id="sdt" name="sdt" value="" class="form-control" placeholder="Nhập số điện thoại">
+													<label for="sdt">Số Điện Thoại</label>
 													<p style="color: red;" id="sdt_result"></p>
 												</div>
 											</div>
@@ -268,7 +272,7 @@
 							<div class="input-group">
 								<input class="form-control" type="text" id="codekm" name="codekm" required="" placeholder="Nhập mã khuyến mãi" autocomplete="off" />
 								<span class="input-group-btn">
-									<button id="makm" class="btn btn-warning" type="submit">Áp dụng</button>
+									<button style="height: 38px;" id="makm" class="btn btn-warning" type="submit">Áp dụng</button>
 								</span>
 							</div>
 							<h5 class="grand-totall-title" style="

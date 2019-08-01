@@ -57,7 +57,7 @@
          <input type="text" name="tennguyenlieu" id="tennguyenlieu" class="form-control" placeholder="Nhập Tên Nguyên Liệu" required="" />
        </div>
      </div>
-    <div class="form-group row">
+    <div class="form-group row soluong">
       <label class="control-label col-md-4" >Số Lượng : </label>
       <div class="col-md-8">
        <input type="text" name="soluong" id="soluong" class="form-control" placeholder="Nhập Số Lượng"  />
@@ -67,7 +67,7 @@
       <label class="control-label col-md-4" >Đơn Vị Tính : </label>
       <div class="col-md-8">
         <select name="donvitinh" id="donvitinh"  class="form-control">
-          <option value="0">Cái</option>
+          <option value="0">Mililit</option>
           <option value="1">Gram</option>
         </select>
       </div>
@@ -125,7 +125,6 @@
 @section('script')
 <script type="text/javascript">
   $(document).ready(function(){
-
    $('#data_table').DataTable({
     "order":[[0,"desc"]],// sắp xếp cột giảm dần
     retrieve: true,
@@ -202,6 +201,7 @@
       $('#action_button').val("Add");
       $('#action').val("Add");
       $('#formModal').modal('show');
+      $('.soluong').hide();
       $('#sample_form')[0].reset();
       $('#form_result').html(html);
     });
@@ -289,6 +289,7 @@
     $(document).on('click', '.edit', function(){
       var id = $(this).attr('id');
       $('#form_result').html('');
+      $('.soluong').show();
       $.ajax({
        url:"admin/nguyenlieu/edit/"+id,
        dataType:"json",

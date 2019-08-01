@@ -84,7 +84,7 @@
             }
             else
             {
-              window.location.href="admin/trangchu";
+              window.location.href="admin/trang-chu";
             }
           }
         })

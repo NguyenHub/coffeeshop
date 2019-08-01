@@ -76,7 +76,7 @@ class KhuyenMaiController extends Controller
 				$khuyenmai->ngaybatdau=$batdau;
 				$khuyenmai->ngayketthuc=$ketthuc;
 				$khuyenmai->ghichu=$request->ghichu;
-				$khuyenmai->created_at=date('Y-m-d H:m:s');
+				$khuyenmai->created_at=date('Y-m-d H:i:s');
 				$khuyenmai->save();
 				return response()->json(['success' => 'Thêm Thành Công!']);
 			}
@@ -151,7 +151,7 @@ class KhuyenMaiController extends Controller
 				$khuyenmai->ngaybatdau=$batdau;
 				$khuyenmai->ngayketthuc=$ketthuc;
 				$khuyenmai->ghichu=$request->ghichu;
-				$khuyenmai->updated_at=date('Y-m-d H:m:s');
+				$khuyenmai->updated_at=date('Y-m-d H:i:s');
 				$khuyenmai->save();
 				return response()->json(['success' => 'Cập Nhật Thành Công!']);
 			}

@@ -16,9 +16,9 @@ class LoaiMonController extends Controller
         {
             return datatables()->of(LoaiMon::latest()->get())
             ->addColumn('action', function($data){
-                $button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Edit</button>';
+                $button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm" title="Cập Nhật"><i class="fa fa-edit" ></i></button>';
                 $button .= '&nbsp;&nbsp;';
-                $button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Delete</button>';
+                $button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm" title="Xóa"><i class="fa fa-trash" ></i></button>';
                 return $button;
             })
             ->rawColumns(['action'])
@@ -30,16 +30,13 @@ class LoaiMonController extends Controller
     {
         $validator =Validator::make($request->all(),[
             'tenloai'    =>  'required|unique:loai_mon,tenloai',
-            'note'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
+            //'note'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
         ],
         [
             'tenloai.unique'=>'Tên đã tồn tại',
             //'note.regex'=>'Mô tả không hợp lệ',
             //'note.max'=>'Mô tả quá dài',
         ]);
-
-        //$validator = Validator::make($request->all(), $rules);
-
         if($validator->fails())
         {
             return response()->json(['errors' => $validator->errors()->all()]);
@@ -55,9 +52,18 @@ class LoaiMonController extends Controller
     }
     public function destroy($id)
     {
-        $loaimon = LoaiMon::find($id);
-        $loaimon->delete();
-        return response()->json(['success' => 'Xóa Thành Công!']);
+        $count=Mon::where('mon.maloai',$id)->count();
+        if($count==0)
+        {
+            $loaimon = LoaiMon::find($id);
+            $loaimon->delete();
+            return response()->json(['success' => 'Xóa Thành Công!']);
+        }
+        else
+        {
+            return response()->json(['errors' => 'Tồn Tại Sản Phẩm Thuộc Loại Này-Không Thể Xóa!']);
+        }
+        
     }
     public function edit($id)
     {

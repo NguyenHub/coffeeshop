@@ -14,6 +14,7 @@
 Route::get('/', function () {
 	return view('welcome');
 });
+Route::get('return-vnpay', 'PageController@return')->name('return');
 Route::get('index',
 	[
 		'as'=>'trangchu',
@@ -23,6 +24,17 @@ Route::get('lien-he',
 	[
 		'as'=>'lien-he',
 		'uses'=>'PageController@getContact'
+	]);
+
+Route::get('tin-tuc',
+	[
+		'as'=>'tin-tuc',
+		'uses'=>'PageController@getBlog'
+	]);
+Route::get('tin-tuc/chi-tiet/{id}',
+	[
+		'as'=>'tin-tuc/chi-tiet',
+		'uses'=>'PageController@getDetailBlog'
 	]);
 Route::get('san-pham',
 	[
@@ -68,7 +80,7 @@ Route::get('tai-khoan/khoi-phuc-mat-khau/{emai}/{token}',
 	[
 		'as'=>'tai-khoan/khoi-phuc-mat-khau',
 		'uses'=>'KhachHangController@resetPassWord',
-	])->middleware('khachhang_login');
+	]);
 Route::post('khoi-phuc-mat-khau',
 	[
 		'as'=>'khoi-phuc-mat-khau',
@@ -109,11 +121,7 @@ Route::get('don-hang/chi-tiet/{id}',
 		'as'=>'don-hang/chi-tiet',
 		'uses'=>'PageController@getChiTietDonHang'
 	])->middleware('khachhang_login');
-Route::get('dangxuat',
-	[
-		'as'=>'home',
-		'uses'=>'NhanVienController@getLogout'
-	]);
+Route::get('dangxuat','NhanVienController@getLogout');
 Route::get('chitiet-sanpham/{id}',
 	[
 		'as'=>'chitiet-sanpham',
@@ -124,10 +132,20 @@ Route::get('add-to-cart/{id}/{sl}',
 		'as'=>'add-to-cart',
 		'uses'=>'PageController@getAddToCart'
 	]);
+Route::post('post-lien-he',
+	[
+		'as'=>'post-lien-he',
+		'uses'=>'KhachHangController@postContact'
+	]);
 Route::get('get_jsonCart',
 	[
 		'as'=>'get_jsonCart',
 		'uses'=>'PageController@get_jsonCart'
+	]);
+Route::get('get_jsonUser',
+	[
+		'as'=>'get_jsonCart',
+		'uses'=>'PageController@get_jsonUser'
 	]);
 Route::get('reduce-item/{id}',
 	[
@@ -179,6 +197,9 @@ Route::post('search',
 		'as'=>'search',
 		'uses'=>'PageController@getSearch'
 	]);
+Route::post('admin/khoi-phuc-mat-khau','NhanVienController@postResetPassWord');
+Route::get('admin/khoi-phuc-mat-khau/{emai}/{token}','NhanVienController@adminResetPassWord');
+Route::post('admin/reset-password','NhanVienController@resetPassWord');
 Route::get('admin/dangnhap','NhanVienController@getLogin');
 Route::post('admin/login','NhanVienController@postLogin');
 Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
@@ -189,7 +210,12 @@ Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
 	Route::get('searchProduct/{key}','NhanVienController@searchProduct');
 	Route::get('searchCustomer/{key}','NhanVienController@searchCustomer');
 	Route::post('ban-hang/save','PageController@postBill');
-	Route::get('ban-hang/print','NhanVienController@getPrint');
+	Route::get('ban-hang/print/{diem}','NhanVienController@getPrint');
+	Route::get('getDataChart/{date}','PageController@getDataChart');
+	Route::get('getDataBarChart','PageController@getDataBarChart');
+	Route::get('getDayBillChart','PageController@getDayBillChart');
+	Route::get('getNewBill','DonHangController@getNewBill');
+	Route::get('printbill/{id}','DonHangController@printBill');
 	Route::group(['prefix'=>'loaisanpham'],function(){
 		Route::resource('danh-sach','LoaiMonController');
 		Route::post('add','LoaiMonController@add');
@@ -197,7 +223,7 @@ Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
 		Route::get('edit/{id}', 'LoaiMonController@edit');
 		Route::post('update','LoaiMonController@update');
 	});
-	Route::group(['prefix'=>'sanpham'],function(){
+	Route::group(['prefix'=>'sanpham','middleware'=>'admin_role'],function(){
 		Route::resource('danh-sach','MonController');
 		Route::post('add','MonController@add');
 		Route::get('destroy/{id}', 'MonController@destroy');
@@ -221,14 +247,14 @@ Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
 		Route::get('edit/{id}', 'NguyenLieuController@edit');
 		Route::post('update','NguyenLieuController@update');
 	});
-	Route::group(['prefix'=>'nhacungcap'],function(){
+	Route::group(['prefix'=>'nhacungcap','middleware'=>'admin_role'],function(){
 		Route::resource('danh-sach','NhaCungCapController');
 		Route::post('add','NhaCungCapController@add');
 		Route::get('destroy/{id}', 'NhaCungCapController@destroy');
 		Route::get('edit/{id}', 'NhaCungCapController@edit');
 		Route::post('update','NhaCungCapController@update');
 	});
-	Route::group(['prefix'=>'dathang'],function(){
+	Route::group(['prefix'=>'dathang','middleware'=>'admin_role'],function(){
 		Route::resource('danh-sach','DonDatHangController');
 		Route::post('add','DonDatHangController@add');
 		Route::get('destroy/{id}', 'DonDatHangController@destroy');
@@ -266,7 +292,7 @@ Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
 		Route::post('update','DonHangController@update');
 		Route::get('filt/{date}','DonHangController@fillDate');
 	});
-	Route::group(['prefix'=>'loaikhachhang'],function(){
+	Route::group(['prefix'=>'loaikhachhang','middleware'=>'admin_role'],function(){
 		Route::resource('danh-sach','LoaiKhachHangController');
 		Route::post('add','LoaiKhachHangController@add');
 		Route::get('destroy/{id}', 'LoaiKhachHangController@destroy');
@@ -276,39 +302,39 @@ Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
 	Route::group(['prefix'=>'khachhang'],function(){
 		Route::resource('danh-sach','KhachHangController');
 		Route::post('add','KhachHangController@add');
-		Route::get('destroy/{id}', 'KhachHangController@destroy');
-		Route::get('edit/{id}', 'KhachHangController@edit');
-		Route::post('update','KhachHangController@update');
+		Route::get('destroy/{id}', 'KhachHangController@destroy')->middleware('admin_role');
+		Route::get('edit/{id}', 'KhachHangController@edit')->middleware('admin_role');
+		Route::post('update','KhachHangController@update')->middleware('admin_role');
 	});
-	Route::group(['prefix'=>'khuyenmai'],function(){
+	Route::group(['prefix'=>'khuyenmai','middleware'=>'admin_role'],function(){
 		Route::resource('danh-sach','KhuyenMaiController');
 		Route::post('add','KhuyenMaiController@add');
 		Route::get('destroy/{id}', 'KhuyenMaiController@destroy');
 		Route::get('edit/{id}', 'KhuyenMaiController@edit');
 		Route::post('update','KhuyenMaiController@update');
 	});
-	Route::group(['prefix'=>'luong'],function(){
+	Route::group(['prefix'=>'luong','middleware'=>'admin_role'],function(){
 		Route::resource('danh-sach','LuongController');
 		Route::post('add','LuongController@add');
 		Route::get('destroy/{id}', 'LuongController@destroy');
 		Route::get('edit/{id}', 'LuongController@edit');
 		Route::post('update','LuongController@update');
 	});
-	Route::group(['prefix'=>'chucvu'],function(){
+	Route::group(['prefix'=>'chucvu','middleware'=>'admin_role'],function(){
 		Route::resource('danh-sach','ChucVuController');
 		Route::post('add','ChucVuController@add');
 		Route::get('destroy/{id}', 'ChucVuController@destroy');
 		Route::get('edit/{id}', 'ChucVuController@edit');
 		Route::post('update','ChucVuController@update');
 	});
-	Route::group(['prefix'=>'loainhanvien'],function(){
+	Route::group(['prefix'=>'loainhanvien','middleware'=>'admin_role'],function(){
 		Route::resource('danh-sach','LoaiNhanVienController');
 		Route::post('add','LoaiNhanVienController@add');
 		Route::get('destroy/{id}', 'LoaiNhanVienController@destroy');
 		Route::get('edit/{id}', 'LoaiNhanVienController@edit');
 		Route::post('update','LoaiNhanVienController@update');
 	});
-	Route::group(['prefix'=>'nhanvien'],function(){
+	Route::group(['prefix'=>'nhanvien','middleware'=>'admin_role'],function(){
 		Route::resource('danh-sach','NhanVienController');
 		Route::post('add','NhanVienController@add');
 		Route::get('destroy/{id}', 'NhanVienController@destroy');
@@ -317,7 +343,14 @@ Route::group(['prefix'=>'admin','middleware'=>'admin'],function(){
 		Route::get('capnhat/{id}', 'NhanVienController@getCapnhat');
 		Route::post('capnhat', 'NhanVienController@postCapnhat');
 	});
-	Route::group(['prefix'=>'calam'],function(){
+	Route::group(['prefix'=>'tintuc'],function(){
+		Route::resource('danh-sach','TinTucController');
+		Route::post('add','TinTucController@add');
+		Route::get('destroy/{id}', 'TinTucController@destroy');
+		Route::get('edit/{id}', 'TinTucController@edit');
+		Route::post('update','TinTucController@update');
+	});
+	Route::group(['prefix'=>'calam','middleware'=>'admin_role'],function(){
 		Route::resource('danh-sach','CaLamController');
 		Route::post('add','CaLamController@add');
 		Route::get('destroy/{id}', 'CaLamController@destroy');

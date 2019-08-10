@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\NguyenLieu;
+use App\ChiTietCongThuc;
 use Validator;
 class NguyenLieuController extends Controller
 {
@@ -13,9 +14,9 @@ class NguyenLieuController extends Controller
 		{
 			return datatables()->of(NguyenLieu::latest()->get())
 			->addColumn('action', function($data){
-				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Edit</button>';
+				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Sửa</button>';
 				$button .= '&nbsp;&nbsp;';
-				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Delete</button>';
+				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Xóa</button>';
 				return $button;
 			})
 			->rawColumns(['action'])
@@ -29,12 +30,12 @@ class NguyenLieuController extends Controller
 			// 'tenkhuyenmai'    =>  'required',
 			// 'soluong'    =>  'required',
 			'tennguyenlieu'=>'unique:nguyen_lieu,tennguyenlieu',
-			'soluong'=>'bail|regex:/([0-9]{1,9})$/',
+			//'soluong'=>'bail|regex:/([0-9]{1,9})$/',
 			'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
 		],
 		[
 			'tennguyenlieu.unique'=>'Tên nguyên liệu đã tồn tại',
-			'soluong.regex'=>'Số lượng không hợp lệ ',
+			//'soluong.regex'=>'Số lượng không hợp lệ ',
 			'ghichu.regex'=>'Ghi chú không hợp lệ'
 		]);
 		if($validator->fails())
@@ -44,7 +45,7 @@ class NguyenLieuController extends Controller
 		else
 		{
 			$data = new NguyenLieu;
-			$data->tennguyenlieu=ucwords(strtolower($request->tennguyenlieu));
+			$data->tennguyenlieu= mb_strtoupper($request->tennguyenlieu,'UTF-8');
 			$data->soluong=0;
 			$data->donvitinh=$request->donvitinh;
 			$data->ghichu=$request->ghichu;
@@ -56,8 +57,17 @@ class NguyenLieuController extends Controller
 	public function destroy($id)
 	{
 		$data = NguyenLieu::find($id);
-		$data->delete();
-		return response()->json(['success' => 'Xóa Thành Công!']);
+		$count=ChiTietCongThuc::where('chitiet_congthuc.manguyenlieu',$id)->count();
+		if($count<1)
+		{
+			$data->delete();
+			return response()->json(['success' => 'Xóa Thành Công!']);
+		}
+		else
+		{
+			return response()->json(['errors' => 'Nguyên Liệu Có Trong Công Thức-Không Thể Xóa!']);
+		}
+		
 	}
 	public function edit($id)
 	{
@@ -88,7 +98,7 @@ class NguyenLieuController extends Controller
 		else
 		{
 			$data = NguyenLieu::find($request->hidden_id);
-			$data->tennguyenlieu=ucwords(strtolower($request->tennguyenlieu));
+			$data->tennguyenlieu=mb_strtoupper($request->tennguyenlieu,'UTF-8');
 			$data->soluong=$request->soluong;
 			$data->donvitinh=$request->donvitinh;
 			$data->ghichu=$request->ghichu;

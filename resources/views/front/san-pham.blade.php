@@ -120,6 +120,7 @@
 			even.preventDefault();
 			var id = $(this).attr('id');
 			var text =$(this).text();
+			text = text.replace(/\s+/g, '');
 			location.hash='type='+text+'?page='+1;
 			$('.loai_sp').removeClass('underline');
 			$(this).addClass('underline');
@@ -141,6 +142,7 @@
 			{
 				var type=$('.shop-sidebar-title').attr('id');
 				var name_type=$('.shop-sidebar-title').attr('title');
+				name_type = name_type.replace(/\s+/g, '');
 				location.hash='type='+name_type+'?page='+page;
 				getProductsType(type,page);
 			}

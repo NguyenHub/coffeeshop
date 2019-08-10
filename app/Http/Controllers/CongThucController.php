@@ -24,9 +24,9 @@ class CongThucController extends Controller
 		{
 			return datatables()->of(CongThuc::latest()->get())
 			->addColumn('action', function($data){
-				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Edit</button>';
+				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Sửa</button>';
 				$button .= '&nbsp;&nbsp;';
-				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Delete</button>';
+				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-info btn-sm">Xóa</button>';
 				return $button;
 			})
 			->rawColumns(['action'])
@@ -60,7 +60,7 @@ class CongThucController extends Controller
 			{
 				$data = new CongThuc;
 				$data->mamon=$request->mamon;
-				$data->tencongthuc=ucwords($request->tencongthuc);
+				$data->tencongthuc=mb_strtoupper($request->tencongthuc,'UTF-8');
 				$data->ghichu=$request->ghichu;
 				$data->created_at=date('Y-m-d H:i:s');
 				$data->save();
@@ -126,7 +126,7 @@ class CongThucController extends Controller
 		else
 		{
 			$data = CongThuc::find($request->hidden_id);
-			$data->tencongthuc=$request->tencongthuc;
+			$data->tencongthuc=mb_strtoupper($request->tencongthuc,'UTF-8');
 			$data->ghichu=$request->ghichu;
 			$data->updated_at=date('Y-m-d H:i:s');
 			$data->save();

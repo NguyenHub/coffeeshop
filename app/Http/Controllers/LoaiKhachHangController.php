@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\LoaiKhachHang;
+use App\KhachHang;
 use Validator;
 class LoaiKhachHangController extends Controller
 {
@@ -13,9 +14,9 @@ class LoaiKhachHangController extends Controller
 		{
 			return datatables()->of(LoaiKhachHang::latest()->get())
 			->addColumn('action', function($data){
-				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Edit</button>';
+				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm">Sửa</button>';
 				$button .= '&nbsp;&nbsp;';
-				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Delete</button>';
+				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm">Xóa</button>';
 				return $button;
 			})
 			->rawColumns(['action'])
@@ -56,8 +57,16 @@ class LoaiKhachHangController extends Controller
 	public function destroy($id)
 	{
 		$loaikhach = LoaiKhachHang::find($id);
-		$loaikhach->delete();
-		return response()->json(['success' => 'Xóa Thành Công!']);
+		$count=KhachHang::Where('khach_hang.loaikhachhang',$id)->count();
+		if($count<1)
+		{
+			$loaikhach->delete();
+			return response()->json(['success' => 'Xóa Thành Công!']);
+		}
+		else
+		{
+			return response()->json(['errors' => 'Tồn Khách Hàng Thuộc Loại Này-Xóa Thất Bại!']);
+		}
 	}
 	public function edit($id)
 	{

@@ -7,7 +7,7 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="#">Dashboard</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
       <li class="breadcrumb-item active">Đơn Hàng</li>
     </ol>
@@ -30,8 +30,8 @@
           <option value="">ALL</option>
         </select>
       </div>
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped" id="data_table" width="100%" cellspacing="0">
+      <div class="table-responsive" style="overflow-y: scroll; height: 480px;">
+        <table class="table table-bordered table-striped" id="data_table" width="100%"  cellspacing="0">
          <thead>
           <tr>
             <th >MÃ</th>
@@ -40,7 +40,7 @@
             <th >SHIP</th>
             <th >GHI CHÚ</th>
             <th >TRẠNG THÁI</th>
-            <th >CẬP NHẬT</th>
+            <th >THANH TOÁN</th>
             <th >Thao Tác</th>
           </tr>
         </thead>
@@ -63,8 +63,8 @@
    <form id="sample_form" class="form-horizontal">
     {{csrf_field()}}
     <div class="form-group row">
-      <div class="col-md-6 ngaydat">Ngày Đặt : </div>
-      <div class="col-md-6 tongtien">Tổng Tiền :</div>
+      <div class="col-md-7 ngaydat">Ngày Đặt : </div>
+      <div class="col-md-5 tongtien">Tổng Tiền :</div>
     </div>
     <div class="form-group row">
       <div class="col-md-12 diachi">Địa Chỉ :</div>
@@ -79,7 +79,8 @@
       <div class="col-md-12 makhuyenmai">Mã Khuyến Mãi :</div>
     </div>
     <div class="form-group row">
-      <div class="col-md-12 phi_ship">Phí Ship :</div>
+      <div class="col-md-5 phi_ship">Phí Ship :</div>
+      <div class="col-md-7 hinh_thuc">Thanh Toán :</div>
     </div>
     <div class="form-group row">
       <div class="col-md-12 trangthai">Trạng Thái :</div>
@@ -105,6 +106,7 @@
     <input type="hidden" name="hidden_id" id="hidden_id" />
     <input type="submit" name="action_button" id="action_xuly" class="btn btn-warning" value="Xử Lý" />
     <input type="submit" name="action_button" id="action_huy" class="btn btn-warning" value="Hủy Đơn" />
+    <button name="action_print" id="" title="In" class="btn btn-warning"><a id="action_print" href="admin/printbill/1" class="fa fa-print"></a></button>
   </div>
 </form>
 </div>
@@ -167,8 +169,33 @@
           } );
         } );
       },
+      dom: 'lBfrtip',
+      buttons: [
+      {
+        extend: 'print',
+        messageTop: 'Danh Sách Đơn Hàng',
+        exportOptions: {
+          columns: ':visible' //in theo cột được hiển thị (phụ thuocj vào columnsToggle, hoặc colvis)
+          //columns: [0,1,2,3,4]  // export theo số cột cố định
+        }
+      },
+      {
+        extend: 'excel',
+        messageTop: 'Danh Sách Đơn Hàng',
+        exportOptions: {
+          columns: ':visible' //in theo cột được hiển thị (phụ thuocj vào columnsToggle, hoặc colvis)
+          //columns: [0,1,2,3,4]  // export theo số cột cố định
+        }
+      }
+      ,
+      'columnsToggle'//show ra cac button ẩn/hiện cột
+      //'colvis' //show ra button chọn cột muốn ẩn/hiện 
+      ],
+      select: true,
       "order":[1,'desc'],
-      processing: true,
+      "iDisplayLength": 50,
+      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+      //processing: true, // nếu render data thì tắt processing,serverside,autofill
       serverSide: true,
       autoFill: true,
       // "ordering": false,
@@ -212,6 +239,7 @@
     data: 'ghichu',
     name: 'ghichu',
     autoWidth:true,
+    visible:false,
   },
   {
     data: 'trangthai',
@@ -224,8 +252,19 @@
     }
   },
   {
-    data: 'updated_at',
-    name: 'updated_at',
+    data: 'pay',
+    name: 'pay',
+    render:function(data)
+    {
+      if(data==1)
+      {
+        return "Online"
+      }
+      else
+      {
+        return "Tiền Mặt"
+      }
+    },
     autoWidth:true,
   },
   {
@@ -240,16 +279,18 @@
     $('#action_fill').click(function(){
       //table.destroy();
       var date=$('.daterange').val();
-      for(var i=0;i<=date.length;i++)
+      if(date.length>1)
       {
-        date= date.replace('/',"-");
-      }
-      var table= $('#data_table').DataTable({
-        destroy: true,
-        initComplete: function () {
-          this.api().columns(5).every( function () {
-            var column = this;
-            var select = $('#select_trangthai')
+        for(var i=0;i<=date.length;i++)
+        {
+          date= date.replace('/',"-");
+        }
+        var table= $('#data_table').DataTable({
+          destroy: true,
+          initComplete: function () {
+            this.api().columns(5).every( function () {
+              var column = this;
+              var select = $('#select_trangthai')
           .appendTo('#select_trangthai')//headder hoặc footer
           .on( 'change', function () {
             var val = $.fn.dataTable.util.escapeRegex(
@@ -258,17 +299,31 @@
             column
             .search( val ? '^'+val+'$' : '', true, false )
             .draw();
-          } );
-
+          });
           column.data().unique().sort().each( function ( d, j ) {
             select.append( '<option value="'+d+'">'+format_trangthai(d)+'</option>' )
           } );
         } );
-        },
-        "order":[1,'desc'],
+          },
+          dom: 'lBfrtip',
+          buttons: ['excel',
+          {
+            extend: 'print',
+            messageTop: 'Danh Sách Đơn Hàng',
+            exportOptions: {
+            columns: ':visible'
+            }
+          },
+          'columnsToggle'//show ra cac button ẩn/hiện cột
+            //'colvis' //show ra button chọn cột muốn ẩn/hiện 
+          ],
+          select: true,
+          "iDisplayLength": 50,
+          "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        //"order":[1,'desc'],
         processing: true,
         serverSide: true,
-        autoFill: true,
+        //autoFill: true,
       // "ordering": false,
       // "info":     false
     //bStateSave: false,
@@ -310,6 +365,7 @@
     data: 'ghichu',
     name: 'ghichu',
     autoWidth:true,
+    visible:false,
   },
   {
     data: 'trangthai',
@@ -322,8 +378,19 @@
     }
   },
   {
-    data: 'updated_at',
-    name: 'updated_at',
+    data: 'pay',
+    name: 'pay',
+    render:function(data)
+    {
+      if(data==1)
+      {
+        return "Online"
+      }
+      else
+      {
+        return "Tiền Mặt"
+      }
+    },
     autoWidth:true,
   },
   {
@@ -334,13 +401,15 @@
   }
   ]
 });
+      }
     });
     // End Filter
   });
 </script>
 <script>
   $(document).ready(function(){
-
+    $('#action_print').printPage();
+    //$('.buttons-colvis span').text('Ẩn/Hiện');
     $('.daterange').daterangepicker({
         //timePicker24Hour: true,
         startDate: moment(),
@@ -352,7 +421,7 @@
     $('.daterange').val('');
     $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
       $('.daterange').val('');
-       window.location.reload();
+      window.location.reload();
 
     });
     {{-- Start Submit --}}
@@ -364,11 +433,13 @@
     $(document).on('click', '.edit', function(event){
       event.preventDefault();
       var id = $(this).attr('id');
+      $('#action_print').attr('href','admin/printbill/'+id);
       $('#form_result').html('');
       $('.modal-title').text("Chi Tiết Đơn Hàng "+id);
       $('#formModal').modal('show');
-      $('#action_xuly').attr('disabled',false);
-      $('#action_huy').attr('disabled',false);
+      $('#action_xuly').show();
+      $('#action_huy').show();
+      //$('#action_huy').hide();
       $('#action_xuly').val('Xử Lý');
       $.ajax({
        url:"admin/donhang/chitiet/"+id,
@@ -441,6 +512,10 @@
       var row='';
       $.each(chitiet,function(key,value){
         $.each(value,function(k,v){
+          if(v.pay==1)
+          {
+           $('#action_huy').hide();
+         }
           if(v.trangthai==1)//đơn hàng đã được xử lý
           {
             //$('#action_xuly').removeAttr('hide');
@@ -449,8 +524,8 @@
           }
           if(v.trangthai==3 ||v.trangthai==2) //đơn hàng đã hoàn thành hoặc đã hủy
           {
-            $('#action_xuly').attr('disabled',true);
-            $('#action_huy').attr('disabled',true);
+            $('#action_xuly').hide();
+            $('#action_huy').hide();
           }
           row+='<tr>'
           row+='<td>'+v.mamon+'</td>'
@@ -459,7 +534,11 @@
           row+='<td>'+format_number(v.dongia)+'</td>'
           row+='</tr>'
           var date=v.ngaydat;
-          $('.ngaydat').text("Ngày Đặt : "+format_datetime(date));
+          v.diachi=v.diachi==null?"":v.diachi;
+          v.sdt=v.sdt==null?"":v.sdt;
+          v.phi_giao_hang=v.phi_giao_hang==null?"":v.phi_giao_hang;
+          v.pay=v.pay==1?"VN Pay":"Tiền Mặt";
+          $('.ngaydat').text("Ngày : "+format_datetime(date));
           $('.tongtien').text("Tổng Tiền : "+format_number(v.thanhtien));
           $('.diachi').text("Địa Chỉ : "+v.diachi);
           $('.sdt').text("SĐT Người Nhận : "+v.sdt);
@@ -468,12 +547,42 @@
           $('.ghichu').text("Ghi Chú : "+v.ghichu);
           $('.makhuyenmai').text("Mã Khuyến Mãi : "+v.makhuyenmai);
           $('.phi_ship').text("Phí Ship : "+v.phi_giao_hang);
+          $('.hinh_thuc').text("Thanh Toán : "+v.pay);
           $('.trangthai').text("Trạng Thái : "+format_trangthai(v.trangthai));
           $('#hidden_id').val(v.id);
         });
       });
       $('.body_table_detail').html(row);
     }
+    {{-- Start Confirm Delete --}}
+    $('#ok_button').click(function(){
+      $.ajax({
+        url:"admin/donhang/destroy/"+id,
+        beforeSend:function(){
+          $('#ok_button').text('Deleting...');
+        },
+        success:function(data)
+        {
+          var html="";
+          if(data.errors)
+          {
+            html = '<div style="color:red;">' + data.errors + '</div>';
+          }
+          if(data.success)
+          {
+            html = '<div style="color:green;">' + data.success + '</div>';
+          }
+          $('#confirm_result').html(html);
+          setTimeout(function(){
+           $('#confirmModal').modal('hide');
+           $('#confirm_result').html(html);
+           $('#data_table').DataTable().ajax.reload();
+         }, 1000);
+          $('#ok_button').text('OK');
+        }
+      })
+    });
+    {{-- End Confirm Delete --}}
   });
 </script>
 <script>

@@ -1,8 +1,8 @@
 <ul class="sidebar navbar-nav">
   <li class="nav-item active">
-    <a class="nav-link" href="index.html">
+    <a class="nav-link" href="admin/quan-ly">
       <i class="fas fa-fw fa-tachometer-alt"></i>
-      <span>Dashboard</span>
+      <span>Quản Lý</span>
     </a>
   </li>
 {{--   <li class="nav-item dropdown">
@@ -77,11 +77,6 @@
                   <a class="dropdown-item" href="admin/dathang/danh-sach">Đặt Hàng</a>
                   <a class="dropdown-item" href="admin/nhaphang/danh-sach">Nhập Hàng</a>
                 </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="admin/nhacungcap/danh-sach">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Nhà Cung Cấp</span></a>
-                  </li>
                 {{-- <li class="nav-item">
                   <a class="nav-link" href="admin/dathang/danh-sach">
                     <i class="fas fa-fw fa-table"></i>
@@ -155,6 +150,11 @@
                                                 <i class="fas fa-fw fa-table"></i>
                                                 <span>Ca Làm</span></a>
                                               </li> --}}
+                                              <li class="nav-item">
+                                                <a class="nav-link" href="admin/tintuc/danh-sach">
+                                                  <i class="fas fa-fw fa-table"></i>
+                                                  <span>Tin Tức</span></a>
+                                                </li>
                                               <li class="nav-item">
                                                 <a class="nav-link" href="admin/khuvuc/danh-sach">
                                                   <i class="fas fa-fw fa-table"></i>

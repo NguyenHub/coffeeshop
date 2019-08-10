@@ -34,14 +34,7 @@
                                         <input type="text" name="email" class="form-control" placeholder="Email" value="{{$email}}" readonly="">
                                         <input type="password" name="password" class="form-control" placeholder="Mật khẩu mới" required="">
                                         <input type="password" name="confirm_password" class="form-control" placeholder="Nhập lại mật khẩu" required="">
-                                        <div class="button-box">
-                                            {{-- <div class="login-toggle-btn">
-                                                <input type="checkbox">
-                                                <label>Ghi nhớ mật khẩu?</label>
-                                                <a href="#">Quên mật khẩu?</a>
-                                            </div> --}}
-                                            <button type="submit"><span>Cập Nhật</span></button>
-                                        </div>
+                                            <button type="submit" class="btn btn-danger" style="width: 90px;">Cập Nhật</button>
                                     </form>
                                 </div>
                             </div>

@@ -39,3 +39,17 @@ td.highlight {
 {
     display: block;
 }
+.zoom {
+  /*padding: 50px;*/
+ /* background-color: green;*/
+  transition: transform .2s;
+  width: 60px;
+  height: 60px;
+  /*margin: 0 auto;*/
+}
+
+.zoom:hover {
+  -ms-transform: scale(5); /* IE 9 */
+  -webkit-transform: scale(5); /* Safari 3-8 */
+  transform: scale(5); 
+}

@@ -7,7 +7,7 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="admin/trangchu">Trang chủ</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
       <li class="breadcrumb-item active">Đặt Hàng</li>
     </ol>
@@ -18,7 +18,7 @@
       </div> --}}
 
       <div class="row card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-y: scroll; height: 480px;">
           <table class="table table-bordered table-striped " id="data_table" width="100%" cellspacing="0">
            <thead>
             <tr>
@@ -26,7 +26,7 @@
               <th >NGÀY ĐẶT </th>
               <th >GHI CHÚ</th>
               <th >NHÀ CUNG CẤP</th>
-              <th >Action
+              <th >
                 <button type="button" name="create_record" id="create_record" class="btn btn-success btn-sm">Tạo mới</button>
               </tr>
             </thead>
@@ -221,35 +221,35 @@
   $(document).ready(function(){
     $(document).on('keyup','.soluong',function(){
       var number = $(this).val();
-      var diem=0;
-      for(var i=0;i<number.length;i++)
-      {
-       var str=number.substring(i,i+1);
-       if(str=='.')
-       {
-        diem++;
-      }
-    }
-    var substring=number.substring(number.length-1,number.length);
-    var sl;
-    var pattern_number= /(([0-9]{1,5})\b)/g;
-    if(pattern_number.test(substring)==false)
-    {
-      sl=number.substring(0,number.length-1);
-      if(substring==".")
-      {
-        sl=number;
-        if(diem>1)
-        {
-          sl=number.substring(0,number.length-1);
-        }
-      }
-    }
-    else
-    {
-      sl= number;
-    }
-    $(this).val(sl);
+    //   var diem=0;
+    //   for(var i=0;i<number.length;i++)
+    //   {
+    //    var str=number.substring(i,i+1);
+    //    if(str=='.')
+    //    {
+    //     diem++;
+    //   }
+    // }
+    // var substring=number.substring(number.length-1,number.length);
+    // var sl;
+    // var pattern_number= /(([0-9]{1,5})\b)/g;
+    // if(pattern_number.test(substring)==false)
+    // {
+    //   sl=number.substring(0,number.length-1);
+    //   if(substring==".")
+    //   {
+    //     sl=number;
+    //     if(diem>1)
+    //     {
+    //       sl=number.substring(0,number.length-1);
+    //     }
+    //   }
+    // }
+    // else
+    // {
+    //   sl= number;
+    // }
+    $(this).val(format_input_number(number));
   });
     var html='';
     $('#create_record').click(function(){
@@ -424,8 +424,19 @@
     },
     success:function(data)
     {
+      var html="";
+      if(data.errors)
+      {
+        html = '<div style="color:red;">' + data.errors + '</div>';
+      }
+      if(data.success)
+      {
+        html = '<div style="color:green;">' + data.success + '</div>';
+      }
+      $('#confirm_result').html(html);
       setTimeout(function(){
        $('#confirmModal').modal('hide');
+       $('#confirm_result').html(html);
        $('#data_table').DataTable().ajax.reload();
      }, 1000);
       $('#ok_button').text('OK');

@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use Session;
+use App\PasswordReset;
+use Mail;
 class NhanVienController extends Controller
 {
 	public function getIndex()
@@ -31,11 +34,13 @@ class NhanVienController extends Controller
 		{
 			if($id==0)
 			{
-				$sanpham=Mon::select('mon.id','mon.tenmon','mon.hinhanh')->get();
+				$sanpham=Mon::select('mon.id','mon.tenmon','mon.hinhanh')
+				->where('mon.trangthai','!=',1)->get();
 			}
 			else
 			{
-				$sanpham=Mon::select('mon.id','mon.tenmon','mon.hinhanh')->where('mon.maloai',$id)->get();
+				$sanpham=Mon::select('mon.id','mon.tenmon','mon.hinhanh')
+				->where([['mon.maloai',$id],['mon.trangthai','!=',1]])->get();
 			}
 			return response()->json(['data'=>$sanpham]);
 		}
@@ -62,9 +67,18 @@ class NhanVienController extends Controller
 		}
 		return response()->json(['data'=>$khachhang]);
 	}
-	public function getPrint()
+	public function getPrint($diem)
 	{
-		return view('admin/print');
+		$giam=0;
+		if($diem>=700)
+		{
+			$giam=Session('cart')->totalPrice*0.1;
+		}
+		if($diem>=500 && $diem<700)
+		{
+			$giam=Session('cart')->totalPrice*0.05;
+		}
+		return view('admin/print',['giam'=>$giam]);
 	}
 	public function index()
 	{
@@ -114,7 +128,7 @@ class NhanVienController extends Controller
 		else
 		{
 			$data = new NhanVien;
-			$data->tennhanvien=ucwords($request->tennhanvien);
+			$data->tennhanvien=$request->tennhanvien;
 			$data->ngaysinh=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngaysinh)));
 			$data->gioitinh=$request->gioitinh;
 			$data->email=$request->email;
@@ -136,8 +150,16 @@ class NhanVienController extends Controller
 	public function destroy($id)
 	{
 		$data = NhanVien::find($id);
-		$data->delete();
-		return response()->json(['success' => 'Xóa Thành Công!']);
+		$id_=Auth::guard('nhan_vien')->user()->id;
+		if($id_!=$id && $data->trangthai==1)
+		{
+			$data->delete();
+			return response()->json(['success' => 'Xóa Thành Công!']);
+		}
+		else
+		{
+			return response()->json(['success' => 'Xóa Thất Bại!']);
+		}
 	}
 	public function edit($id)
 	{
@@ -176,7 +198,7 @@ class NhanVienController extends Controller
 		else
 		{
 			$data =NhanVien::find($request->hidden_id);
-			$data->tennhanvien=ucwords($request->tennhanvien);
+			$data->tennhanvien=$request->tennhanvien;
 			$data->ngaysinh=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngaysinh)));
 			$data->gioitinh=$request->gioitinh;
 			$data->email=$request->email;
@@ -209,13 +231,13 @@ class NhanVienController extends Controller
 	}
 	public function postLogin(Request $request)
 	{
-		$login=['email'=>$request->email,'password'=>$request->password];
+		$login=['email'=>$request->email,'password'=>$request->password,'trangthai'=>0];
 		if(Auth::guard('nhan_vien')->attempt($login))
 		{
             //return redirect('admin/trang-chu');
             //return response()->json(['errors' => 'Đăng Nhập Thành Công!']);
             //return view('admin/trang-chu');
-			return response()->json(['success' => 'Email hoặc mật khẩu không đúng!']);
+			return response()->json(['success' => '']);
 		}
 		else
 		{
@@ -262,7 +284,7 @@ class NhanVienController extends Controller
 			else
 			{
 				$data =NhanVien::find($request->id);
-				$data->tennhanvien=ucwords($request->tennhanvien);
+				$data->tennhanvien=$request->tennhanvien;
 				$data->ngaysinh=$request->ngaysinh;
 				$data->gioitinh=$request->gioitinh;
 				$data->password=bcrypt($request->newpassword);
@@ -301,7 +323,7 @@ class NhanVienController extends Controller
 		else
 		{
 			$data =NhanVien::find($request->id);
-			$data->tennhanvien=ucwords($request->tennhanvien);
+			$data->tennhanvien=$request->tennhanvien;
 			$data->ngaysinh=$request->ngaysinh;
 			$data->gioitinh=$request->gioitinh;
 			$data->sdt=$request->sdt;
@@ -310,6 +332,83 @@ class NhanVienController extends Controller
 			$data->updated_at=date('Y-m-d H:i:s');
 			$data->save();
 			return response()->json(['success' => 'Cập Nhật Thành Công!']);
+		}
+	}
+	public function resetPassWord(Request $request)
+	{
+		$data=NhanVien::Where('email',$request->email)->first();
+		if($data!=null)
+		{
+			if($data->trangthai==0)
+			{
+				$data= new PasswordReset;
+				$data->email=$request->email;
+				$data->token=$request->_token;
+				$data->status=0;
+				$data->created_at=date('Y-m-d H:i:m');
+				$data->save();
+				$to_email = $request->email;
+				$token=$request->_token;
+				$dt = array("body" => "Khôi phục mật khẩu!",'email'=>$to_email,'token'=>$token);
+				Mail::send('admin.mail-admin-reset-password',$dt, function($message) use ($to_email) {
+					$message->to($to_email)->subject('Khôi Phục Mật Khẩu!');
+				});
+				return response()->json(['success'=>'Vui lòng kiểm tra email để khôi phục mật khẩu!']);
+			}
+		}
+		else
+		{
+			return response()->json(['errors'=>'Email không tồn tại']);
+		}
+	}
+	public function adminResetPassWord($email,$token)
+	{
+		$data =DB::table('password_resets')
+		->select('password_resets.*')
+		->Where([['email',$email],['token',$token]])
+		->orderBy('created_at','desc')
+		->limit(1)
+		->first();
+		if($data->status==0)
+		{
+			return view('admin/khoi-phuc-mat-khau',['email'=>$email,'token'=>$token]);
+
+		}
+		else
+		{
+			return redirect('admin/dangnhap');
+		}
+	}
+	public function postResetPassWord(Request $req)
+	{
+		$validator =Validator::make($req->all(),[
+			// 'password'=>'bail|min:8|max:32|regex:/(?=.*?[A-Z]{1,})(?=.*?[a-z]{1,})(?=.*?[0-9]{1,})$/',
+			'password'=>'bail|min:8|max:32',
+			'confirmpassword'=>'bail|same:password',
+		],
+		[
+			//'password.regex'=>'Mật khẩu không hợp lệ',
+			'password.min'=>'Mật khẩu phải từ 8-32 ký tự',
+			'password.max'=>'Mật khẩu phải từ 8-32 ký tự',
+			'confirmpassword.same'=>'Nhập lại mật khẩu chưa đúng'
+
+		]);
+		if($validator->fails())
+		{
+			return response()->json(['errors' => $validator->errors()->all()]);
+		}
+		else
+		{
+			$data=NhanVien::where('email',$req->email)->first();
+			$data->password=bcrypt($req->password);
+			$data->save();
+			DB::table('password_resets')
+			->select('password_resets.*')
+			->Where([['email',$req->email],['token',$req->token_reset]])
+			->orderBy('created_at','desc')
+			->limit(1)
+			->update(['status'=>1]);
+			return response()->json(['success'=>'Khôi phục mật khẩu thành công!']);
 		}
 	}
 }

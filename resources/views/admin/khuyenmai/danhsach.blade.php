@@ -7,7 +7,7 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="admin/trangchu">Trang chủ</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
       <li class="breadcrumb-item active">Khuyến Mãi</li>
     </ol>
@@ -18,7 +18,7 @@
       </div> --}}
 
       <div class="row card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-y: scroll; height: 480px;">
           <table class="table table-striped " id="data_table" width="100%" cellspacing="0">
            <thead>
             <tr>
@@ -167,7 +167,7 @@
       //Setup - add a text input to each footer cell
       $('#data_table tfoot th').each( function () {
         var title = $(this).text();
-        $(this).html( '<input type="text" class="form-control" placeholder="Search" />' );
+        $(this).html( '<input type="text" class="form-control" placeholder="" />' );
       } );
     // DataTable
     var table =  $('#data_table').DataTable({
@@ -289,6 +289,14 @@
 </script>
 <script>
   $(document).ready(function(){
+    $('#giatri').keyup(function(){
+      var number = $(this).val();
+      $(this).val(format_input_number(number));
+    });
+    $('#soluong').keyup(function(){
+      var number = $(this).val();
+      $(this).val(format_input_number(number));
+    });
     {{-- Start Call Form --}}
     var html='';
     $('#create_record').click(function(){
@@ -331,7 +339,7 @@
          var html = '';
          if(data.errors)
          {
-          html = '<div class="alert alert-danger">';
+          html = '<div style="color:red;">';
           for(var count = 0; count < data.errors.length; count++)
           {
            html += '<p>' + data.errors[count] + '</p>';
@@ -340,11 +348,14 @@
        }
        if(data.success)
        {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
+        html = '<div style="color:green;">' + data.success + '</div>';
         $('#sample_form')[0].reset();
         $('#data_table').DataTable().ajax.reload();
       }
       $('#form_result').html(html);
+      setTimeout(function(){
+        $('#form_result').html('');
+      },2000);
     }
   })
      }
@@ -365,7 +376,7 @@
          var html = '';
          if(data.errors)
          {
-          html = '<div class="alert alert-danger">';
+          html = '<div style="color: red;">';
           for(var count = 0; count < data.errors.length; count++)
           {
            html += '<p>' + data.errors[count] + '</p>';
@@ -374,7 +385,7 @@
        }
        if(data.success)
        {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
+        html = '<div style="color: green;">' + data.success + '</div>';
         $('#sample_form')[0].reset();
         setTimeout(function(){
          $('#formModal').modal('hide');

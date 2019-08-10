@@ -7,7 +7,7 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="admin/trangchu">Trang chủ</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
       <li class="breadcrumb-item active">Nhập Hàng</li>
     </ol>
@@ -18,7 +18,7 @@
       </div> --}}
 
       <div class="row card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-y: scroll; height: 480px;">
           <table class="table table-bordered table-striped " id="data_table" width="100%" cellspacing="0">
            <thead>
             <tr>
@@ -187,9 +187,13 @@
     autoWidth:true,
   },
   {
-    data: 'ghichu',
-    name: 'ghichu',
+    data: 'ngaynhap',
+    name: 'ngaynhap',
     autoWidth:true,
+    render:function(data)
+    {
+      return format_datetime(data);
+    }
   },
   {
     data: 'action',

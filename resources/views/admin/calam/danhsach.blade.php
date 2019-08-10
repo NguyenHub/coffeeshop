@@ -7,7 +7,7 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="admin/trangchu">Trang chủ</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
       <li class="breadcrumb-item active">Ca Làm</li>
     </ol>
@@ -142,16 +142,6 @@
     $('#data_table').DataTable({
     "order":[[0,"desc"]],// sắp xếp cột giảm dần
     retrieve: true,
-    //columnDefs: [ //có thể custom hiển thị ở đây hoặc column[]
-    //{
-      //"className":'text-center',"targets":0    //   "render": function(data,type,row)
-    //   {
-    //     return data +'('+ row['tenkhuyenmai']+')';
-    //   },
-    //   "targets":0 //render cho cột số 0
-    //},
-    // //{"visible":false,"targets":2}//ẩn đi cột số 2
-    //],
     "iDisplayLength": 10,
     "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
     processing: true,
@@ -237,7 +227,7 @@
   $(document).ready(function(){
     {{-- Start Call Form --}}
     var html='';
-    $('#create_record').click(function(){
+    $(document).on('click','#create_record',function(){
       $('.modal-title').text("Tạo Mới Dữ Liệu");
       $('#action_button').val("Add");
       $('#action').val("Add");

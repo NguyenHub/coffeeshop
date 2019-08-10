@@ -10,6 +10,7 @@
   <base href="{{ asset('') }}">
   <title>STU-Coffee</title>
   <!-- Custom fonts for this template-->
+  <link rel="shortcut icon" type="image/x-icon" href="assets/img/logo/footer-logo2.PNG">
   <link href="source/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <!-- Custom styles for this template-->
   <link href="source/css/sb-admin.css" rel="stylesheet">
@@ -17,7 +18,8 @@
 <body class="bg-dark">
 
   <div class="container">
-    <div class="card card-login mx-auto mt-5">
+    {{-- Start login form --}}
+    <div class="card card-login mx-auto mt-5" id="login">
       <div class="card-header">Đăng nhập</div>
       <div class="card-body">
         <form method="post" action="admin/login" id="login_form" class="form-horizontal" enctype="multipart/form-data">
@@ -31,8 +33,8 @@
           </div>
           <div class="form-group">
             <div class="form-label-group">
-              <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required="required">
-              <label for="inputPassword">Mật khẩu</label>
+              <input type="password" id="inputPassword" name="password" class="form-control password" placeholder="Password" required="required">
+              <label for="inputPassword">Mật khẩu<i id="show_password" style="float: right;" class="fa fa-eye show_password" title="Hiển thị mật khẩu"></i></label>
             </div>
           </div>
           <div class="form-group">
@@ -47,10 +49,36 @@
         </form>
         <div class="text-center">
           <!-- <a class="d-block small mt-3" href="register.html">Register an Account</a> -->
-          <a class="d-block small" href="forgot-password.html">Quên mật khẩu?</a>
+          <a class="d-block small" href="" id="forgot">Quên mật khẩu?</a>
         </div>
       </div>
     </div>
+    {{-- End login form --}}
+    {{-- Start reset password form --}}
+    <div class="card card-login mx-auto mt-5" id="form_reset_password">
+      <div class="card-header">Khôi Phục Mật Khẩu</div>
+      <div class="card-body">
+        <div class="text-center mb-4">
+          <h4>Bạn Quên Mật Khẩu?</h4>
+          <p>Nhập địa chỉ email. Chúng tôi sẽ gửi email xác nhận khôi phục mật khẩu.</p>
+        </div>
+        <form id="reset_form">
+          {{csrf_field()}}
+          <span id="reset_result"></span>
+          <div class="form-group">
+            <div class="form-label-group">
+              <input type="email" id="email" name="email" class="form-control" placeholder="Enter email address" required="required" autofocus="autofocus">
+              <label for="email">Email</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" href="login.html">Khôi Phục</button>
+        </form>
+        <div class="text-center">
+          <a class="d-block small" href="" id="show_login">Đăng Nhập</a>
+        </div>
+      </div>
+    </div>
+    {{-- End reset password form --}}
   </div>
 
   <!-- Bootstrap core JavaScript-->
@@ -59,11 +87,33 @@
   <!-- Core plugin JavaScript-->
   <script src="source/vendor/jquery-easing/jquery.easing.min.js"></script>
   <script>
-        $('#login_form').on('submit',function(envent){
+    $(document).ready(function(){
+      $(document).on('click','#show_password',function(){
+        $('.password').attr('type','text');
+        $('.show_password').removeClass(' fa-eye');
+        $('.show_password').addClass('fa-eye-slash');
+      })
+      $(document).on('click','.fa-eye-slash',function(){
+        $('.password').attr('type','password');
+        $('.show_password').addClass('fa-eye');
+        $('.show_password').removeClass('fa-eye-slash');
+      })
+      $('#form_reset_password').hide();
+      $('#forgot').click(function(envent){
+        envent.preventDefault();
+        $('#login').hide();
+        $('#form_reset_password').show();
+      });
+      $('#show_login').click(function(envent){
+        envent.preventDefault();
+        $('#login').show();
+        $('#form_reset_password').hide();
+      })
+      $('#login_form').on('submit',function(envent){
         envent.preventDefault('admin/trang-chu');
         //alert('sagf');
         $.ajax({
-          header:{
+          headers:{
             //'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
           },
@@ -79,7 +129,7 @@
             var html='';
             if(data.errors)
             {
-              html='<div class="alert alert-danger">'+data.errors+'</div>';
+              html='<div style="color:red;">'+data.errors+'</div>';
               $('#login_result').html(html);
             }
             else
@@ -89,6 +139,36 @@
           }
         })
       });
+      $('#reset_form').on('submit',function(envent){
+        envent.preventDefault();
+        $.ajax({
+          headers:{
+            'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
+          },
+          url:"admin/reset-password",
+          method:"POST",
+          data: new FormData(this),
+          contentType: false,
+          cache:false,
+          processData: false,
+          dataType:"json",
+          success:function(data)
+          {
+            var html='';
+            if(data.errors)
+            {
+              html='<div style="color:red;">'+data.errors+'</div>';
+            }
+            else
+            {
+              html='<div style="color:green;">'+data.success+'</div>';
+            }
+            $('#reset_result').html(html);
+
+          }
+        })
+      });
+    });
   </script>
 </body>
 </html>

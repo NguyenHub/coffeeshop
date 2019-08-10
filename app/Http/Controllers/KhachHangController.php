@@ -74,8 +74,25 @@ class KhachHangController extends Controller
 	public function destroy($id)
 	{
 		$data = KhachHang::find($id);
-		$data->delete();
-		return response()->json(['success' => 'Xóa Thành Công!']);
+		if($data->trangthai==0)
+		{
+			$now=strtotime(date('Y-m-d H:i:s'));
+			$date=strtotime($data->updated_at);
+			if(($now-$date)/(24*60*60)>=7)
+			{
+				$data->delete();
+				return response()->json(['success' => 'Xóa Thành Công!']);
+			}
+			else
+			{
+				return response()->json(['errors' => 'Không Thể Xóa Khách Hàng Này!']);
+			}
+		}
+		else
+		{
+			return response()->json(['errors' => 'Không Thể Xóa Khách Hàng Này!']);
+		}
+		
 	}
 	public function edit($id)
 	{
@@ -179,7 +196,7 @@ class KhachHangController extends Controller
 		else
 		{
 			$data = new KhachHang;
-			$data->tenkhachhang=ucwords($request->hoten);
+			$data->tenkhachhang=$request->hoten;
 			$data->ngaysinh=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngaysinh)));
 			$data->gioitinh=$request->gioitinh;
 			$data->email=$request->email;
@@ -206,7 +223,7 @@ class KhachHangController extends Controller
 			$validator=Validator::make($request->all(),[
 				'hoten'=>'bail|regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{2,7})+([\s]*)+([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,7}))$/|min:5|max:50',
 				'sdt' => 'bail|digits:10|regex:/(^(0[1-9])+([0-9]{8,10}))$/|unique:khach_hang,sdt,'.$request->id,
-				'new_password'=>'bail|min:8|max:32|regex:/^(?=.*?[A-Z]{1,})(?=.*?[a-z]{1,})+(?=.*?[0-9]{1,})$/',
+				//'new_password'=>'bail|min:8|max:32|regex:/^(?=.*?[A-Z]{1,})(?=.*?[a-z]{1,})+(?=.*?[0-9]{1,})$/',
 				'confirm_password'=>'bail|same:new_password'
 			],
 			[
@@ -228,7 +245,7 @@ class KhachHangController extends Controller
 			else
 			{
 				$data =KhachHang::find($request->id);
-				$data->tenkhachhang=ucwords($request->hoten);
+				$data->tenkhachhang=$request->hoten;
 				$data->ngaysinh=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngaysinh)));
 				$data->gioitinh=$request->gioitinh;
 				$data->password=bcrypt($request->new_password);
@@ -266,7 +283,7 @@ class KhachHangController extends Controller
 		else
 		{
 			$data =KhachHang::find($request->id);
-			$data->tenkhachhang=ucwords($request->hoten);
+			$data->tenkhachhang=$request->hoten;
 			$data->ngaysinh=date('Y-m-d',strtotime(str_replace("/", "-",$request->ngaysinh)));
 			$data->gioitinh=$request->gioitinh;
 			$data->sdt=$request->sdt;
@@ -389,5 +406,16 @@ class KhachHangController extends Controller
 			return redirect('index');
 		}
 	}
-
+	public function postContact(Request $request)
+	{
+		$mail_from=$request->email;
+		$subject=$request->subject;
+		$data = array('ten'=>$request->ten, "body" => $request->message);
+		Mail::send('front.mail-lien-he', $data, function($message) use($mail_from,$subject) {
+			$message->to('smartcoffee@gmail.com')
+			->subject($subject);
+			$message->from($mail_from);
+		});
+		return response()->json(['success'=>'Mail đã được gửi! Chúng tôi sẽ hồi âm sớm nhất có thể. ']);
+	}
 }

@@ -7,7 +7,7 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="admin/trangchu">Trang chủ</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
       <li class="breadcrumb-item active">Nhà Cung Cấp</li>
     </ol>
@@ -18,7 +18,7 @@
       </div> --}}
 
       <div class="row card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-y: scroll; height: 480px;">
           <table class="table table-striped " id="data_table" width="100%" cellspacing="0">
            <thead>
             <tr>
@@ -77,7 +77,7 @@
 <div class="form-group row">
   <label class="control-label col-md-3" >Ghi chú  : </label>
   <div class="col-md-8">
-   <input type="text" name="ghichu" id="ghichu" class="form-control" required=""  />
+   <input type="text" name="ghichu" id="ghichu" class="form-control"  />
  </div>
 </div>
 <div class="form-group row update">
@@ -228,7 +228,7 @@
          var html = '';
          if(data.errors)
          {
-          html = '<div class="alert alert-danger">';
+          html = '<div style="color:red;">';
           for(var count = 0; count < data.errors.length; count++)
           {
            html += '<p>' + data.errors[count] + '</p>';
@@ -237,7 +237,7 @@
        }
        if(data.success)
        {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
+        html = '<div style="color:green;">' + data.success + '</div>';
         $('#sample_form')[0].reset();
         $('#data_table').DataTable().ajax.reload();
       }
@@ -265,7 +265,7 @@
          var html = '';
          if(data.errors)
          {
-          html = '<div class="alert alert-danger">';
+          html = '<div style="color:red;">';
           for(var count = 0; count < data.errors.length; count++)
           {
            html += '<p>' + data.errors[count] + '</p>';
@@ -274,7 +274,7 @@
        }
        if(data.success)
        {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
+        html = '<div class="style="color:green;">' + data.success + '</div>';
         setTimeout(function(){
          $('#formModal').modal('hide');
          $('#data_table').DataTable().ajax.reload();
@@ -328,11 +328,11 @@
         var html ='';
         if(data.errors)
         {
-          html = '<div class="alert alert-danger">' + data.errors + '</div>';
+          html = '<div style="color:red;">' + data.errors + '</div>';
         }
         if(data.success)
         {
-          html = '<div class="alert alert-success">' + data.success + '</div>';
+          html = '<div style="color:green;">' + data.success + '</div>';
         }
         $('#confirm_result').html(html);
         setTimeout(function()

@@ -63,8 +63,8 @@
 			@foreach($cart->items as $carts)
 			<tr>
 				<td>{{$carts['item']['tenmon']}}</td>
-				<td>{{$carts['item']['dongia']}}</td>
 				<td>{{$carts['qty']}}</td>
+				<td>{{$carts['item']['dongia']}}</td>
 			</tr>
 			@endforeach
 		</tbody>
@@ -72,6 +72,6 @@
 	<div>Tạm Tính: {{$cart->totalPrice}}</div>
 	<div>Phí Ship: {{$ship}}</div>
 	<div>Khuyến Mãi: {{$cart->totalPrice+$ship-$thanhtien}}</div>
-	<div>Thành Tiền: {{$thanhtien}}</div>
+	<div>Thành Tiền: {{$thanhtien+$ship}}</div>
 </body>
 </html>

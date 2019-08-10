@@ -17,7 +17,7 @@
                                     <i class="icon-user icons"></i>
                                 </div>
                                 <div class="login-text-content">
-                                    @if(Auth::guard('khach_hang')->check())
+                                    {{-- @if(Auth::guard('khach_hang')->check())
                                     <div class="dropdown">
                                         <p class=" dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"  aria-expanded="false">
                                             {{Auth::guard('khach_hang')->user()->tenkhachhang}}
@@ -32,7 +32,7 @@
                                     <a href="dangnhap-dangky">
                                         <p>Đăng ký <br> hoặc <span style="color: red">Đăng nhập</span></p>
                                     </a>
-                                    @endif
+                                    @endif --}}
                                 </div>
                             </div>
                             <div class="header-wishlist">
@@ -65,6 +65,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    @if(session('errors'))
+                    <div class="alert alert-danger">
+                        {{session('errors')}}
+                    </div>
+                    @endif
+                    @if(session('success'))
+                    <div class="alert alert-success">
+                        {{session('success')}}
+                    </div>
+                    @endif
+                </div>
             </div>
             <div class="header-bottom transparent-bar black-bg">
                 <div class="container">
@@ -72,12 +84,12 @@
                         <div class="col-lg-6 col-md-6 col-6">
                             <div class="row">
                                 <div class="col-md-6 col-6">
-                                    <input id="search" class="form-control " type="text " style="background: #fff0; margin-top: 10px;" placeholder="Tìm kiếm...">
+                                    <input id="search" class="form-control " type="text " style="background: #fff0; margin-top: 10px;color: #007bff;" placeholder="Tìm kiếm...">
                                     <div id="search_result"  class="search-content">
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-4">
-                                    <select name="" id="select_loai" class="form-control" style="background: #fff0; margin-top: 10px;">
+                                    <select name="" id="select_loai" class="form-control" style="background: #fff0; margin-top: 10px;color: #007bff;">
                                         <option value="0">All</option>
                                         @foreach($loai_mon as $loai)
                                         <option value="{{$loai->id}}">{{$loai->tenloai}}</option>
@@ -92,7 +104,9 @@
                                     <ul>
                                         <li><a href="index">Trang Chủ</a></li>
                                         <li><a href="san-pham">Sản Phẩm</a></li>
-                                        <li><a href="lien-he">LIÊN HỆ</a></li>
+                                        <li><a href="tin-tuc">Tin Tức</a></li>
+                                        <li><a href="lien-he">Liên Hệ</a></li>
+
                                 {{-- <li><a href="shop.html">burger</a></li>
                                 <li><a href="shop.html">pizza</a></li>
                                 <li><a href="shop.html">cold drink</a></li> --}}

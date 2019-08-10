@@ -23,9 +23,9 @@ class DonDatHangController extends Controller
 				->select('nha_cung_cap.tennhacungcap','don_dat_hang.*')
 				->latest()->get())
 			->addColumn('action', function($data){
-				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm" title="Cập nhật" style="width:30px"><i class="fa fa-edit" ></i></button>';
+				$button = '<button type="button" name="edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm" title="Cập nhật">Sửa</button>';
 				$button .= '&nbsp;&nbsp;';
-				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm" title="Xóa" style="width:30px"><i class="fa fa-trash"  ></i></button>';
+				$button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm" title="Xóa">Xóa</button>';
 				return $button;
 			})
 			->rawColumns(['action'])
@@ -97,10 +97,19 @@ class DonDatHangController extends Controller
 	public function destroy($id)
 	{
 		$data = DonDatHang::find($id);
-		$data->delete();
-		$data2=ChiTietDonDatHang::Where('madonhang',$id);
-		$data2->delete();
-		return response()->json(['success' => 'Xóa Thành Công!']);
+		$now=strtotime(date('Y-m-d H:i:s'));
+		$day=strtotime($data->ngaydat);
+		if(($now-$day)/(24*60*60)>=7)
+		{
+			$data->delete();
+			$data2=ChiTietDonDatHang::Where('madonhang',$id);
+			$data2->delete();
+			return response()->json(['success' => 'Xóa Thành Công!']);
+		}
+		else
+		{
+			return response()->json(['errors' => 'Đơn Đặt Hàng Chưa Quá 7 Ngày-Không Thể Xóa!']);
+		}
 	}
 	public function edit($id)
 	{

@@ -453,28 +453,8 @@
 </div>
 @endsection
 @section('script')
-<{{-- script>
+<script>
 	$(document).ready(function(){
-	$(window).on('hashchange',function(){
-			page = window.location.hash.replace('#','');
-			getProducts(page);
-		});
-	$(document).on('click','.pagination a',function(event){
-		event.preventDefault();
-		var page=$(this).attr('href').split('page=')[1];
-		//alert(page);
-		//location.hash='page='+page;
-		getProducts(page);
-	});
-	function getProducts(page){
-		$.ajax({
-			url:'product?page=' + page,
-			success:function(mon)
-			{
-				$('#show_mon').html(mon);
-			}
-		})
-	}
-});
-</script> --}}
+	})
+</script>
 @endsection

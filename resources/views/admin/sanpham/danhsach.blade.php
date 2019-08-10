@@ -7,7 +7,7 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="admin/trangchu">Trang chủ</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
       <li class="breadcrumb-item active">Sản Phẩm</li>
     </ol>
@@ -18,7 +18,7 @@
       </div> --}}
 
       <div class="row card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-y: scroll; height: 480px;">
           <table class="table table-bordered table-striped " id="data_table" width="100%" cellspacing="0">
            <thead>
             <tr>
@@ -31,14 +31,13 @@
               <th >TRẠNG THÁI</th>
               <th >CREATED_AT</th>
               <th >UPDATED_AT</th>
-              <th >Action
+              <th >
                 <button type="button" name="create_record" id="create_record" class="btn btn-success btn-sm">Tạo mới</button>
               </tr>
             </thead>
           </table>
         </div>
       </div>
-      <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
     </div>
   </div>
   {{-- Start Form Insert --}}
@@ -162,83 +161,109 @@
  toolbar: [
  [ 'Source','Bold', 'Italic','Underline', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink' ],
  [ 'FontSize', 'TextColor', 'BGColor' ]
- ]
+ ],
+ 
 });</script>
 <script type="text/javascript">
   $(document).ready(function(){
    $('#data_table').DataTable({
     retrieve: true,
-    columnDefs: [],
-    "iDisplayLength": 10,
-    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-    processing: true,
-    serverSide: true,
-    ajax:{
-     url: "admin/sanpham/danh-sach",
-     dataType:"json",
-   },
-   columns:[
-   {
-    data: 'id',
-    name: 'id'
-  },
-  {
-    data: 'tenloai',
-    name: 'tenloai',
-  },
-  {
-    data: 'tenmon',
-    name: 'tenmon'
-  },
-  {
-    data: 'dongia',
-    name: 'dongia',
-    render:function (data)
+    //columnDefs: [],
+    dom: 'lBfrtip',
+    buttons: [
     {
-      return format_number(data);
-    }
-  },
-  {
-    data: 'hinhanh',
-    name: 'hinhanh',
-    orderable: false,
-    render:function(data)
-    {
-      return "<img src={{URL::to('/')}}/hinhanh/upload/"+data+" width='60' class='img-thumbnail'/>";
+      extend: 'print',
+      messageTop: 'Danh Sách Sản Phẩm',
+      exportOptions: {
+          columns: ':visible' //in theo cột được hiển thị (phụ thuocj vào columnsToggle, hoặc colvis)
+          //columns: [0,1,2,3,4]  // export theo số cột cố định
+        }
+      },
+      {
+        extend: 'excel',
+        messageTop: 'Danh Sách Đơn Hàng',
+        exportOptions: {
+          columns: ':visible' //in theo cột được hiển thị (phụ thuocj vào columnsToggle, hoặc colvis)
+          //columns: [0,1,2,3,4]  // export theo số cột cố định
+        }
+      }
+      ,
+      //'columnsToggle'//show ra cac button ẩn/hiện cột
+      'colvis' //show ra button chọn cột muốn ẩn/hiện 
+      ],
+      select: true,
+      "iDisplayLength": 10,
+      "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+      processing: true,
+      serverSide: true,
+      ajax:{
+       url: "admin/sanpham/danh-sach",
+       dataType:"json",
+     },
+     "order":[0,'desc'],
+     columns:[
+     {
+      data: 'id',
+      name: 'id',
     },
+    {
+      data: 'tenloai',
+      name: 'tenloai',
+    },
+    {
+      data: 'tenmon',
+      name: 'tenmon'
+    },
+    {
+      data: 'dongia',
+      name: 'dongia',
+      render:function (data)
+      {
+        return format_number(data);
+      }
+    },
+    {
+      data: 'hinhanh',
+      name: 'hinhanh',
+      orderable: false,
+      render:function(data)
+      {
+        return "<img src={{URL::to('/')}}/hinhanh/upload/"+data+" class='img-thumbnail zoom'/>";
+      },
 
-  },
-  {
-    data: 'ghichu',
-    name: 'ghichu',
-    visible:false
-  },
-  {
-    data: 'trangthai',
-    name: 'trangthai',
-    visible:false
-  },
-  {
-    data: 'created_at',
-    name: 'created_at',
-    visible:false
-  },
-  {
-    data: 'updated_at',
-    name: 'updated_at',
-    visible:false
-  },
-  {
-    data: 'action',
-    name: 'action',
-    orderable: false
-  }
-  ]
-});
+    },
+    {
+      data: 'ghichu',
+      name: 'ghichu',
+      visible:false
+    },
+    {
+      data: 'trangthai',
+      name: 'trangthai',
+      visible:false
+    },
+    {
+      data: 'created_at',
+      name: 'created_at',
+      visible:false
+    },
+    {
+      data: 'updated_at',
+      name: 'updated_at',
+      visible:false
+    },
+    {
+      data: 'action',
+      name: 'action',
+      orderable: false
+    }
+    ]
+  });
  });
 </script>
 <script>
   $(document).ready(function(){
+    $('.buttons-colvis').text('Ẩn Cột');
     {{-- Start Call Form --}}
     var html='';
     $('#create_record').click(function(){
@@ -254,7 +279,7 @@
         dropZoneEnabled: false,
         //maxFileCount: 10,
         //elErrorContainer: '#kartik-file-errors',
-        allowedFileExtensions: ["jpg", "png", "gif"],
+        allowedFileExtensions: ["jpg", "png", "gif",'jpeg'],
         initialPreview:false,
         //mainClass: "input-group-lg"
       });
@@ -291,16 +316,16 @@
            var html = '';
            if(data.errors)
            {
-            html = '<div class="alert alert-danger">';
+            html = '<div>';
             for(var count = 0; count < data.errors.length; count++)
             {
-             html += '<p>' + data.errors[count] + '</p>';
+             html += '<p style="color:red;" >' + data.errors[count] + '</p>';
            }
            html += '</div>';
          }
          if(data.success)
          {
-          html = '<div class="alert alert-success">' + data.success + '</div>';
+          html = '<div style="color:green;">' + data.success + '</div>';
           $('#sample_form')[0].reset();
           CKEDITOR.instances['mota'].setData('');
           $('#data_table').DataTable().ajax.reload();
@@ -332,7 +357,7 @@
            var html = '';
            if(data.errors)
            {
-            html = '<div class="alert alert-danger">';
+            html = '<div style="color:red;">';
             for(var count = 0; count < data.errors.length; count++)
             {
              html += '<p>' + data.errors[count] + '</p>';
@@ -341,7 +366,7 @@
          }
          if(data.success)
          {
-          html = '<div class="alert alert-success">' + data.success + '</div>';
+          html = '<div style="color:green;">' + data.success + '</div>';
           $('#sample_form')[0].reset();
           setTimeout(function(){
            $('#formModal').modal('hide');
@@ -360,6 +385,7 @@
      $('#mota').val('');
      var id = $(this).attr('id');
      $('#form_result').html('');
+     $('.file-caption-name').removeAttr('required');
      $.ajax({
        url:"admin/sanpham/edit/"+id,
        dataType:"json",
@@ -374,7 +400,7 @@
         $('#trangthai').val(html.data.trangthai);
         $("#input-b6").fileinput({
           allowedFileTypes:'image',
-          allowedFileExtensions: ['jpg', 'png', 'gif'],
+          allowedFileExtensions: ['jpg', 'png', 'gif','jpeg'],
           dropZoneEnabled: false,
           overwriteInitial: true,
           showUpload: false,

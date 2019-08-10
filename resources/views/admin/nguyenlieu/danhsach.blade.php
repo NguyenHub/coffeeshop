@@ -7,7 +7,7 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="admin/trangchu">Trang chủ</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
       <li class="breadcrumb-item active">Nguyên Liệu</li>
     </ol>
@@ -18,7 +18,7 @@
       </div> --}}
 
       <div class="row card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-y: scroll; height: 480px;">
           <table class="table table-bordered table-striped " id="data_table" width="100%" cellspacing="0">
            <thead>
             <tr>
@@ -29,7 +29,7 @@
               <th >GHI CHÚ</th>
               <th >CREATED_AT</th>
               <th >UPDATED_AT</th>
-              <th >Action
+              <th >
                 <button type="button" name="create_record" id="create_record" class="btn btn-success btn-sm">Tạo mới</button>
               </tr>
             </thead>
@@ -69,6 +69,8 @@
         <select name="donvitinh" id="donvitinh"  class="form-control">
           <option value="0">Mililit</option>
           <option value="1">Gram</option>
+          <option value="2">Trái</option>
+          <option value="3">Túi</option>
         </select>
       </div>
     </div>
@@ -138,6 +140,29 @@
     // },
     // //{"visible":false,"targets":2}//ẩn đi cột số 2
     // ],
+    dom: 'lBfrtip',
+    buttons: [
+    {
+      extend: 'print',
+      messageTop: 'Danh Sách Sản Phẩm',
+      exportOptions: {
+          columns: ':visible' //in theo cột được hiển thị (phụ thuocj vào columnsToggle, hoặc colvis)
+          //columns: [0,1,2,3,4]  // export theo số cột cố định
+        }
+      },
+      {
+        extend: 'excel',
+        messageTop: 'Danh Sách Đơn Hàng',
+        exportOptions: {
+          columns: ':visible' //in theo cột được hiển thị (phụ thuocj vào columnsToggle, hoặc colvis)
+          //columns: [0,1,2,3,4]  // export theo số cột cố định
+        }
+      }
+      ,
+      //'columnsToggle'//show ra cac button ẩn/hiện cột
+      'colvis' //show ra button chọn cột muốn ẩn/hiện 
+      ],
+      select: true,
     "iDisplayLength": 10,
     "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
     processing: true,
@@ -164,9 +189,17 @@
     "render":function(data){
       if(data==0)
       {
-        return "Cái";
+        return "Mililit";
       }
-      return "Gram";
+      if(data==1)
+      {
+        return "Gram";
+      }
+      if(data==2)
+      {
+        return "Trái";
+      }
+      return "Túi";
     }
   },
   {
@@ -194,6 +227,11 @@
 </script>
 <script>
   $(document).ready(function(){
+    $('.buttons-colvis').text('Ẩn Cột');
+    $('#soluong').keyup(function(){
+      var number=$(this).val();
+      $(this).val(format_input_number(number));
+    });
     {{-- Start Call Form --}}
     var html='';
     $('#create_record').click(function(){
@@ -228,7 +266,7 @@
          var html = '';
          if(data.errors)
          {
-          html = '<div class="alert alert-danger">';
+          html = '<div style="color:red;">';
           for(var count = 0; count < data.errors.length; count++)
           {
            html += '<p>' + data.errors[count] + '</p>';
@@ -237,7 +275,7 @@
        }
        if(data.success)
        {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
+        html = '<div style="color:green;">' + data.success + '</div>';
         $('#sample_form')[0].reset();
         $('#data_table').DataTable().ajax.reload();
       }
@@ -262,7 +300,7 @@
          var html = '';
          if(data.errors)
          {
-          html = '<div class="alert alert-danger">';
+          html = '<div style="color:red;">';
           for(var count = 0; count < data.errors.length; count++)
           {
            html += '<p>' + data.errors[count] + '</p>';
@@ -271,7 +309,7 @@
        }
        if(data.success)
        {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
+        html = '<div style="color:green;">' + data.success + '</div>';
         $('#sample_form')[0].reset();
         setTimeout(function(){
          $('#formModal').modal('hide');
@@ -304,7 +342,7 @@
         $('#action').val("Edit");
         $('#formModal').modal('show');
         $('#action_button').attr('disabled',true);
-        $('input').change(function()
+        $('.form-control').change(function()
           {
             $('#action_button').attr('disabled',false);
           });
@@ -321,8 +359,19 @@
       },
       success:function(data)
       {
+        var html='';
+        if(data.errors)
+        {
+          html = '<div style="color :red;">' + data.errors + '</div>';
+        }
+        if(data.success)
+        {
+          html = '<div style="color :green;">' + data.success + '</div>';
+        }
+        $('#confirm_result').html(html);
         setTimeout(function(){
          $('#confirmModal').modal('hide');
+         $('#confirm_result').html('');
          $('#data_table').DataTable().ajax.reload();
        }, 2000);
         $('#ok_button').text('OK');

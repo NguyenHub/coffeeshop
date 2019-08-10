@@ -32,14 +32,7 @@
                                         {{-- {{csrf_field()}} --}}
                                         <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                                         <input type="text" name="email" class="form-control" placeholder="Email">
-                                        <div class="button-box">
-                                            {{-- <div class="login-toggle-btn">
-                                                <input type="checkbox">
-                                                <label>Ghi nhớ mật khẩu?</label>
-                                                <a href="#">Quên mật khẩu?</a>
-                                            </div> --}}
-                                            <button type="submit"><span>Xác Nhận</span></button>
-                                        </div>
+                                        <button type="submit" class="btn btn-danger" style="width: 90px;">Xác Nhận</button>
                                     </form>
                                 </div>
                             </div>
@@ -74,12 +67,12 @@
                     }
                     if(data.success)
                     {
-                         html = '<div class="alert" style="color: green" >' + data.success + '</div>';
-                         $('#reset_form')[0].reset();
-                    }
-                    $('.reset_result').html(html);
-             }
-         })
+                       html = '<div class="alert" style="color: green" >' + data.success + '</div>';
+                       $('#reset_form')[0].reset();
+                   }
+                   $('.reset_result').html(html);
+               }
+           })
         });
     });
 </script>

@@ -31,36 +31,59 @@
 									@if(Auth::guard('khach_hang')->check())
 									<form id="update_form" action="" method="post">
 										<input type="hidden" name="id" id="id_khachhang" value="{{Auth::guard('khach_hang')->user()->id}}">
-										<div class="form-group row col-md-12">
-											<input type="text" name="hoten" id="hoten" class="form-control" placeholder="Nhập họ tên" required="" value="{{Auth::guard('khach_hang')->user()->tenkhachhang}}">
+										<div class="form-group">
+											<div class="form-label-group">
+												<input type="text" name="hoten" id="hoten" class="form-control" placeholder="Nhập họ tên" required="" value="{{Auth::guard('khach_hang')->user()->tenkhachhang}}">
+												<label for="hoten">Họ Tên</label>
+											</div>
 										</div>
-										<div class="form-group row col-md-12">
-											<input class="col-md-8" type="text" id="ngaysinh" name="ngaysinh" class="form-control" value="{{date('d/m/Y',strtotime( Auth::guard('khach_hang')->user()->ngaysinh))}}"  required="" autocomplete="off">
-											<div class="col-md-4" style="padding-right: 0px">
+										<div class="form-group row ">
+											<div class="form-label-group col-md-6">
+												<input class="col-md-12 form-control" type="text" id="ngaysinh" name="ngaysinh" value="{{date('d/m/Y',strtotime( Auth::guard('khach_hang')->user()->ngaysinh))}}"  required="" autocomplete="off">
+												<label for="ngaysinh" style="padding-left: 25px;">Ngày Sinh</label>
+											</div>
+											<div class="form-label-group-group col-md-6" >
 												<input type="hidden" id="hidden_gioitinh" value="{{Auth::guard('khach_hang')->user()->gioitinh}}">
-												<select name="gioitinh" id="gioitinh" class="form-control" >
+												<select style="height: 50px; border-color: #eceff8" name="gioitinh" id="gioitinh" class="form-control col-md-12" >
 													<option value="0">Nam</option>
 													<option value="1">Nữ</option>
 												</select>
 											</div>
 										</div>
-										<div class="form-group row col-md-12">
-											<input type="email" id="email" name="email" placeholder="Email" class="form-control col-md-6" disabled="" value="{{Auth::guard('khach_hang')->user()->email}}" >
-											<div class="col-md-1"></div>
-											<input type="text" name="sdt" id="sdt" class="form-control col-md-5" placeholder="Nhập sdt" required="" value="{{Auth::guard('khach_hang')->user()->sdt}}">
+										<div class="form-group row">
+											<div class="form-label-group col-md-6">
+												<input type="email" id="email" name="email" placeholder="Email" class="form-control col-md-12" disabled="" value="{{Auth::guard('khach_hang')->user()->email}}" >
+												<label style="padding-left: 25px;" for="email">Email</label>
+											</div>
+											<div class="form-label-group col-md-6">
+												<input type="text" name="sdt" id="sdt" class="form-control col-md-12" placeholder="Nhập sdt" required="" value="{{Auth::guard('khach_hang')->user()->sdt}}">
+												<label style="padding-left: 25px;" for="sdt">SDT</label>
+											</div>
 										</div>
-										<div class="form-group row col-md-12">
-											<input type="text" name="diachi" id="diachi" class="form-control" placeholder="Nhập địa chỉ" required="" value="{{Auth::guard('khach_hang')->user()->diachi}}">
+										<div class="form-group">
+											<div class="form-label-group">
+												<input type="text" name="diachi" id="diachi" class="form-control" placeholder="Nhập địa chỉ" required="" value="{{Auth::guard('khach_hang')->user()->diachi}}">
+												<label for="diachi">Địa Chỉ</label>
+											</div>
 										</div>
 										<input type="checkbox" name="changepassword" id="changepassword">Đổi mật khẩu
 										<div class="form-group row col-md-6">
-											<input type="password" name="old_password" class="form-control password" placeholder="Mật khẩu cũ" disabled="">
+											<div class="form-label-group">
+												<input type="password" name="old_password" id="old_password" class="form-control password" placeholder="Mật khẩu cũ" disabled="">
+												<label for="old_password">Mật Khẩu Cũ<i id="show_password" style="float: right;" class="fa fa-eye show_password" title="Hiển thị mật khẩu"></i></label>
+											</div>
 										</div>
-										<div class="form-group row col-md-12">
-											<input type="password" name="new_password" class="form-control col-md-6 password" placeholder="Mật khẩu mới" disabled="">
-											<input type="password" name="confirm_password" class="form-control col-md-6 password" placeholder="Nhập lại mật khẩu" disabled="">
+										<div class="form-group row">
+											<div class="form-label-group col-md-6">
+												<input type="password" name="new_password" id="new_password" class="form-control col-md-12 password" placeholder="Mật khẩu mới" disabled="" required="">
+												<label style="padding-left: 25px;" for="new_password">Mật Khẩu Mới</label>
+											</div>
+											<div class="form-label-group col-md-6">
+												<input type="password" name="confirm_password" id="confirm_password" class="form-control col-md-12 password" placeholder="Nhập lại mật khẩu" disabled="">
+												<label style="padding-left: 25px;" for="confirm_password">Nhập Lại Mật Khẩu</label>
+											</div>
 										</div>
-										<button id="btn_update" type="submit" class="btn button-box" value="">Cập Nhật</button>										
+										<button id="btn_update" type="submit" class="btn btn-danger" style="width: 90px;" value="">Cập Nhật</button>										
 									</form>
 									@endif
 								</div>
@@ -96,6 +119,17 @@
 @section('script')
 <script>
 	$(document).ready(function(){
+		get_jsonUser();
+		$(document).on('click','#show_password',function(){
+            $('.password').attr('type','text');
+            $('.show_password').removeClass(' fa-eye');
+            $('.show_password').addClass('fa-eye-slash');
+        })
+        $(document).on('click','.fa-eye-slash',function(){
+            $('.password').attr('type','password');
+            $('.show_password').addClass('fa-eye');
+            $('.show_password').removeClass('fa-eye-slash');
+        })
 		$('#btn_update').attr('disabled',true);
 		$('#changepassword').change(function(){
 			if($(this).is(":checked"))
@@ -106,6 +140,10 @@
 			{
 				$(".password").val('');
 				$(".password").attr('disabled','');
+				$('.password').attr('type','password');
+				$('.show_password').removeClass('fa-eye-slash');
+				$('.show_password').addClass('fa-eye');
+
 			}
 		});
 		//Cập nhật thông tin cá nhân

@@ -7,9 +7,9 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="admin/trangchu">Trang chủ</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
-      <li class="breadcrumb-item active">Bàn</li>
+      <li class="breadcrumb-item active">Loại Khách</li>
     </ol>
     <!-- DataTables Example -->
     <div class="card mb-3">
@@ -18,7 +18,7 @@
       </div> --}}
 
       <div class="row card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-y: scroll; height: 480px;">
           <table class="table table-bordered table-striped " id="data_table" width="100%" cellspacing="0">
            <thead>
             <tr>
@@ -26,7 +26,7 @@
               <th >LOẠI</th>
               <th >CREATED_AT</th>
               <th >UPDATED_AT</th>
-              <th >Action
+              <th >
                 <button type="button" name="create_record" id="create_record" class="btn btn-success btn-sm">Tạo mới</button>
               </tr>
             </thead>
@@ -123,11 +123,13 @@
   },
   {
     data: 'created_at',
-    name: 'created_at'
+    name: 'created_at',
+     visible:false,
   },
   {
     data: 'updated_at',
-    name: 'updated_at'
+    name: 'updated_at',
+    visible:false,
   },
   {
     data: 'action',
@@ -171,7 +173,7 @@
          var html = '';
          if(data.errors)
          {
-          html = '<div class="alert alert-danger">';
+          html = '<div style="color:red;">';
           for(var count = 0; count < data.errors.length; count++)
           {
            html += '<p>' + data.errors[count] + '</p>';
@@ -180,7 +182,7 @@
        }
        if(data.success)
        {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
+        html = '<div style="color:green;">' + data.success + '</div>';
         $('#sample_form')[0].reset();
         $('#data_table').DataTable().ajax.reload();
       }
@@ -205,7 +207,7 @@
          var html = '';
          if(data.errors)
          {
-          html = '<div class="alert alert-danger">';
+          html = '<div style="color:red;">';
           for(var count = 0; count < data.errors.length; count++)
           {
            html += '<p>' + data.errors[count] + '</p>';
@@ -214,7 +216,7 @@
        }
        if(data.success)
        {
-        html = '<div class="alert alert-success">' + data.success + '</div>';
+        html = '<div style="color:green;">' + data.success + '</div>';
       //$('#sample_form')[0].reset();
       setTimeout(function(){
        $('#formModal').modal('hide');
@@ -268,8 +270,19 @@
       },
       success:function(data)
       {
+        var html='';
+        if(data.errors)
+        {
+          html = '<div style="color:red;">' + data.errors + '</div>';
+        }
+        if(data.success)
+        {
+          html = '<div style="color:green;">' + data.success + '</div>';
+        }
+        $('#confirm_result').html(html);
         setTimeout(function(){
          $('#confirmModal').modal('hide');
+         $('#confirm_result').html('');
          $('#data_table').DataTable().ajax.reload();
        }, 2000);
         $('#ok_button').text('OK');

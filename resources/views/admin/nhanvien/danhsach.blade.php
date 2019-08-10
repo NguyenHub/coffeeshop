@@ -18,7 +18,7 @@
       </div> --}}
 
       <div class="row card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow: auto; height: 480px;">
           <table class="table table-striped " id="data_table" width="100%" cellspacing="0">
            <thead>
             <tr>
@@ -210,6 +210,29 @@
     //},
     // //{"visible":false,"targets":2}//ẩn đi cột số 2
     //],
+    dom: 'lBfrtip',
+    buttons: [
+    {
+      extend: 'print',
+      messageTop: 'Danh Sách Sản Phẩm',
+      exportOptions: {
+          columns: ':visible' //in theo cột được hiển thị (phụ thuocj vào columnsToggle, hoặc colvis)
+          //columns: [0,1,2,3,4]  // export theo số cột cố định
+        }
+      },
+      {
+        extend: 'excel',
+        messageTop: 'Danh Sách Đơn Hàng',
+        exportOptions: {
+          columns: ':visible' //in theo cột được hiển thị (phụ thuocj vào columnsToggle, hoặc colvis)
+          //columns: [0,1,2,3,4]  // export theo số cột cố định
+        }
+      }
+      ,
+      //'columnsToggle'//show ra cac button ẩn/hiện cột
+      'colvis' //show ra button chọn cột muốn ẩn/hiện 
+      ],
+      select: true,
     "iDisplayLength": 10,
     "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
     processing: true,
@@ -326,6 +349,7 @@
 </script>
 <script>
   $(document).ready(function(){
+    $('.buttons-colvis').text('Ẩn Cột');
     {{-- Start Call Form --}}
     var html='';
     $('#create_record').click(function(){

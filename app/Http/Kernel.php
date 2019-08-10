@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
         'khachhang_login' => \App\Http\Middleware\FrontMiddleWare::class,
         'cart' => \App\Http\Middleware\CartMiddleWare::class,
         'admin' => \App\Http\Middleware\AdminMiddleWare::class,
+        'admin_role'=>\App\Http\Middleware\AdminRoleMiddleWare::class,
     ];
 
     /**

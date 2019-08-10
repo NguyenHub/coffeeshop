@@ -10,7 +10,7 @@
   <meta name="author" content="">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   {{-- <meta name="_token" content="{{csrf_token()}}" /> --}}
-  <title>Admin-SmartCoffee</title>
+  <title>SmartCoffee</title>
   <base href="{{ asset('') }}">
   <!-- Favicon -->
   
@@ -27,6 +27,13 @@
   <link rel="stylesheet" type="text/css" href="daterangepicker/daterangepicker.css" />
   <link rel="stylesheet" href="bootstrap-fileinput/css/fileinput.css" media="all" type="text/css">
   <link href="bootstrap-fileinput/themes/explorer-fas/theme.css" media="all" rel="stylesheet" type="text/css"/>
+  {{-- css boostrap4 datatable --}}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
+  {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css"> --}}
+  {{-- css select datable --}}
+  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.0/css/select.dataTables.min.css">
+  {{-- css button datable --}}
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.bootstrap4.min.css">
 </head>
 
 <body id="page-top">
@@ -197,11 +204,42 @@
 {{-- <script src="bootstrap-fileinput/js/fileinput.js"></script>
 <script src="bootstrap-fileinput/themes/fa/theme.js"></script> --}}
 <script src="ckeditor/ckeditor.js"></script>
+<script src="ckfinder/ckfinder.js"></script>
+<script src="source/vendor/chart.js/Chart.min.js"></script>
+{{-- <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script> --}}
+{{-- https://cdn.datatables.net/buttons/1.5.6/js/buttons.bootstrap4.min.js
+https://cdn.datatables.net/buttons/1.5.6/js/buttons.bootstrap4.min.js --}}
+<!-- scripts hiển thị button-->
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+<!-- scripts button boostraps 4 -->
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<!-- scripts  button export pdf-->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<!-- scripts  button export vfs-->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<!-- scripts  button export excel-->
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+<!-- scripts  button print-->
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+<!-- scripts hover khi select dòng-->
+<script src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
+<!-- scripts  button select ẩn hiện cột-->
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.colVis.min.js"></script>
+
+<!-- Custom scripts for all pages-->
+<!-- Demo scripts for this page-->
+{{-- <script src="source/js/demo/chart-area-demo.js"></script>
+--}}{{-- <script src="source/js/demo/chart-bar-demo.js"></script> --}}
+{{-- <script src="source/js/demo/chart-pie-demo.js"></script> --}}
 
 @yield('script')
 {{-- Start Call Form --}}
 <script type="text/javascript">
   {{-- Start Call Confirm Form Delete --}}
+  Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+  Chart.defaults.global.defaultFontColor = '#292b2c';
   var id;
   $(document).on('click', '.delete', function(){
     var html='';
@@ -215,6 +253,23 @@
 </script>
 <script>
   $(document).ready(function(){
+    getNewBill();
+    function getNewBill()
+  {
+    $.ajax({
+      url:'admin/getNewBill',
+      dataType:'json',
+      success:function(data)
+      {
+        $('#alertbill').text(data.newBill+data.shipBill)
+        $('#newbill').text(data.newBill);
+        $('#shipbill').text(data.shipBill);
+      }
+    })
+  }
+  setInterval(function(){
+    getNewBill();
+  },3000);
     $('#taikhoan').click(function(){
       var html='';
       $('#detail_result').html(html);
@@ -362,13 +417,13 @@
     {
      number=number.replace(".","");
    }
-    sl= number;
-}
-return sl;
+   sl= number;
+ }
+ return sl;
 }
 </script>
 <script>  
-  $(document).ready(function(){  
+  $(document).ready(function(){
     $('#search').keyup(function(){
       search_table($(this).val());  
     });  

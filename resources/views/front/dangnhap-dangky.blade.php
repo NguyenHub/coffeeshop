@@ -201,8 +201,8 @@
                     }
                     if(data.success)
                     {
-                        window.location.href="index";
-                        //$('#register_form')[0].reset();
+                        get_jsonUser();
+                        window.history.back();
                     }
                     // $('#login_result').html(html);
                 }

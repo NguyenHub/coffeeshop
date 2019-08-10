@@ -186,17 +186,55 @@
     });
     get_jsonCart();
     function get_jsonCart()
+    {
+        $.ajax({
+            url:'get_jsonCart',
+            dataType:'json',
+            success:function(data)
+            {
+                load_mini_cart(data.cart);
+                load_cart(data.cart);
+            }
+        })
+    }
+    get_jsonUser();
+    function get_jsonUser()
+    {
+        $.ajax({
+            url:'get_jsonUser',
+            dataType:'json',
+            success:function(khachhang)
+            {
+                load_user(khachhang.khachhang);
+            }
+        })
+    }
+    function load_user(khachhang)
+    {
+        var html='';
+        if(khachhang==null)
         {
-            $.ajax({
-                url:'get_jsonCart',
-                dataType:'json',
-                success:function(data)
-                {
-                    load_mini_cart(data.cart);
-                    load_cart(data.cart);
-                }
-            })
+            html+='<a href="dangnhap-dangky">'
+            html+='<p>Đăng ký <br> hoặc <span style="color: red">Đăng nhập</span></p>'
+            html+='</a>'
+            $('#sdt').val('');
+            $('#diachi').val('');
         }
+        if(khachhang!=null)
+        {
+            html+='<div class="dropdown">'
+            html+='<p class=" dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"  aria-expanded="false">'+khachhang.tenkhachhang+'</p>'
+            html+='<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">'
+            html+='<a class="dropdown-item" href="khach-hang/tai-khoan">Tài khoản</a>'
+            html+='<div class="dropdown-divider"></div>'
+            html+='<a class="dropdown-item" href="khachhang/dangxuat">Đăng xuất</a>'
+            html+='</div>'
+            html+='</div>'
+            $('#sdt').val(khachhang.sdt);
+            $('#diachi').val(khachhang.diachi);
+        }
+        $('.login-text-content').html(html);
+    }
     function load_loai(loais)
     {
         var option='';
@@ -250,7 +288,8 @@
             $('#mini_cart').html(row);
         }
     }
-    function load_cart(carts){
+    function load_cart(carts)
+    {
         var html='';
         if(carts==null)
         {
@@ -363,87 +402,43 @@
         $('#search_result').addClass('display-block');
         $('#search_result').html(ul);
     }
-    function format_datetime(datetime)
-    {
-        var date=new Date(datetime);
-        var day =date.getDate();
-        var month =(date.getMonth()+1);
-        var year =date.getFullYear();
-        day=day<10?"0"+day:day;
-        month=month<10?"0"+month:month;
-        if(datetime.length>14)
-        {
-            var hour =date.getHours();
-            var minute =date.getMinutes();
-            var second =date.getSeconds();
-            hour=hour<10?"0"+hour:hour;
-            minute=minute<10?"0"+minute:minute;
-            second=second<10?"0"+second:second;
-            return  day+"/"+month+"/"+year+" "+hour+":"+minute+":"+second;
-        }
-        return  day+"/"+month+"/"+year;
+    function load_mon(mons)
+    { 
+        var html='';
+        $.each (mons, function(key,val){
+            html+='<div class="custom-col-5">'
+            html+='<div class="product-wrapper mb-25">'
+            html+='<div class="product-img">'
+            html+='<a href="" class="detail" id="'+val.id+'">'
+            html+='<img alt="" src={{URL::to('/')}}/hinhanh/upload/'+val.hinhanh + '>'
+            html+='</a>'
+            html+='<div class="product-action" >'
+            html+='<div class="pro-action-left">'
+            html+='<a href="" title="Chọn Mua " class="addToCart_byOne" id="'+val.id+'"><i class="ion-android-cart"></i> Chọn Mua</a>'
+            html+='</div>'
+            html+='<div class="pro-action-right">'
+            {{-- <a title="Wishlist" href="wishlist.html"><i class="ion-ios-heart-outline"></i></a> --}}
+            {{-- <a title="Chi Tiết" data-toggle="modal" data-target="#exampleModal" href="#"><i class="ion-android-open"></i></a> --}}
+            html+='<a href="" title="Chi Tiết" class="detail" id="'+val.id+'" href="#"><i class="ion-android-open"></i></a>'
+            html+='</div>'
+            html+='</div>'
+            html+='</div>'
+            html+='<div class="product-content">'
+            html+='<h4>'
+            html+='<a >'+val.tenmon+'</a>'
+            html+='</h4>'
+            html+='<div class="product-price-wrapper">'
+            html+='<span>'+val.dongia+'</span>'
+            {{-- <span class="product-price-old">{{$dt->dongia}} </span> --}}
+            html+='</div>'
+            html+='</div>'
+            html+='</div>'
+            html+='</div>'
+        });
+        $('#show_mon').html(html);
     }
-    function format_money(money)
-    {
-        return money.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
-    }
-    function format_trangthai(trangthai)
-    {
-        if(trangthai==0)
-        {
-          return "Chờ Xử Lý";
-      }
-      else if(trangthai==1)
-      {
-          return "Đã Xử Lý";
-      }
-      else if(trangthai==2)
-      {
-          return "Hoàn Thành";
-      }
-      else
-      {
-          return "Hủy";
-      }
-  }
-  function load_mon(mons)
-  { 
-    var html='';
-    $.each (mons, function(key,val){
-        html+='<div class="custom-col-5">'
-        html+='<div class="product-wrapper mb-25">'
-        html+='<div class="product-img">'
-        html+='<a href="" class="detail" id="'+val.id+'">'
-        html+='<img alt="" src={{URL::to('/')}}/hinhanh/upload/'+val.hinhanh + '>'
-        html+='</a>'
-        html+='<div class="product-action" >'
-        html+='<div class="pro-action-left">'
-        html+='<a href="" title="Chọn Mua " class="addToCart_byOne" id="'+val.id+'"><i class="ion-android-cart"></i> Chọn Mua</a>'
-        html+='</div>'
-        html+='<div class="pro-action-right">'
-        {{-- <a title="Wishlist" href="wishlist.html"><i class="ion-ios-heart-outline"></i></a> --}}
-        {{-- <a title="Chi Tiết" data-toggle="modal" data-target="#exampleModal" href="#"><i class="ion-android-open"></i></a> --}}
-        html+='<a href="" title="Chi Tiết" class="detail" id="'+val.id+'" href="#"><i class="ion-android-open"></i></a>'
-        html+='</div>'
-        html+='</div>'
-        html+='</div>'
-        html+='<div class="product-content">'
-        html+='<h4>'
-        html+='<a >'+val.tenmon+'</a>'
-        html+='</h4>'
-        html+='<div class="product-price-wrapper">'
-        html+='<span>'+val.dongia+'</span>'
-        {{-- <span class="product-price-old">{{$dt->dongia}} </span> --}}
-        html+='</div>'
-        html+='</div>'
-        html+='</div>'
-        html+='</div>'
-    });
-    $('#show_mon').html(html);
-}
-
         //thêm vào giỏ hàng với số lượng 1
-        $('.addToCart_byOne').click(function(event){
+        $(document).on('click','.addToCart_byOne',function(event){
             event.preventDefault();
             var id=$(this).attr('id');
             var sl=1;
@@ -496,8 +491,65 @@
                 }
             })
         });
-
     </script>
-
+    <script>
+        function format_input_number(number)
+        {
+            var sl;
+            var pattern_number= /([0-9])+$/;
+            if(pattern_number.test(number)==false)
+            {
+                sl=number.substring(0,number.length-1);
+            }
+            else
+            {
+                sl= number;
+            }
+            return sl;
+        }
+        function format_trangthai(trangthai)
+        {
+            if(trangthai==0)
+            {
+              return "Chờ Xử Lý";
+          }
+          else if(trangthai==1)
+          {
+              return "Đã Xử Lý";
+          }
+          else if(trangthai==2)
+          {
+              return "Hoàn Thành";
+          }
+          else
+          {
+              return "Hủy";
+          }
+      }
+      function format_datetime(datetime)
+      {
+        var date=new Date(datetime);
+        var day =date.getDate();
+        var month =(date.getMonth()+1);
+        var year =date.getFullYear();
+        day=day<10?"0"+day:day;
+        month=month<10?"0"+month:month;
+        if(datetime.length>14)
+        {
+            var hour =date.getHours();
+            var minute =date.getMinutes();
+            var second =date.getSeconds();
+            hour=hour<10?"0"+hour:hour;
+            minute=minute<10?"0"+minute:minute;
+            second=second<10?"0"+second:second;
+            return  day+"/"+month+"/"+year+" "+hour+":"+minute+":"+second;
+        }
+        return  day+"/"+month+"/"+year;
+    }
+    function format_money(money)
+    {
+        return money.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
+    }
+</script>
 </body>
 </html>

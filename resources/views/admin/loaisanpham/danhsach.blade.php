@@ -7,9 +7,9 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="#">Dashboard</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
-      <li class="breadcrumb-item active">Loại Món</li>
+      <li class="breadcrumb-item active">Loại Sản Phẩm</li>
     </ol>
     <!-- DataTables Example -->
     <div class="card mb-3">
@@ -17,7 +17,7 @@
         <i class="fas fa-table"></i>
       </div> --}}
       <div class="row card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-y: scroll; height: 480px;">
           <table class="table table-bordered" id="data_table" width="100%" cellspacing="0">
             <thead>
               <tr>
@@ -33,7 +33,7 @@
           </table>
         </div>
       </div>
-      <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+      {{-- <div class="card-footer small text-muted"></div> --}}
     </div>
   </div>
   {{-- Start Form Insert --}}
@@ -147,7 +147,7 @@
     // Star Call Form
     $('#create_record').click(function(){
       $('.modal-title').text("Thêm Loại Món");
-      $('#action_button').val("Add");
+      $('#action_button').val("Thêm");
       $('#action').val("Add");
       $('#formModal').modal('show');
       $('#form_result').html('');
@@ -195,6 +195,9 @@
         //location.reload();
       }
       $('#form_result').html(html);
+      setTimeout(function(){
+       $('#form_result').html('');
+     }, 1000);
     }
   })
    }
@@ -292,25 +295,22 @@ $('#ok_button').click(function(){
     var html = '';
     if(data.errors)
     {
-      html = '<div class="alert alert-danger">' + data.errors + '</div>';
+      html = '<div style="color:red;">' + data.errors + '</div>';
     }
     if(data.success)
     {
       html = '<div style="color:green;">' + data.success + '</div>';
-        //$('#sample_form')[0].reset();
-        //$('#user_table').DataTable().ajax.reload();
-      }
-
-      $('#confirm_result').html(html);
-      setTimeout(function()
-      {
-        $('#confirmModal').modal('hide');
-      },2000);
-      $('#data_table').DataTable().ajax.reload();
     }
-  })
+    $('#confirm_result').html(html);
+    setTimeout(function()
+    {
+      $('#confirmModal').modal('hide');
+    },2000);
+    $('#data_table').DataTable().ajax.reload();
+  }
+})
 });
    //End Delete
-});
+ });
 </script>
 @endsection

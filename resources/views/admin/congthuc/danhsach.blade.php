@@ -7,7 +7,7 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="admin/trangchu">Trang chủ</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
       <li class="breadcrumb-item active">Công Thức</li>
     </ol>
@@ -18,13 +18,13 @@
       </div> --}}
 
       <div class="row card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="overflow-y: scroll; height: 480px;">
           <table class="table table-bordered table-striped " id="data_table" width="100%" cellspacing="0">
            <thead>
             <tr>
               <th >MÃ</th>
               <th >MÃ MÓN </th>
-              <th >TÊN CT </th>
+              <th >TÊN CÔNG THỨC </th>
               <th >GHI CHÚ</th>
               <th >CREATED_AT</th>
               <th >UPDATED_AT</th>
@@ -360,8 +360,8 @@
       }
       html = '<tr>';
       html += '<td><input value='+val.manguyenlieu+' type="hidden" id="manguyenlieu'+val.id+'" name="manguyenlieu" class="form-control">'+val.tennguyenlieu+'</td>';
-      html += '<td><input type="text" value="'+val.dinhluong+'" name="dinhluong[]" id="dinhluong'+val.id+'" class="form-control dinhluong" required=""></td>';
-      html += '<td><select name="donvitinh" id="donvitinh'+val.id+'" class="form-control donvitinh'+key+'"><option value="0">Gram</option><option  value="1">Mililit</option></select></td>';
+      html += '<td style="width:50px;" ><input type="text" value="'+val.dinhluong+'" name="dinhluong[]" id="dinhluong'+val.id+'" class="form-control dinhluong" required=""></td>';
+      html += '<td><select name="donvitinh" id="donvitinh'+val.id+'" class="form-control donvitinh'+key+'"><option value="0">Mililit</option><option  value="1">Gram</option><option  value="2">Trái</option><option  value="3">Túi</option></select></td>';
       html += '<td><input type="text" id="note'+val.id+'" name="note" value="'+val.ghichu+'" class="form-control budget"></td>';
       html += '<td><button style="width:40px" type="button" name="remove" id="'+val.id+'" class="btn btn-danger remove_detail"><i class="fa fa-trash"></i></button><button style="width:40px" type="button" name="update" id="'+val.id+'" class="btn btn-primary update"><i class="fa fa-wrench"></i></button></td>';
       html += '</tr>';
@@ -404,7 +404,7 @@
     html = '<tr>';
     html += '<td><input value='+id+' type="hidden" id="manguyenlieu'+id+'" name="manguyenlieu[]" class="form-control">'+name+'</td>';
     html += '<td><input type="text" id="dinhluong'+id+'" name="dinhluong[]" class="form-control dinhluong" required=""></td>';
-    html += '<td><select name="donvitinh[]" id="donvitinh'+id+'" class="form-control"><option value="0">Gram</option><option  value="1">Mililit</option></select></td>';
+    html += '<td><select name="donvitinh[]" id="donvitinh'+id+'" class="form-control"><option value="0">Mililit</option><option  value="1">Gram</option><option  value="2">Trái</option><option  value="3">Túi</option></select></td>';
     html += '<td><input type="text" name="note[]" id="note'+id+'" class="form-control budget"></td>';
     html += '<td><button style="width:40px" type="button" value="'+id+'" name="add" id="add'+id+'" class="btn btn-success add"><i id="fa" class="fa fa-plus"></i></button><button style="width:40px" type="button" value="'+id+'" name="remove" id="remove'+id+'" class="btn btn-danger remove"><i id="fa" class="fa fa-trash"></i></button></td></tr>';
     $('#table_addrow').append(html);

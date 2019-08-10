@@ -49,10 +49,10 @@
 		vertical-align: inherit;
 		border-color: inherit;
 	}
-	.table-bordered thead th, .table-bordered thead td {
+	.table-bordered thead td, .table-bordered thead td {
 		border-bottom-width: 2px;
 	}
-	.table thead th {
+	.table thead td {
 		vertical-align: bottom;
 		border-bottom: 2px solid #dee2e6;
 	}
@@ -60,7 +60,7 @@
 		/*border: 1px solid #dee2e6;*/
 	}
 	.table th, .table td {
-		padding: 0.75rem;
+		padding-top: 0.75rem;
 		vertical-align: top;
 		/*border-top: 1px solid #dee2e6;*/
 	}
@@ -87,10 +87,10 @@
 		<div class="">Hình Thức Thanh Toán: Tiền Mặt</div>
 		<table class="table table-bordered ">
 			<thead>
-				<th>STT</th>
-				<th>Sản Phẩm</th>
-				<th>SL</th>
-				<th>GIÁ</th>
+				<td width="20%">STT</td>
+				<td width="60%">Sản Phẩm</td>
+				<td width="20%">SL</td>
+				<td width="30%">GIÁ</td>
 			</thead>
 			@if(Session::has('cart'))
 			<tbody>
@@ -102,19 +102,33 @@
 					<td class="">{{$i}}</td>
 					<td class="">{{$cart['item']['tenmon']}}</td>
 					<td class="">{{$cart['qty']}}</td>
-					<td class="">{{$cart['item']['dongia']}}</td>
+					<td class="">{{number_format($cart['item']['dongia'])}}</td>
 				</tr>
 				@php
 				$i++;
 				@endphp
 				@endforeach
 				@endif
+				<tr >
+					<td colspan="2" ="">Tổng Tiền (vnd):</td>
+					<td></td>
+					<td colspan="2">{{number_format(Session('cart')->totalPrice)}}</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td colspan="2">Giảm Giá (vnd):</td>
+					<td></td>
+					<td colspan="2">{{number_format($giam)}}</td>
+					<td></td>
+				</tr>
+				<tr >
+					<td colspan="2">Thành Tiền (vnd):</td>
+					<td></td>
+					<td colspan="2">{{number_format(Session('cart')->totalPrice-$giam)}}</td>
+					<td></td>
+				</tr>
 			</tbody>
 		</table>
-		
-			<div class="stt">Tổng Tiền (vnd):</div>
-			<div class="price_item">{{Session('cart')->totalPrice}}</div>
-		
 	</div>
 </body>
 </html>

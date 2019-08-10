@@ -41,15 +41,15 @@ class MonController extends Controller
 			// 'tenkhuyenmai'    =>  'required',
 			// 'soluong'    =>  'required',
 			'tenmon'=>'required|unique:mon,tenmon',
-			'dongia'=>'bail|regex:/([0-9]{1,9})$/',
-			//'hinhanh' => 'image|mimes:jpg,png,gif',
-			'hinhanh' => 'image',
+			//'dongia'=>'bail|regex:/([0-9]{1,9})$/',
+			'hinhanh' => 'required|image|mimes:jpg,png,gif,jpeg',
+			//'hinhanh' => 'image',
 			'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
 		],
 		[
-			'dongia.regex'=>'Giá trị không không hợp lệ ',
-			'hinhanh.image' => 'Không đúng định dạng hình ảnh',
-			'hinhanh.mimes'=>'Vui lòng chọn file .jpg,png,gif',
+			//'dongia.regex'=>'Giá trị không không hợp lệ ',
+			'hinhanh.required' => 'Vui lòng chọn hình ảnh phù hợp',
+			'hinhanh.mimes'=>'Vui lòng chọn file .jpg,png,gif,jpeg',
 			'ghichu.regex'=>'Ghi chú không hợp lệ'
 		]);
 		if($validator->fails())
@@ -71,7 +71,7 @@ class MonController extends Controller
 				$file->move('hinhanh/upload/',$name);
 				$data = new Mon;
 				$data->maloai=$request->maloai;
-				$data->tenmon=ucwords($request->tenmon);
+				$data->tenmon=$request->tenmon;
 				$data->dongia=$request->dongia;
 				$data->hinhanh=$name;
 				$data->trangthai=$request->trangthai;
@@ -79,7 +79,6 @@ class MonController extends Controller
 				$data->mota=$request->mota;
 				$data->created_at=date('Y-m-d H:i:s');
 				$data->save();
-				//dd($data);
 				return response()->json(['success' => 'Thêm Thành Công!']);
 			}
 			
@@ -107,16 +106,17 @@ class MonController extends Controller
 		if($file!=null)
 		{
 			$validator =Validator::make($request->all(),[
+
 				'tenmon'=>'required|unique:mon,tenmon,'.$request->hidden_id,
 				'dongia'=>'bail|regex:/([0-9]{1,9})$/',
-				//'hinhanh' => 'bail|image|mimes:jpg,png,gif',
+				'hinhanh' => 'bail|required|image|mimes:jpg,png,gif,jpeg',
 				'ghichu'=>'regex:/(([a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{1,9})+([\s]*)+([0-9a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]{0,9}))$/|max:255|nullable'
 			],
 			[
 				'tenmon.unique'=>'Tên món đã tồn tại',
 				'dongia.regex'=>'Giá trị không không hợp lệ ',
 				'hinhanh.image' => 'Không đúng định dạng hình ảnh',
-				'hinhanh.mimes'=>'Vui lòng chọn file .jpg,png,gif',
+				'hinhanh.mimes'=>'Vui lòng chọn file .jpg,png,gif,jpeg',
 				'ghichu.regex'=>'Ghi chú không hợp lệ'
 			]);
 			if($validator->fails())
@@ -137,7 +137,7 @@ class MonController extends Controller
 					$file->move('hinhanh/upload/',$name);
 					$data = Mon::find($request->hidden_id);
 					$data->maloai=$request->maloai;
-					$data->tenmon=ucwords($request->tenmon);
+					$data->tenmon=$request->tenmon;
 					$data->dongia=$request->dongia;
 					$data->hinhanh=$name;
 					$data->trangthai=$request->trangthai;
@@ -178,7 +178,7 @@ class MonController extends Controller
 				{
 					$data = Mon::find($request->hidden_id);
 					$data->maloai=$request->maloai;
-					$data->tenmon=ucwords($request->tenmon);
+					$data->tenmon=$request->tenmon;
 					$data->dongia=$request->dongia;
 					$data->trangthai=$request->trangthai;
 					$data->ghichu=$request->ghichu;

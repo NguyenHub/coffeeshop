@@ -7,7 +7,7 @@
     <!-- Breadcrumbs-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">
-        <a href="admin/trangchu">Trang chủ</a>
+        <a href="admin/quan-ly">Quản Lý</a>
       </li>
       <li class="breadcrumb-item active">Chức Vụ</li>
     </ol>
@@ -25,9 +25,9 @@
               <th >ID</th>
               <th >CHỨC VỤ</th>
               <th >LƯƠNG</th>
-              <th >CREATED_AT</th>
-              <th >UPDATED_AT</th>
-              <th >Action
+              <th >NGÀY TẠO</th>
+              <th >NGÀY CẬP NHẬT</th>
+              <th >
                 <button type="button" name="create_record" id="create_record" class="btn btn-success btn-sm">Tạo mới</button>
               </tr>
             </thead>
@@ -144,11 +144,13 @@
   ,
   {
     data: 'created_at',
-    name: 'created_at'
+    name: 'created_at',
+    visible:false,
   },
   {
     data: 'updated_at',
-    name: 'updated_at'
+    name: 'updated_at',
+    visible:false,
   },
   {
     data: 'action',

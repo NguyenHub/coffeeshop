@@ -26,25 +26,6 @@
 							<div id="payment-1" class="panel-collapse collapse show">
 								<div class="panel-body">
 									<div class="billing-information-wrapper">
-										@if(Auth::guard('khach_hang')->check())
-										<div class="row">
-											<div class="form-group col-lg-6 col-md-6">
-												<div class="form-label-group">
-													
-													<input type="text" class="form-control" id="diachi" name="diachi" value="{{Auth::guard('khach_hang')->user()->diachi}}" placeholder="Nhập địa chỉ nhập hàng">
-													<label for="diachi">Địa Chỉ</label>
-													<p style="color: red;" id="diachi_result"></p>
-												</div>
-											</div>
-											<div class="form-group col-lg-6 col-md-6">
-												<div class="form-label-group">
-													<input type="text" id="sdt" name="sdt" value="{{Auth::guard('khach_hang')->user()->sdt}}" class="form-control" placeholder="Nhập số điện thoại">
-													<label for="sdt">Số Điện Thoại</label>
-													<p style="color: red;" id="sdt_result"></p>
-												</div>
-											</div>
-										</div>
-										@else
 										<div class="row">
 											<div class="form-group col-lg-6 col-md-6">
 												<div class="form-label-group">
@@ -62,7 +43,6 @@
 												</div>
 											</div>
 										</div>
-										@endif
 									</div>
 								</div>
 							</div>
@@ -76,99 +56,86 @@
 									<div class="payment-info-wrapper">
 										<div class="ship-wrapper">
 											<div class="single-ship">
-												<input type="radio" checked="" value="address" name="address">
+												<input type="radio" checked="" class="pay" value="0" id="cod" name="payment">
 												<label>Thanh Toán Khi Nhận Hàng</label>
 											</div>
 											<div class="single-ship">
-												<input type="radio" value="dadress" name="address">
-												<label>Credit Card (saved) </label>
+												<input type="radio" value="1" class="pay" id="online" name="payment">
+												<label>Thanh Toán Online</label>
 											</div>
 										</div>
 										<div class="payment-info">
-											<div class="row">
-												<div class="col-lg-6 col-md-6">
-													<div class="billing-info">
-														<label>Name on Card </label>
-														<input type="text">
-													</div>
-												</div>
-												<div class="col-lg-6 col-md-6">
-													<div class="billing-select">
-														<label>Credit Card Type</label>
-														<select>
-															<option>American Express</option>
-															<option>Visa</option>
-															<option>MasterCard</option>
-															<option>Discover</option>
+											<div class="table-responsive">
+												<form action="" id="create_form" method="post">       
+
+													<div class="form-group">
+														{{-- <label for="language">Loại hàng hóa </label> --}}
+														<select name="order_type" id="order_type" class="form-control">
+															{{-- <option value="topup">Nạp tiền điện thoại</option> --}}
+															<option value="billpayment">Thanh toán hóa đơn</option>
+															{{-- <option value="fashion">Thời trang</option> --}}
+															{{-- <option value="other">Khác - Xem thêm tại VNPAY</option> --}}
 														</select>
 													</div>
-												</div>
-												<div class="col-lg-12 col-md-12">
-													<div class="billing-info">
-														<label>Credit Card Number </label>
-														<input type="text">
+													{{-- <div class="form-group">
+														<label for="amount">Số tiền</label>
+														<input class="form-control" id="amount"
+														name="amount" readonly="" type="text"/>
+													</div> --}}
+													<div class="form-group">
+														<label for="order_desc">Nội dung thanh toán</label>
+														<textarea class="form-control" cols="20" id="order_desc" name="order_desc" rows="2">Noi dung thanh toan</textarea>
 													</div>
-												</div>
-											</div>
-											<div class="expiration-date">
-												<label>Expiration Date </label>
-												<div class="row">
-													<div class="col-lg-6 col-md-6">
-														<div class="billing-select">
-															<select>
-																<option>Month</option>
-																<option>January</option>
-																<option>February</option>
-																<option> March</option>
-																<option>April</option>
-																<option> May</option>
-																<option>June</option>
-																<option>July</option>
-																<option>August</option>
-																<option>September</option>
-																<option> October</option>
-																<option> November</option>
-																<option> December</option>
-															</select>
-														</div>
+													<div class="form-group">
+														<label for="bank_code">Ngân hàng</label>
+														<select name="bank_code" id="bank_code" class="form-control">
+															{{-- <option value="">Không chọn</option> --}}
+															<option value="NCB"> Ngan hang NCB</option>
+															<option value="AGRIBANK"> Ngan hang Agribank</option>
+															<option value="SCB"> Ngan hang SCB</option>
+															<option value="SACOMBANK">Ngan hang SacomBank</option>
+															<option value="EXIMBANK"> Ngan hang EximBank</option>
+															<option value="MSBANK"> Ngan hang MSBANK</option>
+															<option value="NAMABANK"> Ngan hang NamABank</option>
+															<option value="VNMART"> Vi dien tu VnMart</option>
+															<option value="VIETINBANK">Ngan hang Vietinbank</option>
+															<option value="VIETCOMBANK"> Ngan hang VCB</option>
+															<option value="HDBANK">Ngan hang HDBank</option>
+															<option value="DONGABANK"> Ngan hang Dong A</option>
+															<option value="TPBANK"> Ngân hàng TPBank</option>
+															<option value="OJB"> Ngân hàng OceanBank</option>
+															<option value="BIDV"> Ngân hàng BIDV</option>
+															<option value="TECHCOMBANK"> Ngân hàng Techcombank</option>
+															<option value="VPBANK"> Ngan hang VPBank</option>
+															<option value="MBBANK"> Ngan hang MBBank</option>
+															<option value="ACB"> Ngan hang ACB</option>
+															<option value="OCB"> Ngan hang OCB</option>
+															<option value="IVB"> Ngan hang IVB</option>
+															<option value="VISA"> Thanh toan qua VISA/MASTER</option>
+														</select>
 													</div>
-													<div class="col-lg-6 col-md-6">
-														<div class="billing-select">
-															<select>
-																<option>Year</option>
-																<option>2015</option>
-																<option>2016</option>
-																<option>2017</option>
-																<option>2018</option>
-																<option>2019</option>
-																<option>2020</option>
-																<option>2021</option>
-																<option>2022</option>
-																<option>2023</option>
-																<option>2024</option>
-																<option>2025</option>
-															</select>
-														</div>
+													<div class="form-group">
+														<label for="language">Ngôn ngữ</label>
+														<select name="language" id="language" class="form-control">
+															<option value="vn">Tiếng Việt</option>
+															<option value="en">English</option>
+														</select>
 													</div>
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-lg-12 col-md-12">
-													<div class="billing-info">
-														<label>Card Verification Number</label>
-														<input type="text">
-													</div>
-												</div>
+
+													{{-- <button type="submit" class="btn btn-primary" id="btnPopup">Thanh toán Popup</button>
+													<button type="submit" class="btn btn-default">Thanh toán Redirect</button> --}}
+
+												</form>
 											</div>
 										</div>
-										<div class="billing-back-btn">
+										{{-- <div class="billing-back-btn">
 											<div class="billing-back">
 												<a href="#"><i class="ion-arrow-up-c"></i> back</a>
 											</div>
 											<div class="billing-btn">
 												<button type="submit">Continue</button>
 											</div>
-										</div>
+										</div> --}}
 									</div>
 								</div>
 							</div>
@@ -321,6 +288,7 @@
 	$(document).ready(function(){
 		$('#mini_cart').attr('hidden',true);
 		//hàm kiểm tra mã km
+		$('#create_form').hide();
 		$('#makm').click(function(event){
 			event.preventDefault();
 			var code=$('#codekm').val();
@@ -353,6 +321,17 @@
 				})
 			}
 		});
+		$('#sdt').keyup(function(){
+			var number = $(this).val()
+			$(this).val(format_input_number(number));
+		});
+		// if($(this).is(":checked"))
+		$("#online").click(function(){
+			$('#create_form').show();
+		});
+		$("#cod").click(function(){
+			$('#create_form').hide();
+		})
 		$('#thanh-toan').click(function(){
 			$('#diachi_result').text('');
 			$('#sdt_result').text('');
@@ -381,6 +360,14 @@
 				formData.append('makhuyenmai',$('#ma_giam_gia').text());
 				formData.append('thanhtien',$('.tong-tien').text());
 				formData.append('ship',$('#ship').text());
+				formData.append('pay',$("input[type='radio']:checked").val());
+				if($("input[type='radio']:checked").val()==1)
+				{
+					formData.append('order_type',$('#order_type').val());
+					formData.append('bank_code',$('#bank_code').val());
+					formData.append('language',$('#language').val());
+					formData.append('order_desc',$('#order_desc').val());
+				}
 				$.ajax({
 					headers:{'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')},
 					method:'POST',
@@ -395,19 +382,22 @@
 					processData:false,
 					cache:false,
 					dataType:'json',
-					success:function(){
-						$('#confirmModal').modal('show');
-						setTimeout(function(){
-							$('#confirmModal').modal('hide');
-							window.location.href="index";
-						}, 2000);
+					success:function(data)
+					{
+						if(data.thanhtoan)
+						{
+							window.location.href=''+data.thanhtoan+'';
+						}
+						else
+						{
+							$('#confirmModal').modal('show');
+							setTimeout(function(){
+								$('#confirmModal').modal('hide');
+								window.location.href="index";
+							},2000);
+						}
 					}
 				})
-				// $('#confirmModal').modal('show');
-				// setTimeout(function(){
-				// 	$('#confirmModal').modal('hide');
-				// 	window.location.href="index";
-				// }, 2000);
 			}
 		});
 		function validation(){//hàm kiểm tra thông tin nhận hàng

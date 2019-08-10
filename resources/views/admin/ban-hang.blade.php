@@ -42,7 +42,7 @@
         <label style="padding-left: 20px;" for="khachhang_search">Khách Hàng</label>
         <div id="search_result"  class="search-content"></div>
       </div>
-      <div class="print"><a href="admin/ban-hang/print" id="print"><i class="fa fa-print" title="In"></i></a></div>
+      <div class="print"><a href="admin/ban-hang/print/0" id="print"><i class="fa fa-print" title="In"></i></a></div>
     </div>
     <div class="form-group">
       <div class="form-label-group">
@@ -153,6 +153,8 @@
        html+='<div>Thành Tiền</div>'
        html+='<h4 id="thanh_tien" class="price_item">'+data.totalPrice+'</h4>'
        html+='</div>'
+       html+='<div>Tích lũy</div>'
+       html+='<h4 id="tich_luy" class="price_item">'+data.totalPrice/10000+'</h4>'
        html+='<div id="total" class="row" style="padding-top: 30px;">'
        html+='<div class="col-md-4"><button id="delete_cart" class="btn btn-danger">Xóa</button></div>'
        html+='<div class="col-md-4"><button id="save" class="btn btn-success">Lưu</button></div>'
@@ -275,6 +277,7 @@
   $(document).on('click','.result',function(even){
     even.preventDefault();
     var diem= $(this).attr('href');
+    $('.print a').attr('href','admin/ban-hang/print/'+diem);
     var id = $(this).attr('id')
     $('#id_khachhang').val(id);
     $('#search_result').html('').removeClass('display-block');
@@ -317,6 +320,7 @@
           }
         })
   });
+  $('.print a').attr('href','admin/ban-hang/print/0');
     $('#print').printPage();
 });
 </script>
